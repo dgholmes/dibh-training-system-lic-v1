@@ -1,7 +1,7 @@
-import React, { useState, useRef, useCallback, useEffect } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { CloudUpload, X, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { PatientFlowPageHeader } from '@/components/common/PatientFlowPageHeader';
 import { createPageUrl, getPatientIdFromSearchParams } from '@/utils';
 import {
@@ -14,6 +14,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from '@/components/ui/use-toast';
 import { formatFileSize, fileTypeBadge } from '@/lib/files';
 import { cn } from '@/lib/utils';
+import { isAllowedBreathingUploadFile } from '@/lib/breathingFileFormat';
 import { format } from 'date-fns';
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 
@@ -66,12 +67,12 @@ function PatientBreathingUploadSection({
       >
         <CloudUpload className="mb-3 h-10 w-10 text-[#8B949E]" />
         <p className="text-sm font-medium text-white">파일을 선택하세요</p>
-        <p className="mt-1 text-xs text-[#8B949E]">CSV, VXP 파일 지원 (다중 선택 가능)</p>
+        <p className="mt-1 text-xs text-[#8B949E]">CSV, VXP 지원 (다중 선택 가능 · 분석은 CSV만)</p>
         <input
           ref={inputRef}
           type="file"
           multiple
-          accept=".csv,.vxp,application/octet-stream"
+          accept=".csv,.vxp,text/csv,application/octet-stream"
           className="hidden"
           onChange={(e) => {
             if (e.target.files?.length) onAddFiles(e.target.files);
@@ -255,13 +256,19 @@ export default function BreathingDataUpload() {
             setList((prev) => prev.filter((f) => f.id !== id));
           } catch (err) {
             console.error('createBreathingFile', err);
+            const message = err instanceof Error ? err.message : String(err);
+            toast({
+              title: '파일을 저장할 수 없습니다',
+              description: message,
+              variant: 'destructive',
+            });
             setList((prev) =>
               prev.map((f) =>
                 f.id === id
                   ? {
                       ...f,
                       status: 'error',
-                      error: err instanceof Error ? err.message : String(err),
+                      error: message,
                     }
                   : f
               )
@@ -275,8 +282,27 @@ export default function BreathingDataUpload() {
 
   const handleAddGeneral = useCallback(
     (fileList) => {
-      const incoming = Array.from(fileList);
-      const newItems = incoming.map((file) => ({
+      const existingCount = generalSaved.length + generalPending.length;
+      if (existingCount >= 10) {
+        toast({
+          title: '일반호흡 데이터는 최대 10개까지 저장됩니다',
+          description: '오래된 일반호흡 데이터를 삭제한 뒤 다시 업로드해 주세요.',
+          variant: 'destructive',
+        });
+        return;
+      }
+      const incoming = Array.from(fileList).filter(isAllowedBreathingUploadFile);
+      const skipped = Array.from(fileList).length - incoming.length;
+      if (skipped > 0) {
+        toast({
+          title: 'CSV 또는 VXP만 업로드할 수 있습니다',
+          description: `${skipped}개 파일은 지원 형식이 아니어서 제외되었습니다.`,
+          variant: 'destructive',
+        });
+      }
+      const room = Math.max(0, 10 - existingCount);
+      const limited = incoming.slice(0, room);
+      const newItems = limited.map((file) => ({
         id: `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
         file,
         name: file.name,
@@ -284,16 +310,36 @@ export default function BreathingDataUpload() {
         progress: 0,
         status: 'uploading',
       }));
+      if (newItems.length === 0) return;
       setGeneralPending((prev) => [...prev, ...newItems]);
       simulateUploadAndPersist(newItems, 'general', setGeneralPending);
     },
-    [simulateUploadAndPersist]
+    [simulateUploadAndPersist, generalSaved.length, generalPending.length]
   );
 
   const handleAddDibh = useCallback(
     (fileList) => {
-      const incoming = Array.from(fileList);
-      const newItems = incoming.map((file) => ({
+      const existingCount = dibhSaved.length + dibhPending.length;
+      if (existingCount >= 10) {
+        toast({
+          title: 'DIBH 데이터는 최대 10개까지 저장됩니다',
+          description: '오래된 DIBH 데이터를 삭제한 뒤 다시 업로드해 주세요.',
+          variant: 'destructive',
+        });
+        return;
+      }
+      const incoming = Array.from(fileList).filter(isAllowedBreathingUploadFile);
+      const skipped = Array.from(fileList).length - incoming.length;
+      if (skipped > 0) {
+        toast({
+          title: 'CSV 또는 VXP만 업로드할 수 있습니다',
+          description: `${skipped}개 파일은 지원 형식이 아니어서 제외되었습니다.`,
+          variant: 'destructive',
+        });
+      }
+      const room = Math.max(0, 10 - existingCount);
+      const limited = incoming.slice(0, room);
+      const newItems = limited.map((file) => ({
         id: `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
         file,
         name: file.name,
@@ -301,10 +347,11 @@ export default function BreathingDataUpload() {
         progress: 0,
         status: 'uploading',
       }));
+      if (newItems.length === 0) return;
       setDibhPending((prev) => [...prev, ...newItems]);
       simulateUploadAndPersist(newItems, 'dibh', setDibhPending);
     },
-    [simulateUploadAndPersist]
+    [simulateUploadAndPersist, dibhSaved.length, dibhPending.length]
   );
 
   const busyGeneral = generalPending.some((f) => f.status === 'uploading' || f.status === 'persisting');

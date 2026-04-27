@@ -59,7 +59,7 @@ export function computeStoredBreathingFileName(
 }
 
 /**
- * Persist uploaded breathing data files (CSV/VXP bytes) in SQLite.
+ * Persist uploaded breathing data files (CSV / VXP bytes) in SQLite. Analysis uses CSV only until VXP decoding exists.
  * List views omit BLOB content for performance.
  */
 
@@ -79,6 +79,12 @@ export async function createBreathingFile({ patientId, category, file }) {
   const id = genId();
   const importedAt = new Date().toISOString();
   const existingSameCategory = await listBreathingFilesByPatient(patientId, category);
+  if (existingSameCategory.length >= 10) {
+    const label = category === 'general' ? '일반호흡' : 'DIBH';
+    throw new Error(
+      `한 환자당 ${label} 데이터는 최대 10개까지만 보관할 수 있습니다. 오래된 데이터를 삭제한 뒤 다시 업로드해 주세요.`
+    );
+  }
   const storedName = computeStoredBreathingFileName(
     patient,
     category,

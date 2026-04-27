@@ -12,6 +12,7 @@
  */
 
 import { getBreathingFileContent } from '@/api/breathingFileRepository';
+import { isCsvBreathingFileName, isVxpBreathingFileName } from '@/lib/breathingFileFormat';
 import { Stage1EnsembleRTAnalyzer } from './stage1Analyzer.js';
 import { Stage3Detector, OnePoleLPF, DerivativeEstimator } from './stage3Detector.js';
 import { determineDibhType } from './determineDibhType.js';
@@ -126,6 +127,23 @@ export async function analyzeFiles(generalFileId, dibhFileId, { signal } = {}) {
   ]);
   if (!generalFile) throw new Error('일반호흡 파일을 찾을 수 없습니다.');
   if (!dibhFile) throw new Error('DIBH 파일을 찾을 수 없습니다.');
+
+  if (isVxpBreathingFileName(generalFile.original_name)) {
+    throw new Error(
+      '일반호흡: VXP 파일은 현재 분석에서 지원하지 않습니다. 분석에는 CSV 파일을 선택해 주세요. (VXP는 업로드 보관만 가능합니다.)'
+    );
+  }
+  if (isVxpBreathingFileName(dibhFile.original_name)) {
+    throw new Error(
+      'DIBH: VXP 파일은 현재 분석에서 지원하지 않습니다. 분석에는 CSV 파일을 선택해 주세요. (VXP는 업로드 보관만 가능합니다.)'
+    );
+  }
+  if (!isCsvBreathingFileName(generalFile.original_name)) {
+    throw new Error('일반호흡 분석은 CSV 파일만 지원합니다. 파일 확장자를 확인해 주세요.');
+  }
+  if (!isCsvBreathingFileName(dibhFile.original_name)) {
+    throw new Error('DIBH 분석은 CSV 파일만 지원합니다. 파일 확장자를 확인해 주세요.');
+  }
 
   // ── Parse CSVs ───────────────────────────────────────────────────
   const generalSamples = parseCsv(generalFile.arrayBuffer);

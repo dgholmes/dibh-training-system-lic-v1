@@ -1,4 +1,5 @@
-import React, { useMemo, useState, useEffect, useRef, useCallback } from 'react';
+/* eslint-disable react/prop-types -- playback shape comes from analyzeFiles */
+import { useMemo, useState, useEffect, useRef, useCallback } from 'react';
 import { Play, Pause, Repeat2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import CalibrationChart from '@/components/common/CalibrationChart';
@@ -8,16 +9,6 @@ function formatMmSs(seconds) {
   const s = Math.max(0, Math.floor(seconds % 60));
   const m = Math.max(0, Math.floor(seconds / 60));
   return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-}
-
-function makeDemoSeries(durationSec = 180, points = 240) {
-  const out = [];
-  for (let i = 0; i < points; i++) {
-    const t = (i / (points - 1)) * durationSec;
-    const v = Math.sin(t * 0.65) * 18 + 48 + Math.sin(t * 1.9) * 4;
-    out.push({ time: t, value: v });
-  }
-  return out;
 }
 
 export default function AnalysisPlaybackPanel({ playback }) {
@@ -40,19 +31,28 @@ export default function AnalysisPlaybackPanel({ playback }) {
     if (hasFilePlayback) {
       return graphMode === 'general' ? playback.durationGeneral : playback.durationDibh;
     }
-    return 180;
+    return 0;
   }, [graphMode, hasFilePlayback, playback]);
 
   const fullChartData = useMemo(() => {
     if (activeBlock?.chartData?.length) return activeBlock.chartData;
-    return makeDemoSeries(duration, 200);
-  }, [activeBlock, duration]);
+    return [];
+  }, [activeBlock]);
+
+  // tMin: absolute timestamp of the first data point (DIBH data rarely starts at t=0)
+  const tMin = useMemo(
+    () => (fullChartData.length > 0 ? fullChartData[0].time : 0),
+    [fullChartData]
+  );
+
+  // effectiveDuration: elapsed seconds of actual content
+  const effectiveDuration = Math.max(0, duration - tMin);
 
   const visibleData = useMemo(() => {
     if (!fullChartData.length) return [];
-    const tEnd = Math.min(currentTime, duration);
-    return fullChartData.filter((p) => p.time <= tEnd + 1e-4);
-  }, [fullChartData, currentTime, duration]);
+    const tAbsEnd = tMin + Math.min(currentTime, effectiveDuration);
+    return fullChartData.filter((p) => p.time <= tAbsEnd + 1e-4);
+  }, [fullChartData, currentTime, effectiveDuration, tMin]);
 
   const stage = activeBlock?.stage ?? (graphMode === 'general' ? 1 : 3);
   const chartProps =
@@ -74,7 +74,7 @@ export default function AnalysisPlaybackPanel({ playback }) {
           }
         : {};
 
-  durationRef.current = duration;
+  durationRef.current = effectiveDuration;
   playingRef.current = playing;
 
   useEffect(() => {
@@ -113,6 +113,17 @@ export default function AnalysisPlaybackPanel({ playback }) {
     graphMode === 'general' ? '일반 호흡 그래프' : 'DIBH 호흡 그래프';
   const toggleLabel = graphMode === 'general' ? 'DIBH' : '일반 호흡';
 
+  if (!hasFilePlayback) {
+    return (
+      <div className="rounded-2xl border border-[#30363D] bg-[#1C2128] p-6 text-center">
+        <h3 className="mb-2 text-base font-bold text-white">호흡 파형 재생</h3>
+        <p className="text-sm text-[#8B949E]">
+          파일 기반 분석을 완료하면 일반 호흡·DIBH 구간의 실제 기록과 검출이 이곳에 표시됩니다.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="rounded-2xl border border-[#30363D] bg-[#1C2128] p-4 sm:p-5">
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
@@ -129,13 +140,6 @@ export default function AnalysisPlaybackPanel({ playback }) {
         </Button>
       </div>
 
-      {!hasFilePlayback && (
-        <p className="mb-3 text-xs text-[#8B949E]">
-          파일 분석 데이터가 없어 참고용 파형을 표시합니다. 파일 기반 분석 후에는 실제 기록과 검출이
-          표시됩니다.
-        </p>
-      )}
-
       <div className="overflow-hidden rounded-xl border border-[#30363D] bg-[#0D1117]">
         <CalibrationChart
           embedded
@@ -143,7 +147,7 @@ export default function AnalysisPlaybackPanel({ playback }) {
           showStageCaption={false}
           data={visibleData}
           stage={stage}
-          playheadTime={currentTime < duration ? currentTime : null}
+          playheadTime={currentTime < effectiveDuration ? tMin + currentTime : null}
           {...chartProps}
         />
       </div>
@@ -160,15 +164,15 @@ export default function AnalysisPlaybackPanel({ playback }) {
           {playing ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5 pl-0.5" />}
         </Button>
         <span className="min-w-[7rem] font-mono text-sm text-[#8B949E]">
-          {formatMmSs(currentTime)} / {formatMmSs(duration)}
+          {formatMmSs(currentTime)} / {formatMmSs(effectiveDuration)}
         </span>
         <div className="relative min-h-[44px] min-w-[min(100%,280px)] flex-1">
           <input
             type="range"
             min={0}
-            max={duration || 1}
+            max={effectiveDuration || 1}
             step={0.05}
-            value={Math.min(currentTime, duration)}
+            value={Math.min(currentTime, effectiveDuration)}
             onChange={(e) => {
               setCurrentTime(parseFloat(e.target.value));
               setPlaying(false);

@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Search, Plus, ChevronLeft, ChevronRight, LogOut, Bluetooth, Wifi, Loader2 } from 'lucide-react';
+import { useState } from 'react';
+import { Search, Plus, ChevronLeft, ChevronRight, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Link, useNavigate } from 'react-router-dom';
@@ -7,30 +7,12 @@ import { createPageUrl } from '@/utils';
 import { Patient } from '@/api/entities';
 import { useQuery } from '@tanstack/react-query';
 import PatientCard from '@/components/common/PatientCard';
-import { useGoDirect } from '@/context/GoDirectContext';
-import BluetoothSettingsSheet from '@/components/common/BluetoothSettingsSheet';
-import { cn } from '@/lib/utils';
 
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const [bluetoothSheetOpen, setBluetoothSheetOpen] = useState(false);
   const navigate = useNavigate();
   const patientsPerPage = 5;
-
-  // GoDirect Bluetooth connection
-  const { connected, connecting, connect, connectionAttempt, maxRetries } = useGoDirect();
-
-  // Handle Bluetooth indicator click
-  const handleBluetoothClick = () => {
-    if (connected) {
-      // If connected, open settings sheet
-      setBluetoothSheetOpen(true);
-    } else if (!connecting) {
-      // If not connected and not connecting, initiate connection
-      connect();
-    }
-  };
 
   const { data: patients = [], isLoading } = useQuery({
     queryKey: ['patients'],
@@ -63,45 +45,6 @@ export default function Home() {
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold text-white">환자 정보 선택</h1>
           <div className="flex items-center gap-2">
-            {/* Bluetooth Indicator */}
-            <button
-              onClick={handleBluetoothClick}
-              className={cn(
-                "flex items-center gap-1.5 px-3 py-2 rounded-lg transition-all",
-                connected 
-                  ? "bg-[#22C55E]/10 hover:bg-[#22C55E]/20" 
-                  : connecting 
-                    ? "bg-[#3B82F6]/10" 
-                    : "bg-[#1C2128] hover:bg-[#30363D]"
-              )}
-              title={connected ? '블루투스 설정' : '블루투스 연결'}
-            >
-              {connecting ? (
-                <Loader2 className="w-4 h-4 text-[#3B82F6] animate-spin" />
-              ) : (
-                <Bluetooth className={cn(
-                  "w-4 h-4",
-                  connected ? "text-[#22C55E]" : "text-[#8B949E]"
-                )} />
-              )}
-              <span className={cn(
-                "text-xs font-medium",
-                connected ? "text-[#22C55E]" : connecting ? "text-[#3B82F6]" : "text-[#8B949E]"
-              )}>
-                {connected 
-                  ? '연결됨' 
-                  : connecting 
-                    ? (connectionAttempt > 0 ? `재시도 ${connectionAttempt}/${maxRetries}` : '연결 중')
-                    : '연결 안됨'}
-              </span>
-            </button>
-
-            {/* WiFi Indicator */}
-            <div className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#22C55E]/10">
-              <Wifi className="w-4 h-4 text-[#22C55E]" />
-              <span className="text-xs font-medium text-[#22C55E]">WiFi</span>
-            </div>
-
             {/* Logout Button */}
             <Button
               onClick={handleLogout}
@@ -114,12 +57,6 @@ export default function Home() {
             </Button>
           </div>
         </div>
-
-        {/* Bluetooth Settings Sheet */}
-        <BluetoothSettingsSheet 
-          open={bluetoothSheetOpen} 
-          onOpenChange={setBluetoothSheetOpen} 
-        />
 
         {/* Search Bar and New Patient Button */}
         <div className="flex items-center gap-3 mb-6">

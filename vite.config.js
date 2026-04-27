@@ -1,10 +1,19 @@
+/// <reference types="vitest/config" />
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
+import { fileURLToPath } from 'url'
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
+  test: {
+    environment: 'node',
+    globals: true,
+    include: ['src/**/*.test.{js,jsx}'],
+  },
   server: {
     host: '0.0.0.0', // Listen on all network interfaces
     port: 5174, // Default Vite port

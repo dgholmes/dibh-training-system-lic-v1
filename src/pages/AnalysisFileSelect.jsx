@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
@@ -107,6 +107,10 @@ export default function AnalysisFileSelect() {
         source: 'file_analysis',
       });
 
+      const genRow = generalFiles.find((f) => f.id === selectedGeneral);
+      const dibhRow = dibhFiles.find((f) => f.id === selectedDibh);
+      const source_files = [genRow?.original_name, dibhRow?.original_name].filter(Boolean);
+
       CalibrationSession.complete(session.id, {
         training_type: result.trainingType,
         dibh_duration: result.avgDibh ?? 0,
@@ -115,7 +119,14 @@ export default function AnalysisFileSelect() {
         source: result.source,
         playback: result.playback,
         breathing_file_ids: { general: selectedGeneral, dibh: selectedDibh },
+        source_files,
       });
+
+      await queryClient.invalidateQueries({ queryKey: ['patient', patientId] });
+      await queryClient.invalidateQueries({ queryKey: ['calibrations', patientId] });
+      await queryClient.invalidateQueries({ queryKey: ['latestCalibration', patientId] });
+      await queryClient.invalidateQueries({ queryKey: ['breathingFiles'] });
+      await queryClient.invalidateQueries({ queryKey: ['patients'] });
 
       setShowAnalysisModal(false);
       navigate(`${createPageUrl('TypeDecision')}?patientId=${encodeURIComponent(patientId)}`);
@@ -182,6 +193,10 @@ export default function AnalysisFileSelect() {
 
         <div className="mb-6 space-y-2 text-sm text-[#8B949E]">
           <p>이 환자에게 등록된 호흡 데이터 목록입니다.</p>
+          <p className="text-xs leading-relaxed text-[#6E7681]">
+            업로드는 CSV·VXP 모두 가능합니다. 이 화면에서 실행하는 분석은{' '}
+            <span className="font-medium text-[#8B949E]">일반·DIBH 각각 CSV 파일</span>을 선택해야 합니다.
+          </p>
           {patientId ? (
             <p>
               <Link

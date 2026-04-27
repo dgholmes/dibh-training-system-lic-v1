@@ -1,23 +1,8 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import {
-  ArrowLeft,
-  LogOut,
-  Plus,
-  ChevronRight,
-  Lock,
-  Headphones,
-  Edit,
-  Trash2,
-  X,
-  Folder,
-  Play,
-  RefreshCw,
-  FileText,
-} from 'lucide-react';
+import { useState, useEffect, useMemo } from 'react';
+import { ArrowLeft, LogOut, Plus, Edit, Trash2, Folder, RefreshCw, Calendar as CalendarIcon, Minus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl, getPatientIdFromSearchParams } from '@/utils';
 import {
@@ -27,10 +12,22 @@ import {
   listAllBreathingFilesByPatient,
 } from '@/api/entities';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { getCalibrationStatus, getRecalibrationReason, needsRecalibration } from '@/utils/recalibration';
-import { format, parseISO } from 'date-fns';
+import { getCalibrationStatus, getRecalibrationReason } from '@/utils/recalibration';
+import { format, parseISO, isValid } from 'date-fns';
 import { cn } from '@/lib/utils';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { darkPopoverCalendarClassNames } from '@/lib/darkPopoverCalendar';
+import { nextPatientCode } from '@/lib/patientCode';
+import { BreathingTypeBadge } from '@/components/breathing/BreathingTypeBadge';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Calendar } from '@/components/ui/calendar';
+import { toast } from '@/components/ui/use-toast';
+
+const genderOptions = [
+  { value: 'male', label: '남성' },
+  { value: 'female', label: '여성' },
+  { value: 'unspecified', label: '선택안함' },
+];
 
 const typeLabels = {
   A: { label: '우수 호흡', className: 'bg-[#22C55E]/20 text-[#22C55E] border-[#22C55E]/40' },
@@ -55,10 +52,12 @@ export default function PatientDashboard() {
   const [editFormData, setEditFormData] = useState({
     name: '',
     birth_date: '',
-    expected_treatment_date: '',
-    treatment_method: '',
-    breathing_method: '',
+    gender: 'male',
+    treatment_session_count: 0,
+    patient_code: '',
   });
+  const [editSessionManualMode, setEditSessionManualMode] = useState(false);
+  const [editBirthPopoverOpen, setEditBirthPopoverOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
   const { data: patient } = useQuery({
@@ -90,16 +89,23 @@ export default function PatientDashboard() {
 
   const calibrationStatus = patient ? getCalibrationStatus(patient) : null;
   const recalibrationReason = patient ? getRecalibrationReason(patient) : null;
-  const needsRecal = patient ? needsRecalibration(patient) : true;
 
+  /** 최근 방문일: 등록일(created_at)을 기준으로 두고, 훈련(치료)이 있을 때마다 해당 세션 시각으로 갱신되어 보이는 최댓값. */
   const lastVisitDate = useMemo(() => {
-    if (!trainingSessions.length) return null;
-    const sorted = [...trainingSessions].sort(
-      (a, b) => new Date(b.session_date || b.created_at || 0) - new Date(a.session_date || a.created_at || 0)
-    );
-    const d = sorted[0]?.session_date || sorted[0]?.created_at;
-    return d ? parseISO(String(d)) : null;
-  }, [trainingSessions]);
+    const candidates = [];
+    if (patient?.created_at) {
+      const t = parseISO(String(patient.created_at));
+      if (isValid(t)) candidates.push(t);
+    }
+    trainingSessions.forEach((s) => {
+      const raw = s.completed_at || s.session_date || s.created_at;
+      if (!raw) return;
+      const t = parseISO(String(raw));
+      if (isValid(t)) candidates.push(t);
+    });
+    if (!candidates.length) return null;
+    return new Date(Math.max(...candidates.map((d) => d.getTime())));
+  }, [patient, trainingSessions]);
 
   const lastAnalysisLabel = useMemo(() => {
     const dates = [];
@@ -118,74 +124,59 @@ export default function PatientDashboard() {
   }, [calibrations, breathingFiles]);
 
   const hasBreathingData = breathingFiles.length > 0;
-  const canOpenVr = hasBreathingData && !!patient?.training_type;
-  const lastSession = trainingSessions.length
-    ? [...trainingSessions].sort(
-        (a, b) => new Date(b.session_date || b.created_at) - new Date(a.session_date || a.created_at)
-      )[0]
-    : null;
-
   const historyRows = useMemo(() => {
     const rows = [];
-    breathingFiles.forEach((f) => {
-      rows.push({
-        id: `bf-${f.id}`,
-        date: f.imported_at,
-        category: f.category === 'general' ? '일반호흡' : 'DIBH',
-        categoryBadge: '호흡 데이터',
-        detail: f.original_name,
-        result: '—',
-        reportHref: null,
-      });
-    });
     calibrations.forEach((c) => {
       const t = c.training_type;
-      const tl = typeLabels[t] || { label: `Type ${t || '—'}` };
+      const tl = typeLabels[t] || { label: `Type ${t || '—'}`, className: '' };
+      const fileDetail = (() => {
+        if (c.source_files && Array.isArray(c.source_files) && c.source_files.length) {
+          return c.source_files.join(', ');
+        }
+        const ids = c.breathing_file_ids;
+        if (ids && typeof ids === 'object' && (ids.general || ids.dibh)) {
+          const parts = [];
+          if (ids.general) parts.push('일반 호흡');
+          if (ids.dibh) parts.push('DIBH');
+          return parts.join(', ');
+        }
+        return null;
+      })();
       rows.push({
         id: `cal-${c.id}`,
         date: c.calibration_date,
-        category: '캘리브레이션',
-        categoryBadge: '캘리브레이션',
-        detail: `Type ${t || '—'}`,
-        result: tl.label,
+        detail: fileDetail,
+        result: t ? `Type ${t}` : '—',
         resultClass: tl.className,
-        reportHref: null,
+        reportHref:
+          `/CalibrationReport?patientId=${encodeURIComponent(patientId)}&calibrationId=${encodeURIComponent(c.id)}`,
       });
     });
     return rows.sort((a, b) => new Date(b.date) - new Date(a.date));
-  }, [breathingFiles, calibrations]);
+  }, [patientId, calibrations]);
+
+  const latestCalibration = useMemo(() => {
+    if (!calibrations.length) return null;
+    return [...calibrations].sort(
+      (a, b) => new Date(b.calibration_date || 0) - new Date(a.calibration_date || 0)
+    )[0];
+  }, [calibrations]);
+
+  const analysisReportCardHref = useMemo(() => {
+    if (!patientId || !latestCalibration?.id) return null;
+    return `/CalibrationReport?patientId=${encodeURIComponent(patientId)}&calibrationId=${encodeURIComponent(latestCalibration.id)}`;
+  }, [patientId, latestCalibration?.id]);
 
   const handleLogout = () => {
     navigate(createPageUrl('Login'));
   };
 
-  const handleUploadBreathing = () => {
+  const handleAddData = () => {
     navigate(createPageUrl('BreathingDataUpload') + `?patientId=${encodeURIComponent(patientId)}`);
   };
 
-  const handleViewReport = () => {
-    if (lastSession?.id) {
-      navigate(
-        createPageUrl('TrainingReport') +
-          `?patientId=${encodeURIComponent(patientId)}&sessionId=${encodeURIComponent(lastSession.id)}`
-      );
-    }
-  };
-
-  const handleVrSim = () => {
-    if (canOpenVr) navigate(createPageUrl('EquipmentCheck') + `?patientId=${encodeURIComponent(patientId)}`);
-  };
-
-  const handleStartTraining = () => {
-    navigate(createPageUrl('InitialDiagnosis') + `?patientId=${encodeURIComponent(patientId)}`);
-  };
-
   const handleRecalibrate = () => {
-    navigate(createPageUrl('InitialDiagnosis') + `?patientId=${encodeURIComponent(patientId)}&recalibrate=true`);
-  };
-
-  const handleViewTrainingHistory = () => {
-    navigate(createPageUrl('TrainingHistory') + `?patientId=${encodeURIComponent(patientId)}`);
+    navigate(createPageUrl('AnalysisFileSelect') + `?patientId=${encodeURIComponent(patientId)}`);
   };
 
   const handleEdit = () => setShowEditModal(true);
@@ -202,50 +193,46 @@ export default function PatientDashboard() {
 
   const handleSaveEdit = async (e) => {
     e.preventDefault();
-    if (patientId) {
-      setIsSaving(true);
-      await Patient.update(patientId, editFormData);
-      queryClient.invalidateQueries({ queryKey: ['patient', patientId] });
-      queryClient.invalidateQueries({ queryKey: ['patients'] });
-      setIsSaving(false);
+    if (!patientId) return;
+    if (!editFormData.name.trim() || !editFormData.birth_date) {
+      return;
+    }
+    setIsSaving(true);
+    try {
+      Patient.update(patientId, {
+        name: editFormData.name.trim(),
+        birth_date: editFormData.birth_date,
+        gender: editFormData.gender,
+        treatment_session_count: editFormData.treatment_session_count,
+        patient_code: editFormData.patient_code,
+      });
+      await queryClient.invalidateQueries({ queryKey: ['patient', patientId] });
+      await queryClient.invalidateQueries({ queryKey: ['patients'] });
       setShowEditModal(false);
+    } catch (err) {
+      toast({
+        title: '저장 실패',
+        description: err instanceof Error ? err.message : String(err),
+        variant: 'destructive',
+      });
+    } finally {
+      setIsSaving(false);
     }
   };
 
   useEffect(() => {
     if (showEditModal && patient) {
+      setEditSessionManualMode(false);
+      setEditBirthPopoverOpen(false);
       setEditFormData({
         name: patient.name || '',
         birth_date: patient.birth_date || '',
-        expected_treatment_date: patient.expected_treatment_date || '',
-        treatment_method: patient.treatment_method || '',
-        breathing_method: patient.breathing_method || '',
+        gender: patient.gender || 'male',
+        treatment_session_count: patient.treatment_session_count ?? 0,
+        patient_code: patient.patient_code || nextPatientCode(),
       });
     }
   }, [showEditModal, patient]);
-
-  const treatmentMethods = [
-    { value: 'intensity_modulated', label: '세기조절방사선치료' },
-    { value: 'proton', label: '양성자치료' },
-    { value: 'other', label: '기타' },
-  ];
-
-  const breathingMethods = [
-    { value: 'normal', label: 'Normal' },
-    { value: 'shallow', label: 'Shallow' },
-    { value: 'dibh', label: 'DIBH' },
-  ];
-
-  const analysisBadge = (() => {
-    if (!hasBreathingData && !patient?.training_type) {
-      return { text: '데이터 없음', className: 'bg-[#30363D] text-[#8B949E] border-[#30363D]' };
-    }
-    if (patient?.training_type && typeLabels[patient.training_type]) {
-      const t = typeLabels[patient.training_type];
-      return { text: t.label, className: t.className };
-    }
-    return { text: '분석 대기', className: 'bg-[#3B82F6]/15 text-[#79B8FF] border-[#3B82F6]/40' };
-  })();
 
   return (
     <div className="min-h-screen bg-[#0D1117] p-6 pb-28">
@@ -342,140 +329,146 @@ export default function PatientDashboard() {
               </div>
             </div>
 
-            {/* 호흡 분석 결과 */}
-            <div className="rounded-2xl border border-[#3B82F6]/50 bg-[#1C2128] p-5 sm:p-6">
-              <h3 className="mb-3 text-lg font-bold text-white">호흡 분석 결과</h3>
-              <div className="mb-5 flex flex-wrap items-center gap-2">
-                <span className="text-sm text-[#8B949E]">
-                  최근 분석 상태
-                  {lastAnalysisLabel ? ` (${lastAnalysisLabel})` : ''}
-                </span>
-                <span
-                  className={cn(
-                    'rounded-full border px-3 py-0.5 text-xs font-medium',
-                    analysisBadge.className
-                  )}
-                >
-                  {analysisBadge.text}
-                </span>
-              </div>
-              <div className="grid gap-3 sm:grid-cols-2">
-                <Button
-                  type="button"
-                  onClick={handleUploadBreathing}
-                  className="h-12 gap-2 bg-[#3B82F6] text-base font-semibold text-white hover:bg-[#2563EB] sm:h-14"
-                >
-                  <Plus className="h-5 w-5" />
-                  데이터 추가
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  disabled={!lastSession}
-                  onClick={handleViewReport}
-                  className="h-12 border-[#30363D] bg-[#252A32] text-white hover:bg-[#30363D] disabled:opacity-40 sm:h-14"
-                >
-                  분석 결과지 보기
-                </Button>
-              </div>
-              {recalibrationReason && calibrationStatus && (
-                <p
-                  className={cn(
-                    'mt-4 text-xs',
-                    calibrationStatus === 'expired' ? 'text-[#EF4444]' : 'text-[#EAB308]'
-                  )}
-                >
-                  {recalibrationReason}
-                </p>
-              )}
-            </div>
-
-            {/* VR 시뮬레이션 */}
-            <div className="rounded-2xl border border-[#30363D] bg-[#1C2128] p-1">
-              <button
-                type="button"
-                disabled={!canOpenVr}
-                onClick={handleVrSim}
-                className={cn(
-                  'flex w-full items-center gap-3 rounded-xl px-4 py-4 text-left transition-colors sm:py-5',
-                  canOpenVr
-                    ? 'hover:bg-[#252A32]'
-                    : 'cursor-not-allowed opacity-60'
-                )}
+            {/* 호흡 분석 결과 – dashboard card (entire card opens CalibrationReport when data exists) */}
+            {analysisReportCardHref ? (
+              <Link
+                to={analysisReportCardHref}
+                className="block rounded-2xl border border-[#30363D] bg-[#1C2128] p-5 sm:p-6 transition-colors hover:border-[#3B82F6]/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0D1117]"
+                aria-label="호흡 분석 결과 상세 보기"
               >
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#0D1117]">
-                  {canOpenVr ? (
-                    <Headphones className="h-6 w-6 text-[#8B5CF6]" />
-                  ) : (
-                    <Lock className="h-6 w-6 text-[#8B949E]" />
-                  )}
+                <div className="mb-4 flex items-center justify-between gap-3">
+                  <h3 className="flex items-center gap-2 text-lg font-bold text-white">
+                    <span className="h-5 w-1 rounded-full bg-gradient-to-b from-[#3B82F6] to-[#8B5CF6]" />
+                    호흡 분석 결과
+                  </h3>
+                  <div className="flex items-center gap-2 text-xs text-[#8B949E]">
+                    <span>최근 분석 상태</span>
+                    <span className="rounded-full border border-[#30363D] bg-[#0D1117] px-2 py-0.5 text-[11px] font-medium">
+                      {lastAnalysisLabel ?? '없음'}
+                    </span>
+                  </div>
                 </div>
-                <div className="min-w-0 flex-1">
-                  <p className="text-sm font-semibold text-white sm:text-base">
-                    {canOpenVr
-                      ? '환자 호흡 정보 기반 VR 치료 예측 시뮬레이션 바로가기'
-                      : '시뮬레이션 불가 (호흡 데이터를 먼저 추가해주세요)'}
+
+                <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:gap-10">
+                  <BreathingTypeBadge
+                    type={latestCalibration.training_type || patient?.training_type || 'A'}
+                    compact
+                    className="bg-[#0D1117]"
+                  />
+
+                  <div className="flex min-w-0 flex-1 flex-col justify-center gap-3 sm:gap-4">
+                    <p className="text-sm font-medium text-[#C9D1D9] sm:text-base">
+                      현재 환자는{' '}
+                      <span className="font-semibold text-white">
+                        {latestCalibration.training_type === 'C'
+                          ? 'DIBH 비권장 상태'
+                          : 'DIBH 가능 상태'}
+                      </span>
+                      입니다.
+                    </p>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="mb-1 text-xs text-[#8B949E]">DIBH 유지 시간</p>
+                        <p className="text-2xl font-bold text-white">
+                          {latestCalibration.dibh_duration != null
+                            ? `${latestCalibration.dibh_duration}초`
+                            : '—'}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="mb-1 text-xs text-[#8B949E]">호흡 안정성 (CV)</p>
+                        <p className="text-2xl font-bold text-white">
+                          {latestCalibration.cv != null ? `${latestCalibration.cv}%` : '—'}
+                        </p>
+                      </div>
+                    </div>
+                    {recalibrationReason && calibrationStatus && (
+                      <p
+                        className={cn(
+                          'mt-1 text-xs',
+                          calibrationStatus === 'expired' ? 'text-[#EF4444]' : 'text-[#EAB308]'
+                        )}
+                      >
+                        {recalibrationReason}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </Link>
+            ) : (
+              <div className="rounded-2xl border border-[#30363D] bg-[#1C2128] p-5 sm:p-6">
+                <div className="mb-4 flex items-center justify-between gap-3">
+                  <h3 className="flex items-center gap-2 text-lg font-bold text-white">
+                    <span className="h-5 w-1 rounded-full bg-gradient-to-b from-[#3B82F6] to-[#8B5CF6]" />
+                    호흡 분석 결과
+                  </h3>
+                  <div className="flex items-center gap-2 text-xs text-[#8B949E]">
+                    <span>최근 분석 상태</span>
+                    <span className="rounded-full border border-[#30363D] bg-[#0D1117] px-2 py-0.5 text-[11px] font-medium">
+                      {lastAnalysisLabel ?? '없음'}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="rounded-xl border border-dashed border-[#30363D] bg-[#161B22] px-4 py-5 text-sm text-[#8B949E] sm:px-5">
+                  <p className="font-medium text-white mb-1.5">아직 호흡 분석 결과가 없습니다.</p>
+                  <p>
+                    상단의 <span className="font-semibold text-[#3B82F6]">[데이터 추가]</span>로 일반·DIBH
+                    데이터(CSV 또는 VXP)를 업로드한 뒤,{' '}
+                    <span className="font-semibold text-[#3B82F6]">[호흡 분석]</span>에서 파일을 선택해
+                    분석을 실행해 주세요.
                   </p>
                 </div>
-                {canOpenVr && <ChevronRight className="h-5 w-5 shrink-0 text-[#8B949E]" />}
-              </button>
-            </div>
+              </div>
+            )}
 
-            {/* Training shortcuts */}
+            {/* Data / calibration shortcuts */}
             <div className="flex flex-col gap-2 sm:flex-row">
-              {patient?.training_type && !needsRecal && (
-                <Button
-                  type="button"
-                  onClick={handleStartTraining}
-                  className="h-12 flex-1 bg-gradient-to-r from-[#3B82F6] to-[#8B5CF6] font-semibold text-white"
-                >
-                  <Play className="mr-2 h-4 w-4" />
-                  훈련 시작
-                </Button>
-              )}
               <Button
                 type="button"
-                variant="outline"
-                onClick={handleRecalibrate}
-                className="h-12 flex-1 border-[#30363D] bg-[#1C2128] text-white hover:bg-[#30363D]"
+                onClick={handleAddData}
+                className={cn(
+                  'h-12 flex-1 font-semibold text-white',
+                  hasBreathingData
+                    ? 'border border-[#30363D] bg-[#1C2128] hover:bg-[#30363D]'
+                    : 'bg-gradient-to-r from-[#3B82F6] to-[#8B5CF6] hover:from-[#2563EB] hover:to-[#7C3AED]'
+                )}
               >
-                <RefreshCw className="mr-2 h-4 w-4" />
-                {patient?.training_type ? '재캘리브레이션' : '캘리브레이션'}
+                <Plus className="mr-2 h-4 w-4" />
+                데이터 추가
               </Button>
-              {trainingSessions.length > 0 && (
+              {hasBreathingData && (
                 <Button
                   type="button"
-                  variant="outline"
-                  onClick={handleViewTrainingHistory}
-                  className="h-12 flex-1 border-[#30363D] bg-[#1C2128] text-white hover:bg-[#30363D]"
+                  onClick={handleRecalibrate}
+                  className="h-12 flex-1 bg-gradient-to-r from-[#3B82F6] to-[#8B5CF6] font-semibold text-white hover:from-[#2563EB] hover:to-[#7C3AED]"
                 >
-                  <FileText className="mr-2 h-4 w-4" />
-                  훈련 이력
+                  <RefreshCw className="mr-2 h-4 w-4" />
+                  {latestCalibration ? '다시 분석' : '호흡 분석'}
                 </Button>
               )}
             </div>
 
-            {/* History table */}
+            {/* Calibration history table */}
             <div className="overflow-hidden rounded-2xl border border-[#30363D] bg-[#1C2128]">
               <div className="border-b border-[#30363D] px-4 py-3 sm:px-5">
-                <h3 className="text-base font-bold text-white">검사 및 시뮬레이션 히스토리</h3>
+                <h3 className="text-base font-bold text-white">캘리브레이션 히스토리</h3>
               </div>
               {historyRows.length === 0 ? (
                 <div className="flex flex-col items-center justify-center px-6 py-16 text-center">
                   <Folder className="mb-4 h-14 w-14 text-[#30363D]" />
-                  <p className="mb-2 text-sm text-[#8B949E]">등록된 검사 및 시뮬레이션 내역이 없습니다.</p>
+                  <p className="mb-2 text-sm text-[#8B949E]">캘리브레이션 이력이 없습니다.</p>
                   <p className="max-w-sm text-xs text-[#6E7681]">
                     상단의 [데이터 추가] 버튼을 눌러 첫 분석을 시작해 주세요.
                   </p>
                 </div>
               ) : (
                 <div className="overflow-x-auto">
-                  <table className="w-full min-w-[520px] text-left text-sm">
+                  <table className="w-full min-w-[480px] text-left text-sm">
                     <thead>
                       <tr className="border-b border-[#30363D] bg-[#0D1117]/80 text-[#8B949E]">
                         <th className="px-4 py-3 font-medium">일자</th>
-                        <th className="px-4 py-3 font-medium">구분</th>
-                        <th className="px-4 py-3 font-medium">상세 내용</th>
+                        <th className="px-4 py-3 font-medium">사용 파일</th>
                         <th className="px-4 py-3 font-medium">결과</th>
                         <th className="px-4 py-3 font-medium">리포트</th>
                       </tr>
@@ -484,37 +477,35 @@ export default function PatientDashboard() {
                       {historyRows.map((row) => (
                         <tr key={row.id} className="border-b border-[#30363D]/80 last:border-0">
                           <td className="whitespace-nowrap px-4 py-3 text-white">
-                            {row.date ? format(parseISO(String(row.date)), 'MM.dd') : '—'}
+                            {row.date ? format(parseISO(String(row.date)), 'yyyy.MM.dd') : '—'}
+                          </td>
+                          <td className="max-w-[200px] truncate px-4 py-3 text-[#8B949E] text-xs" title={row.detail}>
+                            {row.detail || '—'}
                           </td>
                           <td className="px-4 py-3">
-                            <span className="inline-block rounded-full border border-[#30363D] bg-[#0D1117] px-2 py-0.5 text-xs text-[#C9D1D9]">
-                              {row.categoryBadge}
+                            <span
+                              className={cn(
+                                'inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold',
+                                row.resultClass?.includes('22C55E')
+                                  ? 'bg-[#22C55E]/15 text-[#22C55E]'
+                                  : row.resultClass?.includes('EAB308')
+                                  ? 'bg-[#EAB308]/15 text-[#EAB308]'
+                                  : row.resultClass?.includes('EF4444')
+                                  ? 'bg-[#EF4444]/15 text-[#EF4444]'
+                                  : 'bg-[#8B949E]/15 text-[#8B949E]'
+                              )}
+                            >
+                              {row.result || '—'}
                             </span>
-                          </td>
-                          <td className="max-w-[180px] truncate px-4 py-3 text-[#C9D1D9]" title={row.detail}>
-                            {row.detail}
-                          </td>
-                          <td className="px-4 py-3">
-                            {row.resultClass ? (
-                              <span
-                                className={cn(
-                                  'text-xs font-medium',
-                                  row.resultClass.includes('22C55E') && 'text-[#22C55E]',
-                                  row.resultClass.includes('EAB308') && 'text-[#EAB308]',
-                                  row.resultClass.includes('EF4444') && 'text-[#EF4444]'
-                                )}
-                              >
-                                {row.result}
-                              </span>
-                            ) : (
-                              <span className="text-[#8B949E]">{row.result}</span>
-                            )}
                           </td>
                           <td className="px-4 py-3">
                             {row.reportHref ? (
-                              <button type="button" className="text-[#3B82F6] hover:underline">
+                              <Link
+                                to={row.reportHref}
+                                className="font-medium text-[#3B82F6] hover:underline"
+                              >
                                 결과지
-                              </button>
+                              </Link>
                             ) : (
                               <span className="text-[#6E7681]">—</span>
                             )}
@@ -530,105 +521,225 @@ export default function PatientDashboard() {
         )}
       </div>
 
-      {/* Edit modal */}
+      {/* 환자 정보 수정: 이름·생년월일·성별·치료회차·환자 코드만 저장 */}
       <Dialog open={showEditModal} onOpenChange={setShowEditModal}>
-        <DialogContent className="max-h-[90vh] max-w-lg overflow-y-auto border border-[#30363D] bg-[#1C2128] p-0 text-white sm:rounded-2xl">
-          <div className="flex items-center justify-between border-b border-[#30363D] px-6 py-4">
-            <h2 className="text-lg font-bold">환자 정보 수정</h2>
-            <button
-              type="button"
-              onClick={() => setShowEditModal(false)}
-              className="text-[#8B949E] hover:text-white"
-            >
-              <X className="h-5 w-5" />
-            </button>
-          </div>
-          <form onSubmit={handleSaveEdit} className="space-y-4 px-6 py-5">
-            <div>
-              <Label htmlFor="edit-name" className="text-[#8B949E]">
-                환자명
-              </Label>
-              <Input
-                id="edit-name"
-                value={editFormData.name}
-                onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
-                className="mt-1.5 h-12 rounded-xl border-[#30363D] bg-[#0D1117] text-white"
-                required
-              />
-            </div>
-            <div>
-              <Label htmlFor="edit-birth-date" className="text-[#8B949E]">
-                생년월일
-              </Label>
-              <Input
-                id="edit-birth-date"
-                type="date"
-                value={editFormData.birth_date}
-                onChange={(e) => setEditFormData({ ...editFormData, birth_date: e.target.value })}
-                className="mt-1.5 h-12 rounded-xl border-[#30363D] bg-[#0D1117] text-white"
-              />
-            </div>
-            <div>
-              <Label htmlFor="edit-treatment-date" className="text-[#8B949E]">
-                예상 치료일
-              </Label>
-              <Input
-                id="edit-treatment-date"
-                type="date"
-                value={editFormData.expected_treatment_date}
-                onChange={(e) => setEditFormData({ ...editFormData, expected_treatment_date: e.target.value })}
-                className="mt-1.5 h-12 rounded-xl border-[#30363D] bg-[#0D1117] text-white"
-              />
-            </div>
-            <div>
-              <Label className="text-[#8B949E]">치료 기법</Label>
-              <Select
-                value={editFormData.treatment_method}
-                onValueChange={(value) => setEditFormData({ ...editFormData, treatment_method: value })}
+        <DialogContent
+          hideClose
+          className="max-h-[92vh] max-w-lg overflow-y-auto border border-[#30363D] bg-[#1C2128] p-0 text-white sm:rounded-2xl"
+        >
+          <DialogTitle className="sr-only">환자 정보 수정</DialogTitle>
+          <form onSubmit={handleSaveEdit} className="pb-6">
+            <div className="flex items-center justify-between border-b border-[#30363D] px-6 py-4">
+              <p className="text-sm font-semibold text-[#C9D1D9]">환자 정보 수정</p>
+              <button
+                type="button"
+                onClick={() => setShowEditModal(false)}
+                className="rounded-lg p-1 text-[#8B949E] transition-colors hover:bg-[#30363D] hover:text-white"
+                aria-label="닫기"
               >
-                <SelectTrigger className="mt-1.5 h-12 border-[#30363D] bg-[#0D1117] text-white">
-                  <SelectValue placeholder="선택" />
-                </SelectTrigger>
-                <SelectContent className="border-[#30363D] bg-[#1C2128]">
-                  {treatmentMethods.map((m) => (
-                    <SelectItem key={m.value} value={m.value} className="text-white focus:bg-[#30363D]">
-                      {m.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                <span className="text-lg leading-none">×</span>
+              </button>
             </div>
-            <div>
-              <Label className="text-[#8B949E]">호흡 방식</Label>
-              <Select
-                value={editFormData.breathing_method}
-                onValueChange={(value) => setEditFormData({ ...editFormData, breathing_method: value })}
-              >
-                <SelectTrigger className="mt-1.5 h-12 border-[#30363D] bg-[#0D1117] text-white">
-                  <SelectValue placeholder="선택" />
-                </SelectTrigger>
-                <SelectContent className="border-[#30363D] bg-[#1C2128]">
-                  {breathingMethods.map((m) => (
-                    <SelectItem key={m.value} value={m.value} className="text-white focus:bg-[#30363D]">
-                      {m.label}
-                    </SelectItem>
+
+            <div className="space-y-5 px-6 pt-5">
+              <h2 className="flex items-center gap-2 text-lg font-bold text-white">
+                <span className="h-5 w-1 shrink-0 rounded-full bg-gradient-to-b from-[#3B82F6] to-[#8B5CF6]" />
+                기본 정보(필수)
+              </h2>
+
+              <div>
+                <Label htmlFor="edit-name" className="mb-2 block font-medium text-[#8B949E]">
+                  환자 이름
+                </Label>
+                <Input
+                  id="edit-name"
+                  placeholder="환자 이름을 입력하세요"
+                  value={editFormData.name}
+                  onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
+                  className="h-12 rounded-xl border-[#30363D] bg-[#0D1117] text-white placeholder:text-[#6E7681] focus-visible:ring-[#3B82F6]/40"
+                  autoComplete="name"
+                />
+              </div>
+
+              <div>
+                <Label className="mb-2 block font-medium text-[#8B949E]">생년월일</Label>
+                <Popover open={editBirthPopoverOpen} onOpenChange={setEditBirthPopoverOpen}>
+                  <PopoverTrigger asChild>
+                    <button
+                      type="button"
+                      className={cn(
+                        'flex h-12 w-full items-center gap-3 rounded-xl border bg-[#0D1117] px-4 text-left text-sm transition-colors',
+                        'border-[#30363D] hover:border-[#8B949E]/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]/50'
+                      )}
+                    >
+                      <CalendarIcon className="h-5 w-5 shrink-0 text-[#8B949E]" aria-hidden />
+                      <span className={editFormData.birth_date ? 'text-white' : 'text-[#6E7681]'}>
+                        {editFormData.birth_date && isValid(parseISO(editFormData.birth_date))
+                          ? format(parseISO(editFormData.birth_date), 'MM/dd/yyyy')
+                          : 'mm/dd/yyyy'}
+                      </span>
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent
+                    className="w-auto border border-[#30363D] bg-[#1C2128] p-0 text-white"
+                    align="start"
+                    sideOffset={8}
+                  >
+                    <Calendar
+                      mode="single"
+                      selected={
+                        editFormData.birth_date && isValid(parseISO(editFormData.birth_date))
+                          ? parseISO(editFormData.birth_date)
+                          : undefined
+                      }
+                      onSelect={(date) => {
+                        setEditFormData({
+                          ...editFormData,
+                          birth_date: date ? format(date, 'yyyy-MM-dd') : '',
+                        });
+                        setEditBirthPopoverOpen(false);
+                      }}
+                      defaultMonth={
+                        editFormData.birth_date && isValid(parseISO(editFormData.birth_date))
+                          ? parseISO(editFormData.birth_date)
+                          : new Date()
+                      }
+                      initialFocus
+                      className="rounded-md border-0 bg-transparent text-white"
+                      classNames={darkPopoverCalendarClassNames}
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
+
+              <div>
+                <Label className="mb-2 block font-medium text-[#8B949E]">성별</Label>
+                <div className="flex flex-wrap gap-2">
+                  {genderOptions.map((opt) => (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      onClick={() => setEditFormData({ ...editFormData, gender: opt.value })}
+                      className={cn(
+                        'flex min-w-[5.5rem] flex-1 items-center justify-center rounded-xl border px-3 py-2.5 text-sm font-medium transition-colors sm:flex-none sm:px-4',
+                        editFormData.gender === opt.value
+                          ? 'border-[#3B82F6] bg-[#3B82F6]/10 text-white ring-1 ring-[#3B82F6]/40'
+                          : 'border-[#30363D] bg-[#0D1117] text-[#8B949E] hover:border-[#8B949E]/50 hover:text-white'
+                      )}
+                    >
+                      <span
+                        className={cn(
+                          'mr-2 inline-block h-2.5 w-2.5 shrink-0 rounded-full border align-middle',
+                          editFormData.gender === opt.value
+                            ? 'border-[#3B82F6] bg-[#3B82F6]'
+                            : 'border-[#8B949E] bg-transparent'
+                        )}
+                      />
+                      {opt.label}
+                    </button>
                   ))}
-                </SelectContent>
-              </Select>
+                </div>
+              </div>
+
+              <div>
+                <Label className="mb-2 block font-medium text-[#8B949E]">치료회차</Label>
+                <div className="flex flex-wrap items-center gap-3">
+                  {!editSessionManualMode ? (
+                    <div className="flex items-center gap-0.5 rounded-full border border-[#30363D] bg-[#0D1117] p-1">
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="h-10 w-10 rounded-full text-[#8B949E] hover:bg-[#30363D] hover:text-white"
+                        onClick={() =>
+                          setEditFormData((prev) => ({
+                            ...prev,
+                            treatment_session_count: Math.max(0, prev.treatment_session_count - 1),
+                          }))
+                        }
+                      >
+                        <Minus className="h-5 w-5" />
+                      </Button>
+                      <span className="min-w-[2.75rem] text-center text-sm font-semibold tabular-nums text-white">
+                        {editFormData.treatment_session_count}
+                      </span>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="h-10 w-10 rounded-full text-[#8B949E] hover:bg-[#30363D] hover:text-white"
+                        onClick={() =>
+                          setEditFormData((prev) => ({
+                            ...prev,
+                            treatment_session_count: prev.treatment_session_count + 1,
+                          }))
+                        }
+                      >
+                        <Plus className="h-5 w-5" />
+                      </Button>
+                    </div>
+                  ) : (
+                    <Input
+                      type="number"
+                      min={0}
+                      value={editFormData.treatment_session_count}
+                      onChange={(e) =>
+                        setEditFormData({
+                          ...editFormData,
+                          treatment_session_count: Math.max(0, parseInt(e.target.value, 10) || 0),
+                        })
+                      }
+                      className="h-12 w-32 rounded-xl border-[#30363D] bg-[#0D1117] text-white"
+                    />
+                  )}
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="h-12 rounded-xl border-[#30363D] bg-transparent text-[#C9D1D9] hover:bg-[#30363D] hover:text-white"
+                    onClick={() => setEditSessionManualMode((m) => !m)}
+                  >
+                    직접입력
+                  </Button>
+                </div>
+              </div>
+
+              <div>
+                <Label htmlFor="edit-patient-code" className="mb-2 block font-medium text-[#8B949E]">
+                  환자 코드
+                </Label>
+                <div className="flex gap-2">
+                  <Input
+                    id="edit-patient-code"
+                    readOnly
+                    value={editFormData.patient_code}
+                    className="h-12 flex-1 rounded-xl border-[#30363D] bg-[#0D1117] text-[#C9D1D9]"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="h-12 shrink-0 rounded-xl border-[#30363D] bg-transparent px-3 text-[#C9D1D9] hover:bg-[#30363D] hover:text-white sm:px-4"
+                    onClick={() => setEditFormData((prev) => ({ ...prev, patient_code: nextPatientCode() }))}
+                  >
+                    <RefreshCw className="mr-2 h-4 w-4" />
+                    다시 생성하기
+                  </Button>
+                </div>
+              </div>
             </div>
-            <div className="flex gap-3 pt-2">
+
+            <div className="mt-8 flex gap-3 px-6">
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => setShowEditModal(false)}
-                className="h-12 flex-1 border-[#30363D] bg-[#0D1117] text-white"
+                className="h-12 flex-1 rounded-xl border-[#30363D] bg-[#0D1117] text-white hover:bg-[#252A32]"
               >
                 취소
               </Button>
               <Button
                 type="submit"
-                disabled={isSaving || !editFormData.name}
-                className="h-12 flex-1 bg-gradient-to-r from-[#3B82F6] to-[#8B5CF6] font-semibold text-white disabled:opacity-50"
+                disabled={isSaving || !editFormData.name.trim() || !editFormData.birth_date}
+                className="h-12 flex-1 rounded-xl bg-gradient-to-r from-[#3B82F6] to-[#8B5CF6] font-semibold text-white hover:from-[#2563EB] hover:to-[#7C3AED] disabled:opacity-50"
               >
                 {isSaving ? '저장 중…' : '저장'}
               </Button>

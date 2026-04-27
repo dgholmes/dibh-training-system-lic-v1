@@ -13,7 +13,12 @@ export async function pickFilesWithFilePicker({ multiple = true, accept } = {}) 
   const files = await showOpenFilePicker({
     multiple,
     types: accept
-      ? [{ description: 'Data files', accept: { 'text/csv': ['.csv'], 'application/octet-stream': ['.vxp'] } }]
+      ? [
+          {
+            description: 'Breathing data (CSV, VXP)',
+            accept: { 'text/csv': ['.csv'], 'application/octet-stream': ['.vxp'] },
+          },
+        ]
       : undefined,
   });
   const out = await Promise.all(files.map((h) => h.getFile()));
