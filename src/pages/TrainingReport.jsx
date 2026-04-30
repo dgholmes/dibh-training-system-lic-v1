@@ -23,8 +23,8 @@ export default function TrainingReport() {
 
   const { data: patient } = useQuery({
     queryKey: ['patient', patientId],
-    queryFn: () => {
-      const results = Patient.filter({ id: patientId });
+    queryFn: async () => {
+      const results = await Patient.filter({ id: patientId });
       return results[0] || null;
     },
     enabled: !!patientId,
@@ -58,11 +58,7 @@ export default function TrainingReport() {
 
   const playback = calibration?.playback ?? null;
 
-  const handleHome = () => {
-    navigate(createPageUrl('Home'));
-  };
-
-  const handleSaveAndExit = () => {
+  const handleDashboard = () => {
     if (patientId) {
       navigate(
         `${createPageUrl('PatientDashboard')}?patientId=${encodeURIComponent(patientId)}`
@@ -107,21 +103,13 @@ export default function TrainingReport() {
       </div>
 
       <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-[#30363D] bg-[#0D1117]/95 p-4 backdrop-blur">
-        <div className="mx-auto flex max-w-2xl gap-3">
+        <div className="mx-auto max-w-2xl">
           <Button
             type="button"
-            variant="outline"
-            onClick={handleHome}
-            className="h-12 flex-1 border-[#30363D] bg-[#1C2128] text-base font-semibold text-white hover:bg-[#30363D]"
+            onClick={handleDashboard}
+            className="h-12 w-full bg-gradient-to-r from-[#3B82F6] to-[#8B5CF6] text-base font-semibold text-white hover:from-[#2563EB] hover:to-[#7C3AED]"
           >
-            처음으로
-          </Button>
-          <Button
-            type="button"
-            onClick={handleSaveAndExit}
-            className="h-12 flex-[1.15] bg-gradient-to-r from-[#3B82F6] to-[#8B5CF6] text-base font-semibold text-white hover:from-[#2563EB] hover:to-[#7C3AED]"
-          >
-            저장 및 종료
+            환자 대시보드로 이동
           </Button>
         </div>
       </div>

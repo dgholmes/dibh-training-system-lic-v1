@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import {
   Calendar as CalendarIcon,
-  RefreshCw,
   CloudUpload,
   X,
   Minus,
@@ -13,6 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
+import { useAuth } from '@/context/AuthContext';
 import { PatientFlowPageHeader } from '@/components/common/PatientFlowPageHeader';
 import { Patient, createBreathingFile } from '@/api/entities';
 import { useQueryClient } from '@tanstack/react-query';
@@ -145,6 +145,7 @@ function BreathingFileSection({ title, files, onAddFiles, onRemove, inputRef }) 
 export default function NewPatient() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { session } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const generalFileInputRef = useRef(null);
   const dibhFileInputRef = useRef(null);
@@ -155,6 +156,7 @@ export default function NewPatient() {
     gender: 'male',
     treatment_session_count: 0,
     patient_code: '',
+    assigned_doctor_name: session?.displayName || session?.username || '',
   });
 
   const [sessionManualMode, setSessionManualMode] = useState(false);
@@ -220,12 +222,8 @@ export default function NewPatient() {
     [simulateUpload]
   );
 
-  const regenerateCode = () => {
-    setFormData((prev) => ({ ...prev, patient_code: nextPatientCode() }));
-  };
-
   const validateBasicInfo = () => {
-    const nameInvalid = !formData.name.trim();
+    const nameInvalid = !formData.name.trim() || formData.name.trim().length > 100;
     const birthInvalid = !formData.birth_date;
     return { nameInvalid, birthInvalid, ok: !nameInvalid && !birthInvalid };
   };
@@ -267,12 +265,13 @@ export default function NewPatient() {
     const dibh_files = dibhFiles.filter((f) => f.status === 'done').map(({ name, size }) => ({ name, size }));
 
     try {
-      const newPatient = Patient.create({
+      const newPatient = await Patient.create({
         name: formData.name,
         birth_date: formData.birth_date,
         gender: formData.gender,
         treatment_session_count: formData.treatment_session_count,
         patient_code: formData.patient_code,
+        assigned_doctor_name: formData.assigned_doctor_name.trim(),
         general_breathing_files,
         dibh_files,
         expected_treatment_date: '',
@@ -313,9 +312,10 @@ export default function NewPatient() {
       }
     } catch (err) {
       console.error('NewPatient: save failed', err);
+      console.error('[NewPatient] save failed:', err);
       toast({
         title: '저장에 실패했습니다',
-        description: err instanceof Error ? err.message : String(err),
+        description: '환자 정보를 저장하는 중 오류가 발생했습니다. 다시 시도해 주세요.',
         variant: 'destructive',
       });
     } finally {
@@ -366,6 +366,19 @@ export default function NewPatient() {
                       ? 'border-red-500 ring-1 ring-red-500/35 focus:border-red-500 focus-visible:ring-red-500/40'
                       : 'border-[#30363D]'
                   )}
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="new-doctor" className="text-[#8B949E] mb-2 block font-medium">
+                  담당 의사
+                </Label>
+                <Input
+                  id="new-doctor"
+                  placeholder="담당 의사 이름을 입력하세요"
+                  value={formData.assigned_doctor_name}
+                  onChange={(e) => setFormData({ ...formData, assigned_doctor_name: e.target.value })}
+                  className="h-12 rounded-xl border-[#30363D] bg-[#0D1117] text-white placeholder:text-[#8B949E] focus:border-[#3B82F6]"
                 />
               </div>
 
@@ -526,23 +539,12 @@ export default function NewPatient() {
                 <Label htmlFor="new-patient-code" className="text-[#8B949E] mb-2 block font-medium">
                   환자 코드
                 </Label>
-                <div className="flex gap-2">
-                  <Input
-                    id="new-patient-code"
-                    value={formData.patient_code}
-                    readOnly
-                    className="h-12 flex-1 bg-[#0D1117] border-[#30363D] text-[#8B949E] rounded-xl"
-                  />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="h-12 shrink-0 border-[#30363D] bg-transparent px-3 text-[#8B949E] hover:bg-[#30363D] hover:text-white sm:px-4"
-                    onClick={regenerateCode}
-                  >
-                    <RefreshCw className="mr-2 h-4 w-4" />
-                    다시 생성하기
-                  </Button>
-                </div>
+                <Input
+                  id="new-patient-code"
+                  value={formData.patient_code}
+                  readOnly
+                  className="h-12 bg-[#0D1117] border-[#30363D] text-[#8B949E] rounded-xl"
+                />
               </div>
             </div>
           </div>
