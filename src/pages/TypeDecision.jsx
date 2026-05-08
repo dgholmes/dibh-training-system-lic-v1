@@ -63,7 +63,7 @@ export default function TypeDecision() {
       : null;
   const cv =
     latestCalibration?.cv != null && Number.isFinite(Number(latestCalibration.cv))
-      ? Math.round(Number(latestCalibration.cv))
+      ? Number(latestCalibration.cv)
       : null;
 
   const playback = latestCalibration?.playback ?? null;

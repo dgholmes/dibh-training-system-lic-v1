@@ -54,7 +54,7 @@ export default function TrainingReport() {
 
   const dibhDuration =
     calibration?.dibh_duration != null ? Math.round(Number(calibration.dibh_duration)) : 0;
-  const cv = calibration?.cv != null ? Math.round(Number(calibration.cv)) : 0;
+  const cv = calibration?.cv != null ? Number(calibration.cv) : 0;
 
   const playback = calibration?.playback ?? null;
 

@@ -34,6 +34,14 @@ export default function AnalysisFileSelect() {
   const [isDeletingFile, setIsDeletingFile] = useState(false);
   const abortRef = useRef(null);
 
+  // Preload the analysis video so it plays instantly when the modal opens
+  useEffect(() => {
+    const v = document.createElement('video');
+    v.src = analysisLoadingVideo;
+    v.preload = 'auto';
+    v.load();
+  }, []);
+
   // Abort analysis on unmount
   useEffect(() => {
     return () => abortRef.current?.abort();
@@ -41,8 +49,8 @@ export default function AnalysisFileSelect() {
 
   const { data: patient } = useQuery({
     queryKey: ['patient', patientId],
-    queryFn: () => {
-      const results = Patient.filter({ id: patientId });
+    queryFn: async () => {
+      const results = await Patient.filter({ id: patientId });
       return results[0] || null;
     },
     enabled: !!patientId,
@@ -111,7 +119,7 @@ export default function AnalysisFileSelect() {
       const dibhRow = dibhFiles.find((f) => f.id === selectedDibh);
       const source_files = [genRow?.original_name, dibhRow?.original_name].filter(Boolean);
 
-      CalibrationSession.complete(session.id, {
+      await CalibrationSession.complete(session.id, {
         training_type: result.trainingType,
         dibh_duration: result.avgDibh ?? 0,
         cv: result.cv ?? 0,
@@ -136,8 +144,8 @@ export default function AnalysisFileSelect() {
         setShowAnalysisModal(false);
         return;
       }
-      console.error('File analysis failed:', err);
-      setAnalysisError(err.message || '분석 중 오류가 발생했습니다.');
+      console.error('[AnalysisFileSelect] Analysis failed:', err);
+      setAnalysisError('분석 중 오류가 발생했습니다. 파일을 확인하고 다시 시도해 주세요.');
     }
   };
 
@@ -168,9 +176,10 @@ export default function AnalysisFileSelect() {
       queryClient.invalidateQueries({ queryKey: ['breathingFiles'] });
       setDeleteTarget(null);
     } catch (err) {
+      console.error('[AnalysisFileSelect] delete failed:', err);
       toast({
         title: '파일 삭제 실패',
-        description: err instanceof Error ? err.message : String(err),
+        description: '파일 삭제 중 오류가 발생했습니다. 다시 시도해 주세요.',
         variant: 'destructive',
       });
     } finally {
