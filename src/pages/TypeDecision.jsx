@@ -125,7 +125,7 @@ export default function TypeDecision() {
             </div>
             <div>
               <p className="mb-1 text-sm text-[#8B949E]">호흡 안정성 (CV)</p>
-              <p className="text-2xl font-bold text-white">{cv != null ? `${cv}%` : '—'}</p>
+              <p className="text-2xl font-bold text-white">{cv != null ? `${Number(cv).toFixed(1)}%` : '—'}</p>
             </div>
           </div>
         </div>
