@@ -86,10 +86,8 @@ def build_dibh(hold_duration_s, rng, n_reps=3):
     PREP_SEC    = 4.0
     INHALE_SEC  = 2.0
     EXHALE_SEC  = 1.0
-    # Stage3 needs rest_sec (4s) + prep_sec (4s) = 8s from hold-end detection
-    # (hold-end fires ~0.75s into the exhale ramp) before the next inhale.
-    # 10s gives a safe 1.25s margin for all hold durations.
-    REST_SEC    = 10.0
+    # The scan-based detector has no PREP/REST phases — any gap between holds works.
+    REST_SEC    = 4.0
     TAIL_SEC    = 2.0
 
     samples = []
