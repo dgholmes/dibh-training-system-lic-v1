@@ -30,11 +30,16 @@ export default function TypeDecision() {
     queryFn: () => {
       const calibrations = Calibration.filter({ patient_id: patientId });
       if (calibrations.length === 0) return null;
-      return calibrations.sort(
-        (a, b) => new Date(b.calibration_date) - new Date(a.calibration_date)
+      return [...calibrations].sort(
+        (a, b) =>
+          new Date(b.calibration_date || b.created_at || 0) -
+          new Date(a.calibration_date || a.created_at || 0) ||
+          new Date(b.created_at || 0) - new Date(a.created_at || 0)
       )[0];
     },
     enabled: !!patientId,
+    staleTime: 0,
+    refetchOnMount: 'always',
   });
 
   if (!patientId) {
