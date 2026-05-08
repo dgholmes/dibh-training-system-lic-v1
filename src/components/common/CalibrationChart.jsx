@@ -52,6 +52,7 @@ export default function CalibrationChart({
   hold_th,
   release_th,
   target_th,
+  holds = [],
   hold_start_t,
   hold_end_t,
   // Optional vertical playhead (seconds)
@@ -217,7 +218,19 @@ export default function CalibrationChart({
             {stage === 3 && target_th != null && (
               <ReferenceLine y={target_th} stroke="#22C55E" strokeDasharray="2 2" strokeOpacity={0.8} />
             )}
-            {stage === 3 && hold_start_t != null && hold_end_t != null && (
+            {stage === 3 && holds.length > 0 &&
+              holds.map((h, i) => (
+                <ReferenceArea
+                  key={i}
+                  x1={h.hold_start_t}
+                  x2={h.hold_end_t}
+                  y1={domainY[0]}
+                  y2={domainY[1]}
+                  fill="#8B5CF6"
+                  fillOpacity={0.15}
+                />
+              ))}
+            {stage === 3 && holds.length === 0 && hold_start_t != null && hold_end_t != null && (
               <ReferenceArea
                 x1={hold_start_t}
                 x2={hold_end_t}

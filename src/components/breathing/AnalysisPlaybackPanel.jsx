@@ -69,6 +69,7 @@ export default function AnalysisPlaybackPanel({ playback }) {
             hold_th: playback.dibh.hold_th,
             release_th: playback.dibh.release_th,
             target_th: playback.dibh.target_th,
+            holds: playback.dibh.holds ?? [],
             hold_start_t: playback.dibh.hold_start_t,
             hold_end_t: playback.dibh.hold_end_t,
           }

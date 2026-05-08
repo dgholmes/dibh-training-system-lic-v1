@@ -342,6 +342,7 @@ export async function analyzeFiles(generalFileId, dibhFileId, { signal } = {}) {
       hold_th: holdTh,
       release_th: releaseTh,
       target_th: dibhBaseline + 0.85 * maxAmp,
+      holds,
       hold_start_t: displayHold?.hold_start_t ?? null,
       hold_end_t: displayHold?.hold_end_t ?? null,
     },
