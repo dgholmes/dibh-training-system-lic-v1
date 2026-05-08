@@ -14,7 +14,7 @@
 import { getBreathingFileContent } from '@/api/breathingFileRepository';
 import { isVxpBreathingFileName } from '@/lib/breathingFileFormat';
 import { Stage1EnsembleRTAnalyzer } from './stage1Analyzer.js';
-import { Stage3Detector, OnePoleLPF, DerivativeEstimator } from './stage3Detector.js';
+import { OnePoleLPF } from './stage3Detector.js';
 import { determineDibhType } from './determineDibhType.js';
 
 const YIELD_EVERY = 2000; // yield to UI every N samples
@@ -161,6 +161,71 @@ function estimateMaxAmpFromSignal(samples) {
 
   // Ensure a reasonable minimum so thresholds are meaningful
   return Math.max(amp, 0.1);
+}
+
+/**
+ * Scan-based DIBH hold detector for pre-recorded files.
+ *
+ * Unlike Stage3Detector (real-time state machine), this makes no assumptions
+ * about signal structure — it finds all sustained elevated plateaus regardless
+ * of when they occur or how many there are.
+ *
+ * Algorithm:
+ *   1. baseline   = p10 of raw samples (resting/exhale level)
+ *   2. hold_th    = baseline + 0.80 * maxAmp  — enter hold when signal crosses this
+ *   3. release_th = baseline + 0.50 * maxAmp  — exit hold (hysteresis prevents noise exits)
+ *   4. Scan LPF-smoothed signal; collect contiguous periods above hold_th
+ *   5. Keep only periods >= 3 s
+ *
+ * @param {Array<{t: number, raw: number}>} samples
+ * @param {number} maxAmp - pre-estimated amplitude (p95 - p10 of raw)
+ * @param {{ signal?: AbortSignal }} [options]
+ * @returns {{ holds, chartData, baseline, holdTh, releaseTh }}
+ */
+export async function detectDibhHolds(samples, maxAmp, { signal } = {}) {
+  const MIN_HOLD_SEC = 3.0;
+
+  const sorted = [...samples.map((s) => s.raw)].sort((a, b) => a - b);
+  const n = sorted.length;
+  const baseline = n >= 10 ? sorted[Math.floor(n * 0.10)] : (sorted[0] ?? 0);
+
+  const holdTh = baseline + 0.80 * maxAmp;
+  const releaseTh = baseline + 0.50 * maxAmp;
+
+  const lpf = new OnePoleLPF(1.2);
+  const chartData = [];
+  const holds = [];
+  let holdStart = null;
+
+  for (let i = 0; i < samples.length; i++) {
+    if (signal?.aborted) throw new DOMException('Analysis cancelled', 'AbortError');
+    const { t, raw } = samples[i];
+    const y_f = lpf.update(t, raw);
+    chartData.push({ time: t, value: y_f });
+
+    if (holdStart === null) {
+      if (y_f >= holdTh) holdStart = t;
+    } else if (y_f < releaseTh) {
+      const dur = t - holdStart;
+      if (dur >= MIN_HOLD_SEC) {
+        holds.push({ hold_start_t: holdStart, hold_end_t: t, hold_duration: dur, valid: true });
+      }
+      holdStart = null;
+    }
+
+    if (i % YIELD_EVERY === 0) await yieldToUI();
+  }
+
+  // Close any hold still active at end of file
+  if (holdStart !== null) {
+    const lastT = samples[samples.length - 1].t;
+    const dur = lastT - holdStart;
+    if (dur >= MIN_HOLD_SEC) {
+      holds.push({ hold_start_t: holdStart, hold_end_t: lastT, hold_duration: dur, valid: true });
+    }
+  }
+
+  return { holds, chartData, baseline, holdTh, releaseTh };
 }
 
 /** Yield to the event loop so the UI stays responsive. */
