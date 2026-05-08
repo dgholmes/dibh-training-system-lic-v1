@@ -6,8 +6,6 @@ Date=8-5-2026
 Total_study_time=120.000
 Samples_per_second=25
 Scale_factor=1.0
-# DIBH Type target: B
-# Category: GEN
 [Data]
 9.893693,0.0,0,0,1,,0
 10.183021,0.0,40,0,1,,0
