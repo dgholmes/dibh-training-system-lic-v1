@@ -19,27 +19,6 @@ const TYPE_BOX_STYLE = {
   },
 };
 
-// Gradient text: bright left → darker right (horizontal)
-const LETTER_GRADIENT_STYLE = {
-  A: {
-    background: 'linear-gradient(to right, #4ADE80 0%, #16A34A 100%)',
-    WebkitBackgroundClip: 'text',
-    WebkitTextFillColor: 'transparent',
-    backgroundClip: 'text',
-  },
-  B: {
-    background: 'linear-gradient(to right, #FDE047 0%, #CA8A04 100%)',
-    WebkitBackgroundClip: 'text',
-    WebkitTextFillColor: 'transparent',
-    backgroundClip: 'text',
-  },
-  C: {
-    background: 'linear-gradient(to right, #F87171 0%, #B91C1C 100%)',
-    WebkitBackgroundClip: 'text',
-    WebkitTextFillColor: 'transparent',
-    backgroundClip: 'text',
-  },
-};
 
 export default function ComprehensiveBreathingReportCard({ trainingType, onOpenInfo }) {
   const t = trainingType === 'C' ? 'C' : trainingType === 'B' ? 'B' : 'A';
@@ -74,10 +53,7 @@ export default function ComprehensiveBreathingReportCard({ trainingType, onOpenI
           style={TYPE_BOX_STYLE[t]}
         >
           <span className={cn('text-xs font-semibold tracking-wide', copy.typeSmallClass)}>Type</span>
-          <span
-            className="my-1.5 text-5xl font-extrabold leading-none sm:text-6xl"
-            style={LETTER_GRADIENT_STYLE[t]}
-          >
+          <span className={cn('my-1.5 text-5xl font-extrabold leading-none sm:text-6xl', copy.letterClass)}>
             {t}
           </span>
           <span className={cn('whitespace-nowrap text-center text-[10px] font-semibold sm:text-xs', copy.typeSmallClass)}>
