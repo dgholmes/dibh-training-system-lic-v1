@@ -72,32 +72,19 @@ describe('analyzeFiles (mocked files)', () => {
     expect(result.algorithmResults.stage2).toBeNull();
   });
 
-  it('rejects non-CSV non-VXP extensions for analysis', async () => {
-    vi.mocked(getBreathingFileContent).mockImplementation(async (id) => {
-      if (id === 'bad-gen') {
-        return {
-          arrayBuffer: toBuf('0,1\n'),
-          original_name: 'notes.txt',
-          mime: 'text/plain',
-        };
-      }
-      if (id === 'ok-dibh') {
-        return {
-          arrayBuffer: toBuf(buildDibhCsv()),
-          original_name: 'P001_DIBH_20260101.csv',
-          mime: 'text/csv',
-        };
-      }
-      return null;
-    });
-    await expect(analyzeFiles('bad-gen', 'ok-dibh')).rejects.toThrow(/CSV/);
-  });
-
-  it('rejects VXP for analysis until decoder exists', async () => {
+  it('accepts VXP general file and runs analysis without error', async () => {
+    const vxpContent =
+      '[Header]\nData_layout=amplitude,phase,timestamp,validflag,ttlin,mark,ttlout\n[Data]\n' +
+      Array.from({ length: 2501 }, (_, i) => {
+        const tMs = i * 40;
+        const amp = 50 + 8 * Math.sin((tMs / 1000) * 1.1);
+        return `${amp.toFixed(4)},0.0,${tMs},0,1,,0`;
+      }).join('\n') +
+      '\n';
     vi.mocked(getBreathingFileContent).mockImplementation(async (id) => {
       if (id === 'vxp-gen') {
         return {
-          arrayBuffer: new ArrayBuffer(8),
+          arrayBuffer: toBuf(vxpContent),
           original_name: 'P001_GEN_20260101.vxp',
           mime: 'application/octet-stream',
         };
@@ -111,6 +98,9 @@ describe('analyzeFiles (mocked files)', () => {
       }
       return null;
     });
-    await expect(analyzeFiles('vxp-gen', 'ok-dibh')).rejects.toThrow(/VXP/);
+    const result = await analyzeFiles('vxp-gen', 'ok-dibh');
+    expect(['A', 'B', 'C']).toContain(result.trainingType);
+    expect(result.cv).not.toBeNull();
+    expect(result.source).toBe('file_analysis');
   });
 });

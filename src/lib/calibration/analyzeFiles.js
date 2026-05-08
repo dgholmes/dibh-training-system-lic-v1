@@ -184,26 +184,9 @@ export async function analyzeFiles(generalFileId, dibhFileId, { signal } = {}) {
   if (!generalFile) throw new Error('일반호흡 파일을 찾을 수 없습니다.');
   if (!dibhFile) throw new Error('DIBH 파일을 찾을 수 없습니다.');
 
-  if (isVxpBreathingFileName(generalFile.original_name)) {
-    throw new Error(
-      '일반호흡: VXP 파일은 현재 분석에서 지원하지 않습니다. 분석에는 CSV 파일을 선택해 주세요. (VXP는 업로드 보관만 가능합니다.)'
-    );
-  }
-  if (isVxpBreathingFileName(dibhFile.original_name)) {
-    throw new Error(
-      'DIBH: VXP 파일은 현재 분석에서 지원하지 않습니다. 분석에는 CSV 파일을 선택해 주세요. (VXP는 업로드 보관만 가능합니다.)'
-    );
-  }
-  if (!isCsvBreathingFileName(generalFile.original_name)) {
-    throw new Error('일반호흡 분석은 CSV 파일만 지원합니다. 파일 확장자를 확인해 주세요.');
-  }
-  if (!isCsvBreathingFileName(dibhFile.original_name)) {
-    throw new Error('DIBH 분석은 CSV 파일만 지원합니다. 파일 확장자를 확인해 주세요.');
-  }
-
-  // ── Parse CSVs ───────────────────────────────────────────────────
-  const generalSamples = parseCsv(generalFile.arrayBuffer);
-  const dibhSamples = parseCsv(dibhFile.arrayBuffer);
+  // ── Parse files (CSV or VXP) ─────────────────────────────────────
+  const generalSamples = parseBreathingFile(generalFile.arrayBuffer, generalFile.original_name);
+  const dibhSamples = parseBreathingFile(dibhFile.arrayBuffer, dibhFile.original_name);
 
   if (generalSamples.length === 0) {
     throw new Error('일반호흡 파일에 유효한 데이터가 없습니다.');
