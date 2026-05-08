@@ -45,12 +45,6 @@ function serializeCyclesForStorage(cycles) {
   }));
 }
 
-function pickStage3DisplayAttempt(attempts) {
-  if (!attempts?.length) return null;
-  const valid = attempts.filter((a) => a.valid);
-  if (valid.length) return valid[valid.length - 1];
-  return attempts[attempts.length - 1];
-}
 
 /**
  * Parse a calibration CSV. Returns an array of objects with t, raw,
@@ -293,41 +287,26 @@ export async function analyzeFiles(generalFileId, dibhFileId, { signal } = {}) {
   const maxAmp = estimateMaxAmpFromSignal(dibhSamples);
   console.log(`[analyzeFiles] Estimated max_amp from DIBH signal: ${maxAmp.toFixed(3)}`);
 
-  // ── Stage 3: DIBH hold detection using original Stage3Detector ──
-  if (signal?.aborted) throw new DOMException('Analysis cancelled', 'AbortError');
+  // ── Stage 3: scan-based DIBH hold detection ─────────────────────
+  const {
+    holds,
+    chartData: dibhChartDataFull,
+    baseline: dibhBaseline,
+    holdTh,
+    releaseTh,
+  } = await detectDibhHolds(dibhSamples, maxAmp, { signal });
 
-  // Use the same pre-filters as the real-time flow
-  const lpf = new OnePoleLPF(1.2);
-  const deriv = new DerivativeEstimator(1.8);
-
-  const s3 = new Stage3Detector(maxAmp);
-  s3.start(dibhSamples[0].t);
-
-  const dibhChartDataFull = [];
-
-  for (let i = 0; i < dibhSamples.length; i++) {
-    if (signal?.aborted) throw new DOMException('Analysis cancelled', 'AbortError');
-    if (s3.is_done()) break;
-
-    const { t, raw } = dibhSamples[i];
-    const y_f = lpf.update(t, raw);
-    const [, dy_s] = deriv.update(t, y_f);
-    dibhChartDataFull.push({ time: t, value: y_f });
-    s3.update(t, y_f, dy_s);
-
-    if (i % YIELD_EVERY === 0) await yieldToUI();
-  }
-  s3.stop();
-
-  const avgDibh = s3.get_avg_dibh();
-  const validAttempts = s3.attempts.filter((a) => a.valid);
+  const avgDibh =
+    holds.length > 0
+      ? holds.reduce((acc, h) => acc + h.hold_duration, 0) / holds.length
+      : null;
 
   console.log(
-    `[analyzeFiles] Stage 3: ${s3.attempts.length} attempts, ${validAttempts.length} valid, avgDibh=${avgDibh}`
+    `[analyzeFiles] DIBH holds detected: ${holds.length}, avgDibh=${avgDibh}`
   );
-  s3.attempts.forEach((a, i) => {
+  holds.forEach((h, i) => {
     console.log(
-      `[analyzeFiles]   attempt[${i}]: valid=${a.valid}, duration=${a.hold_duration?.toFixed(1)}s, reason=${a.reason}, baseline=${a.baseline?.toFixed(2)}, hold_th=${a.hold_th?.toFixed(2)}`
+      `[analyzeFiles]   hold[${i}]: duration=${h.hold_duration.toFixed(1)}s, start=${h.hold_start_t.toFixed(1)}s, end=${h.hold_end_t.toFixed(1)}s`
     );
   });
 
@@ -336,7 +315,7 @@ export async function analyzeFiles(generalFileId, dibhFileId, { signal } = {}) {
 
   console.log(`[analyzeFiles] Result: type=${trainingType}, avgDibh=${avgDibh}, cv=${cv}`);
 
-  const attemptPick = pickStage3DisplayAttempt(s3.attempts);
+  const displayHold = holds[0] ?? null;
   const durationGeneral =
     generalChartDataFull.length > 0
       ? generalChartDataFull[generalChartDataFull.length - 1].time
@@ -360,11 +339,11 @@ export async function analyzeFiles(generalFileId, dibhFileId, { signal } = {}) {
     dibh: {
       stage: 3,
       chartData: downsamplePlaybackPoints(dibhChartDataFull),
-      hold_th: attemptPick?.hold_th ?? s3.hold_th,
-      release_th: attemptPick?.release_th ?? s3.release_th,
-      target_th: attemptPick?.target_th ?? s3.target_th,
-      hold_start_t: attemptPick?.hold_start_t ?? null,
-      hold_end_t: attemptPick?.hold_end_t ?? null,
+      hold_th: holdTh,
+      release_th: releaseTh,
+      target_th: dibhBaseline + 0.85 * maxAmp,
+      hold_start_t: displayHold?.hold_start_t ?? null,
+      hold_end_t: displayHold?.hold_end_t ?? null,
     },
   };
 
@@ -374,12 +353,14 @@ export async function analyzeFiles(generalFileId, dibhFileId, { signal } = {}) {
     trainingType,
     algorithmResults: {
       stage1: { cv, cv_period: cvPeriod, ok_cycles_count: okCycles },
-      stage2: null, // skipped — max_amp estimated from signal
+      stage2: null,
       stage3: {
         avg_dibh: avgDibh,
         max_amp_estimated: maxAmp,
-        attempts: s3.attempts,
-        avg_hold_quality_pct: s3.get_avg_hold_quality_pct(),
+        holds,
+        baseline: dibhBaseline,
+        hold_th: holdTh,
+        release_th: releaseTh,
       },
     },
     source: 'file_analysis',
