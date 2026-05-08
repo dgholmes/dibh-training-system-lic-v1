@@ -34,14 +34,6 @@ export default function AnalysisFileSelect() {
   const [isDeletingFile, setIsDeletingFile] = useState(false);
   const abortRef = useRef(null);
 
-  // Preload the analysis video so it plays instantly when the modal opens
-  useEffect(() => {
-    const v = document.createElement('video');
-    v.src = analysisLoadingVideo;
-    v.preload = 'auto';
-    v.load();
-  }, []);
-
   // Abort analysis on unmount
   useEffect(() => {
     return () => abortRef.current?.abort();
@@ -189,6 +181,16 @@ export default function AnalysisFileSelect() {
 
   return (
     <div className="min-h-screen bg-[#0D1117] p-6 pb-32">
+      {/* Always-in-DOM hidden video — keeps the asset decoded in browser memory
+          so the dialog video renders its first frame without any blank flash. */}
+      <video
+        src={analysisLoadingVideo}
+        preload="auto"
+        muted
+        playsInline
+        aria-hidden="true"
+        style={{ position: 'absolute', width: 0, height: 0, opacity: 0, pointerEvents: 'none' }}
+      />
       <div className="mx-auto max-w-2xl">
         <PatientFlowPageHeader
           backHref={
@@ -463,13 +465,14 @@ export default function AnalysisFileSelect() {
 
           <div className="flex flex-col items-center px-6 pb-6 pt-6 text-center">
             {/* Loading video */}
-            <div className="mb-4 w-full overflow-hidden rounded-xl">
+            <div className="mb-4 w-full overflow-hidden rounded-xl bg-[#0D1117]">
               <video
                 src={analysisLoadingVideo}
                 autoPlay
                 loop
                 muted
                 playsInline
+                preload="auto"
                 className="w-full"
               />
             </div>
