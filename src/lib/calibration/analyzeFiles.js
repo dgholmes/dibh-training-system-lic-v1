@@ -12,7 +12,7 @@
  */
 
 import { getBreathingFileContent } from '@/api/breathingFileRepository';
-import { isCsvBreathingFileName, isVxpBreathingFileName } from '@/lib/breathingFileFormat';
+import { isVxpBreathingFileName } from '@/lib/breathingFileFormat';
 import { Stage1EnsembleRTAnalyzer } from './stage1Analyzer.js';
 import { Stage3Detector, OnePoleLPF, DerivativeEstimator } from './stage3Detector.js';
 import { determineDibhType } from './determineDibhType.js';
@@ -82,6 +82,62 @@ export function parseCsv(arrayBuffer) {
     samples.push(entry);
   }
   return samples;
+}
+
+/**
+ * Parse a Varian VXP file. Returns the same shape as parseCsv: [{ t, raw }].
+ * Timestamp column is in milliseconds — divided by 1000 to produce seconds.
+ * All columns except amplitude and timestamp are ignored.
+ */
+export function parseVxp(arrayBuffer) {
+  const text = new TextDecoder().decode(arrayBuffer);
+  const lines = text.split(/\r?\n/);
+
+  let ampIdx = 0;
+  let tsIdx = 2;
+  let inData = false;
+  const samples = [];
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (!trimmed) continue;
+
+    if (trimmed === '[Data]') {
+      inData = true;
+      continue;
+    }
+    if (trimmed === '[Header]') continue;
+
+    if (!inData) {
+      if (trimmed.startsWith('Data_layout=')) {
+        const cols = trimmed.slice('Data_layout='.length).split(',').map((c) => c.trim().toLowerCase());
+        const ai = cols.indexOf('amplitude');
+        const ti = cols.indexOf('timestamp');
+        if (ai >= 0) ampIdx = ai;
+        if (ti >= 0) tsIdx = ti;
+      }
+      continue;
+    }
+
+    const cols = trimmed.split(',');
+    if (cols.length <= Math.max(ampIdx, tsIdx)) continue;
+    const raw = parseFloat(cols[ampIdx]);
+    const t = parseFloat(cols[tsIdx]) / 1000.0;
+    if (!Number.isFinite(raw) || !Number.isFinite(t)) continue;
+    samples.push({ t, raw });
+  }
+
+  if (!inData) {
+    throw new Error('VXP 파일에서 [Data] 섹션을 찾을 수 없습니다.');
+  }
+
+  return samples;
+}
+
+/** Dispatch to the correct parser based on file extension. */
+export function parseBreathingFile(arrayBuffer, filename) {
+  if (isVxpBreathingFileName(filename)) return parseVxp(arrayBuffer);
+  return parseCsv(arrayBuffer);
 }
 
 /**
