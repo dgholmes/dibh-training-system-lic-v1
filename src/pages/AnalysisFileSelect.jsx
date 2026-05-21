@@ -17,8 +17,6 @@ import { formatFileSize, fileTypeBadge } from '@/lib/files';
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { toast } from '@/components/ui/use-toast';
 import { analyzeFiles } from '@/lib/calibration/analyzeFiles';
-import analysisLoadingVideo from '@/assets/analysis-loading.mp4';
-
 export default function AnalysisFileSelect() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -181,16 +179,6 @@ export default function AnalysisFileSelect() {
 
   return (
     <div className="min-h-screen bg-[#0D1117] p-6 pb-32">
-      {/* Always-in-DOM hidden video — keeps the asset decoded in browser memory
-          so the dialog video renders its first frame without any blank flash. */}
-      <video
-        src={analysisLoadingVideo}
-        preload="auto"
-        muted
-        playsInline
-        aria-hidden="true"
-        style={{ position: 'absolute', width: 0, height: 0, opacity: 0, pointerEvents: 'none' }}
-      />
       <div className="mx-auto max-w-2xl">
         <PatientFlowPageHeader
           backHref={
@@ -464,17 +452,9 @@ export default function AnalysisFileSelect() {
           <DialogDescription className="sr-only">업로드된 파일의 패턴을 분석하고 있습니다.</DialogDescription>
 
           <div className="flex flex-col items-center px-6 pb-6 pt-6 text-center">
-            {/* Loading video */}
+            {/* Loading animation */}
             <div className="mb-4 w-full overflow-hidden rounded-xl bg-[#0D1117]">
-              <video
-                src={analysisLoadingVideo}
-                autoPlay
-                loop
-                muted
-                playsInline
-                preload="auto"
-                className="w-full"
-              />
+              <img src="/analysis-loading.webp" alt="" className="w-full" />
             </div>
 
             {analysisError ? (
