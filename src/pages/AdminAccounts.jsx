@@ -204,7 +204,7 @@ export default function AdminAccounts() {
                   <div className="flex shrink-0 flex-wrap gap-2">
                     {isLocked(u) && (
                       <Button size="sm" variant="outline" onClick={() => handleUnlock(u)}
-                        className="gap-1 border-[#EAB308]/40 text-[#EAB308] hover:bg-[#EAB308]/10">
+                        className="gap-1 border-[#30363D] text-[#C9D1D9] hover:bg-[#30363D]">
                         <Unlock className="h-3.5 w-3.5" /> 잠금해제
                       </Button>
                     )}
@@ -216,14 +216,14 @@ export default function AdminAccounts() {
                     {u.id !== session?.userId && (
                       <Button size="sm" variant="outline"
                         onClick={() => { setResetTarget(u); setResetPw(''); setResetErrors([]); setShowResetPw(false); }}
-                        className="gap-1.5 border-[#EAB308]/40 text-[#EAB308] hover:bg-[#EAB308]/10">
+                        className="gap-1.5 border-[#30363D] text-[#C9D1D9] hover:bg-[#30363D]">
                         <KeyRound className="h-3.5 w-3.5" />
                         <span>비밀번호 초기화</span>
                       </Button>
                     )}
                     {u.id !== session?.userId && (
                       <Button size="sm" variant="outline" onClick={() => setDeleteTarget(u)}
-                        className="gap-1.5 border-[#EF4444]/40 text-[#EF4444] hover:bg-[#EF4444]/10">
+                        className="gap-1.5 border-[#30363D] text-[#C9D1D9] hover:bg-[#30363D]">
                         <Trash2 className="h-3.5 w-3.5" />
                         <span>삭제</span>
                       </Button>
