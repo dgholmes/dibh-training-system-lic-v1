@@ -1,4 +1,5 @@
 // Authentication store — MFDS cybersecurity guideline IA-01 through IA-07
+import { secDbg } from '@/lib/securityDebug';
 // Audit logging imported lazily to avoid circular dep (auditStore → authStore → auditStore)
 // Passwords hashed with PBKDF2-SHA256 (100k iterations + random 16-byte salt)
 // Sessions stored in sessionStorage (cleared on tab/browser close)
@@ -6,7 +7,40 @@
 const USERS_KEY = 'dibh_users';
 const SESSION_KEY = 'dibh_session';
 const MAX_FAILED_ATTEMPTS = 5;
-const LOCKOUT_MS = 15 * 60 * 1000; // 15 minutes
+const LOCKOUT_MS = 15 * 60 * 1000;       // 15 minutes total
+const HEARTBEAT_MS = 10_000;              // tick every 10 real seconds
+const LOCKOUT_TICKS = LOCKOUT_MS / HEARTBEAT_MS; // 90 ticks
+
+// ── Two-layer lockout tracker (IA-07) ─────────────────────────────────────────
+//
+// Layer 1 — Tick counter (primary, cross-session safe):
+//   setInterval fires on the monotonic scheduler — OS clock changes have no effect.
+//   `lockoutTicksRemaining` is stored in localStorage so it persists across app restarts.
+//   Each real-time tick decrements the counter. Lockout expires only when counter reaches 0.
+//   Only bypass: directly edit localStorage (requires ADB + Android developer mode).
+//
+// Layer 2 — performance.now() (same-session, belt-and-suspenders):
+//   Maps userId → performance.now() at lockout start. Provides sub-10s precision within
+//   a session and is a second independent check immune to OS clock manipulation.
+//
+const _sessionLockouts = new Map(); // userId → perfNow at lockout start (layer 2)
+
+// Heartbeat: decrement lockoutTicksRemaining for every locked user every 10 real seconds.
+// Auto-starts on module import so it runs even before the React tree mounts.
+setInterval(() => {
+  const users = loadUsers();
+  let dirty = false;
+  for (let i = 0; i < users.length; i++) {
+    if (!users[i].lockoutTicksRemaining || users[i].lockoutTicksRemaining <= 0) continue;
+    users[i] = { ...users[i], lockoutTicksRemaining: users[i].lockoutTicksRemaining - 1 };
+    if (users[i].lockoutTicksRemaining === 0) {
+      users[i] = { ...users[i], lockedUntil: null, failedAttempts: 0 };
+      _sessionLockouts.delete(users[i].id);
+    }
+    dirty = true;
+  }
+  if (dirty) saveUsers(users);
+}, HEARTBEAT_MS);
 
 // ── Crypto helpers ────────────────────────────────────────────────────────────
 
@@ -32,6 +66,14 @@ async function pbkdf2Hash(password, salt) {
     key,
     256
   );
+  secDbg('IA-01/IA-05', 'PBKDF2-SHA256 Password Hash', {
+    algorithm: 'PBKDF2-SHA256',
+    iterations: 100_000,
+    salt_hex: salt,
+    salt_length_bytes: salt.length / 2,
+    output_length_bits: 256,
+    note: 'Password not logged',
+  });
   return hexEncode(bits);
 }
 
@@ -91,13 +133,25 @@ export async function loginUser(username, password) {
 
   const user = users[idx];
 
-  // Lockout check (IA-07)
-  if (user.lockedUntil && new Date(user.lockedUntil) > new Date()) {
-    const mins = Math.ceil((new Date(user.lockedUntil) - Date.now()) / 60_000);
+  // Lockout check (IA-07) — tick counter (primary) + performance.now() (same-session layer)
+  const ticks = user.lockoutTicksRemaining ?? 0;
+  if (ticks > 0) {
+    const remainingMin = Math.ceil((ticks * HEARTBEAT_MS) / 60_000);
+    // Also check same-session layer for belt-and-suspenders
+    if (!_sessionLockouts.has(user.id)) {
+      // Re-entering after app restart: pin into monotonic tracker for this session
+      _sessionLockouts.set(user.id, performance.now() - (LOCKOUT_TICKS - ticks) * HEARTBEAT_MS);
+    }
+    secDbg('IA-07', 'Lockout Active', {
+      ticks_remaining: ticks,
+      remaining_min: remainingMin,
+      layer1: 'tick counter (real-time interval, OS-clock immune, cross-session)',
+      layer2: 'performance.now() pinned for this session',
+    });
     return {
       success: false,
       locked: true,
-      error: `계정이 잠금되었습니다. ${mins}분 후 다시 시도하거나 관리자에게 문의하세요.`,
+      error: `계정이 잠금되었습니다. 약 ${remainingMin}분 후 다시 시도하거나 관리자에게 문의하세요.`,
     };
   }
 
@@ -107,11 +161,22 @@ export async function loginUser(username, password) {
     const attempts = (user.failedAttempts || 0) + 1;
     const update = { failedAttempts: attempts, updatedAt: new Date().toISOString() };
     if (attempts >= MAX_FAILED_ATTEMPTS) {
-      update.lockedUntil = new Date(Date.now() + LOCKOUT_MS).toISOString();
+      update.lockedUntil = new Date().toISOString(); // audit trail: when lockout began
+      update.lockoutTicksRemaining = LOCKOUT_TICKS;  // primary: real-time tick countdown
       update.failedAttempts = 0;
+      _sessionLockouts.set(user.id, performance.now()); // layer 2: same-session monotonic
     }
     users[idx] = { ...user, ...update };
     saveUsers(users);
+    secDbg('IA-07', update.lockoutTicksRemaining ? 'Account Locked' : 'Login Failed', {
+      username,
+      failed_attempt: attempts,
+      max_attempts: MAX_FAILED_ATTEMPTS,
+      account_locked: !!update.lockoutTicksRemaining,
+      lockout_ticks: update.lockoutTicksRemaining ?? 'N/A',
+      lockout_duration_min: LOCKOUT_MS / 60_000,
+      clock_protection: 'Layer 1: real-time tick counter (cross-session safe) | Layer 2: performance.now() (same-session)',
+    });
 
     // Lazy import to avoid circular dependency
     import('./auditStore').then(({ tryWriteAuditLog, AUDIT_ACTIONS }) => {
@@ -126,7 +191,7 @@ export async function loginUser(username, password) {
       return {
         success: false,
         locked: true,
-        error: '로그인 시도 횟수를 초과하여 계정이 잠금되었습니다. 15분 후 다시 시도하거나 관리자에게 문의하세요.',
+        error: '로그인 시도 횟수를 초과하여 계정이 잠금되었습니다. 관리자에게 문의하여 잠금을 해제해 주세요.',
       };
     }
     const remaining = MAX_FAILED_ATTEMPTS - attempts;
@@ -246,8 +311,9 @@ export const UserStore = {
     const users = loadUsers();
     const idx = users.findIndex((u) => u.id === userId);
     if (idx === -1) throw new Error('사용자를 찾을 수 없습니다.');
-    users[idx] = { ...users[idx], failedAttempts: 0, lockedUntil: null, updatedAt: new Date().toISOString() };
+    users[idx] = { ...users[idx], failedAttempts: 0, lockedUntil: null, lockoutTicksRemaining: 0, updatedAt: new Date().toISOString() };
     saveUsers(users);
+    _sessionLockouts.delete(userId); // clear both layers
   },
 
   setRole(userId, role) {

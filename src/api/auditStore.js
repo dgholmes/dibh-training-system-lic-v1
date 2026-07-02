@@ -1,4 +1,5 @@
 // Audit log — MFDS UC-04 (logging), UC-05 (failure handling), UC-06 (timestamps), UC-07 (non-repudiation)
+import { secDbg } from '@/lib/securityDebug';
 // Entries are append-only; never modified or deleted via the UI.
 
 import { getSession } from './authStore';
@@ -36,6 +37,17 @@ export function writeAuditLog({ action, targetType = null, targetId = null, deta
   log.push(entry);
   if (log.length > MAX_ENTRIES) log.splice(0, log.length - MAX_ENTRIES);
 
+  secDbg('UC-04/UC-06/UC-07', 'Audit Log Entry Written', {
+    action: entry.action,
+    userId: entry.userId,
+    username: entry.username,
+    targetType: entry.targetType,
+    targetId: entry.targetId,
+    detail: entry.detail,
+    timestamp: entry.timestamp,
+    total_entries: log.length,
+    max_entries: MAX_ENTRIES,
+  });
   // UC-05 — let the storage error propagate so the caller can alert the admin
   localStorage.setItem(AUDIT_KEY, JSON.stringify(log));
   return entry;
@@ -70,6 +82,18 @@ export function getAuditLogEntries({ search = '', limit = 50, offset = 0 } = {})
   return { entries: filtered.slice(offset, offset + limit), total: filtered.length };
 }
 
+/**
+ * UC-05 — Audit log capacity status.
+ * Returns current count, max, and usage percentage so the admin UI
+ * can warn when the log is nearing its limit.
+ */
+export function getAuditLogCapacity() {
+  const log = loadLog();
+  const count = log.length;
+  const pct = Math.round((count / MAX_ENTRIES) * 100);
+  return { count, max: MAX_ENTRIES, pct };
+}
+
 // ── Action constants (keep consistent across the app) ────────────────────────
 export const AUDIT_ACTIONS = {
   LOGIN: 'LOGIN',
@@ -89,4 +113,6 @@ export const AUDIT_ACTIONS = {
   FILE_DELETED: 'FILE_DELETED',
   ANALYSIS_RUN: 'ANALYSIS_RUN',
   CALIBRATION_DELETED: 'CALIBRATION_DELETED',
+  BACKUP_CREATED: 'BACKUP_CREATED',
+  BACKUP_RESTORED: 'BACKUP_RESTORED',
 };
