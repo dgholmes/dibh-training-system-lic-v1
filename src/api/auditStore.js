@@ -6,6 +6,22 @@ import { getSession } from './authStore';
 
 const AUDIT_KEY = 'dibh_audit_log';
 const MAX_ENTRIES = 10_000;
+const LS_WARN_BYTES = 4 * 1024 * 1024; // 4 MB — warn before typical WebView 5 MB quota
+
+function estimateAuditLogBytes() {
+  const raw = localStorage.getItem(AUDIT_KEY);
+  return raw ? raw.length * 2 : 0; // UTF-16: ~2 bytes per char
+}
+
+function estimateTotalLocalStorageBytes() {
+  let total = 0;
+  try {
+    for (const key of Object.keys(localStorage)) {
+      total += (key.length + (localStorage.getItem(key)?.length ?? 0)) * 2;
+    }
+  } catch { /* quota already exceeded — estimation incomplete */ }
+  return total;
+}
 
 function loadLog() {
   try {
@@ -48,8 +64,26 @@ export function writeAuditLog({ action, targetType = null, targetId = null, deta
     total_entries: log.length,
     max_entries: MAX_ENTRIES,
   });
-  // UC-05 — let the storage error propagate so the caller can alert the admin
-  localStorage.setItem(AUDIT_KEY, JSON.stringify(log));
+  // UC-05 — attempt write; on QuotaExceededError, emergency-trim oldest 20% and retry once
+  const serialized = JSON.stringify(log);
+  try {
+    localStorage.setItem(AUDIT_KEY, serialized);
+  } catch (e) {
+    const isQuota = e instanceof DOMException && (e.name === 'QuotaExceededError' || e.code === 22);
+    if (isQuota) {
+      secDbg('UC-05', 'QuotaExceededError — emergency trim 20% oldest entries', {
+        entries_before: log.length,
+      });
+      const trimmed = log.slice(Math.floor(log.length * 0.2));
+      try {
+        localStorage.setItem(AUDIT_KEY, JSON.stringify(trimmed));
+      } catch {
+        throw e; // still full — propagate; tryWriteAuditLog will surface to console
+      }
+    } else {
+      throw e;
+    }
+  }
   return entry;
 }
 
@@ -91,7 +125,10 @@ export function getAuditLogCapacity() {
   const log = loadLog();
   const count = log.length;
   const pct = Math.round((count / MAX_ENTRIES) * 100);
-  return { count, max: MAX_ENTRIES, pct };
+  const auditBytes = estimateAuditLogBytes();
+  const totalBytes = estimateTotalLocalStorageBytes();
+  const storagePct = Math.min(100, Math.round((totalBytes / LS_WARN_BYTES) * 100));
+  return { count, max: MAX_ENTRIES, pct, auditBytes, totalBytes, storagePct };
 }
 
 // ── Action constants (keep consistent across the app) ────────────────────────

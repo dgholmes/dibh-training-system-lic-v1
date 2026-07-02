@@ -29,6 +29,12 @@ function AdminNav() {
 import { getAuditLogEntries, getAuditLogCapacity } from '@/api/auditStore';
 import { format } from 'date-fns';
 
+function fmtBytes(b) {
+  if (b < 1024) return `${b} B`;
+  if (b < 1024 * 1024) return `${(b / 1024).toFixed(1)} KB`;
+  return `${(b / (1024 * 1024)).toFixed(2)} MB`;
+}
+
 const PAGE_SIZE = 50;
 
 const ACTION_COLORS = {
@@ -87,26 +93,38 @@ export default function AdminAuditLog() {
 
         <AdminNav />
 
-        {/* UC-05 — Capacity warning */}
-        {capacity.pct >= 80 && (
-          <div className={cn(
-            'mb-4 flex items-start gap-3 rounded-xl border px-4 py-3',
-            capacity.pct >= 90
-              ? 'border-[#EF4444]/40 bg-[#EF4444]/10 text-[#EF4444]'
-              : 'border-[#EAB308]/40 bg-[#EAB308]/10 text-[#EAB308]'
-          )}>
-            <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
-            <div className="text-sm">
-              <span className="font-semibold">
-                {capacity.pct >= 90 ? '감사 로그 저장 공간 부족 (UC-05)' : '감사 로그 저장 공간 경고 (UC-05)'}
-              </span>
-              <span className="ml-2 text-xs opacity-80">
-                {capacity.count.toLocaleString()} / {capacity.max.toLocaleString()}건 ({capacity.pct}% 사용 중)
-                {capacity.pct >= 90 && ' — 오래된 로그가 자동 삭제됩니다. 백업을 권장합니다.'}
-              </span>
+        {/* UC-05 — Capacity warnings (entry count + device storage) */}
+        {(capacity.pct >= 80 || capacity.storagePct >= 80) && (() => {
+          const isCritical = capacity.pct >= 90 || capacity.storagePct >= 90;
+          return (
+            <div className={cn(
+              'mb-4 flex items-start gap-3 rounded-xl border px-4 py-3',
+              isCritical
+                ? 'border-[#EF4444]/40 bg-[#EF4444]/10 text-[#EF4444]'
+                : 'border-[#EAB308]/40 bg-[#EAB308]/10 text-[#EAB308]'
+            )}>
+              <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+              <div className="space-y-0.5 text-sm">
+                <p className="font-semibold">
+                  {isCritical ? '감사 로그 저장 공간 부족 (UC-05)' : '감사 로그 저장 공간 경고 (UC-05)'}
+                </p>
+                {capacity.pct >= 80 && (
+                  <p className="text-xs opacity-80">
+                    로그 항목: {capacity.count.toLocaleString()} / {capacity.max.toLocaleString()}건 ({capacity.pct}%)
+                    {capacity.pct >= 90 && ' — 오래된 항목이 자동 삭제됩니다.'}
+                  </p>
+                )}
+                {capacity.storagePct >= 80 && (
+                  <p className="text-xs opacity-80">
+                    기기 저장소: {fmtBytes(capacity.totalBytes)} 사용 중 (감사 로그 {fmtBytes(capacity.auditBytes)})
+                    {capacity.storagePct >= 90 && ' — 저장소 용량이 부족합니다.'}
+                  </p>
+                )}
+                {isCritical && <p className="text-xs font-medium">백업 후 데이터를 내보내기하세요.</p>}
+              </div>
             </div>
-          </div>
-        )}
+          );
+        })()}
 
         {/* Search */}
         <div className="relative mb-4">
@@ -116,7 +134,10 @@ export default function AdminAuditLog() {
             className="h-12 w-full rounded-xl border border-[#30363D] bg-[#1C2128] pl-11 pr-4 text-sm text-white placeholder:text-[#8B949E] outline-none focus:border-[#3B82F6]" />
         </div>
 
-        <p className="mb-3 text-xs text-[#8B949E]">총 {total.toLocaleString()}건 · 페이지 {page + 1}/{totalPages}</p>
+        <p className="mb-3 text-xs text-[#8B949E]">
+          총 {total.toLocaleString()}건 · 페이지 {page + 1}/{totalPages}
+          <span className="ml-3 opacity-60">· 감사 로그 {fmtBytes(capacity.auditBytes)} · 저장소 전체 {fmtBytes(capacity.totalBytes)}</span>
+        </p>
 
         {/* Log table */}
         <div className="overflow-hidden rounded-2xl border border-[#30363D] bg-[#1C2128]">
