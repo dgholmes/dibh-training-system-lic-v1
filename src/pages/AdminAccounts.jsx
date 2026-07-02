@@ -17,6 +17,8 @@ const ROLE_COLORS = {
   admin: 'bg-[#8B5CF6]/15 text-[#A78BFA] border-[#8B5CF6]/30',
   clinician: 'bg-[#3B82F6]/15 text-[#60A5FA] border-[#3B82F6]/30',
 };
+const LIST_ACTION_BTN =
+  'border-[#30363D] bg-transparent text-[#C9D1D9] shadow-none hover:bg-[#30363D] hover:text-white';
 
 function AdminNav() {
   const { pathname } = useLocation();
@@ -204,26 +206,26 @@ export default function AdminAccounts() {
                   <div className="flex shrink-0 flex-wrap gap-2">
                     {isLocked(u) && (
                       <Button size="sm" variant="outline" onClick={() => handleUnlock(u)}
-                        className="gap-1 border-[#30363D] text-[#C9D1D9] hover:bg-[#30363D]">
+                        className={cn('gap-1', LIST_ACTION_BTN)}>
                         <Unlock className="h-3.5 w-3.5" /> 잠금해제
                       </Button>
                     )}
                     <Button size="sm" variant="outline" onClick={() => handleRoleToggle(u)}
-                      className="gap-1.5 border-[#30363D] text-[#C9D1D9] hover:bg-[#30363D]">
+                      className={cn('gap-1.5', LIST_ACTION_BTN)}>
                       {u.role === 'admin' ? <ShieldAlert className="h-3.5 w-3.5" /> : <ShieldCheck className="h-3.5 w-3.5" />}
                       <span>역할 변경</span>
                     </Button>
                     {u.id !== session?.userId && (
                       <Button size="sm" variant="outline"
                         onClick={() => { setResetTarget(u); setResetPw(''); setResetErrors([]); setShowResetPw(false); }}
-                        className="gap-1.5 border-[#30363D] text-[#C9D1D9] hover:bg-[#30363D]">
+                        className={cn('gap-1.5', LIST_ACTION_BTN)}>
                         <KeyRound className="h-3.5 w-3.5" />
                         <span>비밀번호 초기화</span>
                       </Button>
                     )}
                     {u.id !== session?.userId && (
                       <Button size="sm" variant="outline" onClick={() => setDeleteTarget(u)}
-                        className="gap-1.5 border-[#30363D] text-[#C9D1D9] hover:bg-[#30363D]">
+                        className={cn('gap-1.5', LIST_ACTION_BTN)}>
                         <Trash2 className="h-3.5 w-3.5" />
                         <span>삭제</span>
                       </Button>

@@ -203,8 +203,8 @@ export default function BreathingDataUpload() {
 
   const { data: patient } = useQuery({
     queryKey: ['patient', patientId],
-    queryFn: () => {
-      const results = Patient.filter({ id: patientId });
+    queryFn: async () => {
+      const results = await Patient.filter({ id: patientId });
       return results[0] || null;
     },
     enabled: !!patientId,
@@ -255,22 +255,16 @@ export default function BreathingDataUpload() {
             invalidateBreathing();
             setList((prev) => prev.filter((f) => f.id !== id));
           } catch (err) {
-            console.error('createBreathingFile', err);
-            const message = err instanceof Error ? err.message : String(err);
+            console.error('[BreathingDataUpload] createBreathingFile failed:', err);
+            const safeMsg = '파일 저장 중 오류가 발생했습니다. 다시 시도해 주세요.';
             toast({
               title: '파일을 저장할 수 없습니다',
-              description: message,
+              description: safeMsg,
               variant: 'destructive',
             });
             setList((prev) =>
               prev.map((f) =>
-                f.id === id
-                  ? {
-                      ...f,
-                      status: 'error',
-                      error: message,
-                    }
-                  : f
+                f.id === id ? { ...f, status: 'error', error: safeMsg } : f
               )
             );
           }
@@ -378,9 +372,10 @@ export default function BreathingDataUpload() {
       invalidateBreathing();
       setDeleteTarget(null);
     } catch (err) {
+      console.error('[BreathingDataUpload] delete failed:', err);
       toast({
         title: '삭제 실패',
-        description: err instanceof Error ? err.message : String(err),
+        description: '파일 삭제 중 오류가 발생했습니다. 다시 시도해 주세요.',
         variant: 'destructive',
       });
     } finally {
@@ -390,15 +385,16 @@ export default function BreathingDataUpload() {
 
   useEffect(() => {
     if (!patientId) return;
-    const exists = Patient.get(patientId);
-    if (!exists) {
-      toast({
-        title: '환자를 찾을 수 없습니다',
-        description: '목록에서 다시 선택해 주세요.',
-        variant: 'destructive',
-      });
-      navigate(createPageUrl('Home'));
-    }
+    Patient.get(patientId).then((exists) => {
+      if (!exists) {
+        toast({
+          title: '환자를 찾을 수 없습니다',
+          description: '목록에서 다시 선택해 주세요.',
+          variant: 'destructive',
+        });
+        navigate(createPageUrl('Home'));
+      }
+    });
   }, [patientId, navigate]);
 
   return (

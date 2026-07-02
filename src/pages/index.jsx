@@ -1,26 +1,20 @@
 import Layout from "./Layout.jsx";
-
 import Login from "./Login";
-
 import Home from "./Home";
-
 import NewPatient from "./NewPatient";
-
 import PatientDashboard from "./PatientDashboard";
-
 import TrainingHistory from "./TrainingHistory";
-
 import TrainingReport from "./TrainingReport";
-
 import TypeDecision from "./TypeDecision";
-
 import AnalysisFileSelect from "./AnalysisFileSelect";
-
 import BreathingDataUpload from "./BreathingDataUpload";
-
 import LegacyFlowRedirect from "./LegacyFlowRedirect.jsx";
+import AdminAccounts from "./AdminAccounts.jsx";
+import AdminAuditLog from "./AdminAuditLog.jsx";
+import AdminBackup from "./AdminBackup.jsx";
 
-import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, useLocation, Navigate } from 'react-router-dom';
+import { useAuth } from '@/context/AuthContext';
 
 const PAGES = {
     Login: Login,
@@ -47,6 +41,23 @@ function _getCurrentPage(url) {
     return pageName || 'Login';
 }
 
+function ProtectedRoute({ children }) {
+    const { isAuthenticated, initialised } = useAuth();
+    const location = useLocation();
+    if (!initialised) return null;
+    if (!isAuthenticated) return <Navigate to="/login" state={{ from: location }} replace />;
+    return children;
+}
+
+function AdminRoute({ children }) {
+    const { session, initialised } = useAuth();
+    const location = useLocation();
+    if (!initialised) return null;
+    if (!session) return <Navigate to="/login" state={{ from: location }} replace />;
+    if (session.role !== 'admin') return <Navigate to="/home" replace />;
+    return children;
+}
+
 function PagesContent() {
     const location = useLocation();
     const currentPage = _getCurrentPage(location.pathname);
@@ -57,36 +68,41 @@ function PagesContent() {
                 <Route path="/" element={<Login />} />
                 <Route path="/Login" element={<Login />} />
                 <Route path="/login" element={<Login />} />
-                <Route path="/Home" element={<Home />} />
-                <Route path="/home" element={<Home />} />
-                <Route path="/NewPatient" element={<NewPatient />} />
-                <Route path="/newpatient" element={<NewPatient />} />
-                <Route path="/PatientDashboard" element={<PatientDashboard />} />
-                <Route path="/patientdashboard" element={<PatientDashboard />} />
-                <Route path="/TrainingHistory" element={<TrainingHistory />} />
-                <Route path="/traininghistory" element={<TrainingHistory />} />
-                <Route path="/CalibrationReport" element={<TrainingReport />} />
-                <Route path="/calibrationreport" element={<TrainingReport />} />
-                <Route path="/TypeDecision" element={<TypeDecision />} />
-                <Route path="/typedecision" element={<TypeDecision />} />
-                <Route path="/AnalysisFileSelect" element={<AnalysisFileSelect />} />
-                <Route path="/analysisfileselect" element={<AnalysisFileSelect />} />
-                <Route path="/BreathingDataUpload" element={<BreathingDataUpload />} />
-                <Route path="/breathingdataupload" element={<BreathingDataUpload />} />
+                <Route path="/Home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+                <Route path="/home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+                <Route path="/NewPatient" element={<ProtectedRoute><NewPatient /></ProtectedRoute>} />
+                <Route path="/newpatient" element={<ProtectedRoute><NewPatient /></ProtectedRoute>} />
+                <Route path="/PatientDashboard" element={<ProtectedRoute><PatientDashboard /></ProtectedRoute>} />
+                <Route path="/patientdashboard" element={<ProtectedRoute><PatientDashboard /></ProtectedRoute>} />
+                <Route path="/TrainingHistory" element={<ProtectedRoute><TrainingHistory /></ProtectedRoute>} />
+                <Route path="/traininghistory" element={<ProtectedRoute><TrainingHistory /></ProtectedRoute>} />
+                <Route path="/CalibrationReport" element={<ProtectedRoute><TrainingReport /></ProtectedRoute>} />
+                <Route path="/calibrationreport" element={<ProtectedRoute><TrainingReport /></ProtectedRoute>} />
+                <Route path="/TypeDecision" element={<ProtectedRoute><TypeDecision /></ProtectedRoute>} />
+                <Route path="/typedecision" element={<ProtectedRoute><TypeDecision /></ProtectedRoute>} />
+                <Route path="/AnalysisFileSelect" element={<ProtectedRoute><AnalysisFileSelect /></ProtectedRoute>} />
+                <Route path="/analysisfileselect" element={<ProtectedRoute><AnalysisFileSelect /></ProtectedRoute>} />
+                <Route path="/BreathingDataUpload" element={<ProtectedRoute><BreathingDataUpload /></ProtectedRoute>} />
+                <Route path="/breathingdataupload" element={<ProtectedRoute><BreathingDataUpload /></ProtectedRoute>} />
+
+                {/* Admin-only routes */}
+                <Route path="/admin/accounts" element={<AdminRoute><AdminAccounts /></AdminRoute>} />
+                <Route path="/admin/auditlog" element={<AdminRoute><AdminAuditLog /></AdminRoute>} />
+                <Route path="/admin/backup" element={<AdminRoute><AdminBackup /></AdminRoute>} />
 
                 {/* Deferred live belt / VR flows — deep links redirect to dashboard */}
-                <Route path="/Calibration" element={<LegacyFlowRedirect />} />
-                <Route path="/calibration" element={<LegacyFlowRedirect />} />
-                <Route path="/EndSession" element={<LegacyFlowRedirect />} />
-                <Route path="/endsession" element={<LegacyFlowRedirect />} />
-                <Route path="/EquipmentCheck" element={<LegacyFlowRedirect />} />
-                <Route path="/equipmentcheck" element={<LegacyFlowRedirect />} />
-                <Route path="/InitialDiagnosis" element={<LegacyFlowRedirect />} />
-                <Route path="/initialdiagnosis" element={<LegacyFlowRedirect />} />
-                <Route path="/TrainingMonitor" element={<LegacyFlowRedirect />} />
-                <Route path="/trainingmonitor" element={<LegacyFlowRedirect />} />
-                <Route path="/TrainingResult" element={<LegacyFlowRedirect />} />
-                <Route path="/trainingresult" element={<LegacyFlowRedirect />} />
+                <Route path="/Calibration" element={<ProtectedRoute><LegacyFlowRedirect /></ProtectedRoute>} />
+                <Route path="/calibration" element={<ProtectedRoute><LegacyFlowRedirect /></ProtectedRoute>} />
+                <Route path="/EndSession" element={<ProtectedRoute><LegacyFlowRedirect /></ProtectedRoute>} />
+                <Route path="/endsession" element={<ProtectedRoute><LegacyFlowRedirect /></ProtectedRoute>} />
+                <Route path="/EquipmentCheck" element={<ProtectedRoute><LegacyFlowRedirect /></ProtectedRoute>} />
+                <Route path="/equipmentcheck" element={<ProtectedRoute><LegacyFlowRedirect /></ProtectedRoute>} />
+                <Route path="/InitialDiagnosis" element={<ProtectedRoute><LegacyFlowRedirect /></ProtectedRoute>} />
+                <Route path="/initialdiagnosis" element={<ProtectedRoute><LegacyFlowRedirect /></ProtectedRoute>} />
+                <Route path="/TrainingMonitor" element={<ProtectedRoute><LegacyFlowRedirect /></ProtectedRoute>} />
+                <Route path="/trainingmonitor" element={<ProtectedRoute><LegacyFlowRedirect /></ProtectedRoute>} />
+                <Route path="/TrainingResult" element={<ProtectedRoute><LegacyFlowRedirect /></ProtectedRoute>} />
+                <Route path="/trainingresult" element={<ProtectedRoute><LegacyFlowRedirect /></ProtectedRoute>} />
             </Routes>
         </Layout>
     );

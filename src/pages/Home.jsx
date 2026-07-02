@@ -7,11 +7,14 @@ import { createPageUrl } from '@/utils';
 import { Patient } from '@/api/entities';
 import { useQuery } from '@tanstack/react-query';
 import PatientCard from '@/components/common/PatientCard';
+import { useAuth } from '@/context/AuthContext';
+import { Shield } from 'lucide-react';
 
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
+  const { logout, session } = useAuth();
   const patientsPerPage = 5;
 
   const { data: patients = [], isLoading } = useQuery({
@@ -35,7 +38,8 @@ export default function Home() {
   };
 
   const handleLogout = () => {
-    navigate(createPageUrl('Login'));
+    logout();
+    navigate('/login', { replace: true });
   };
 
   return (
@@ -45,13 +49,16 @@ export default function Home() {
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold text-white">환자 정보 선택</h1>
           <div className="flex items-center gap-2">
-            {/* Logout Button */}
-            <Button
-              onClick={handleLogout}
-              variant="ghost"
-              size="sm"
-              className="text-[#8B949E] hover:text-white hover:bg-[#1C2128]"
-            >
+            {/* Admin panel — visible to admin role only (UC-01) */}
+            {session?.role === 'admin' && (
+              <Button variant="ghost" size="sm" onClick={() => navigate('/admin/accounts')}
+                className="gap-1.5 text-[#A78BFA] hover:bg-[#8B5CF6]/10 hover:text-[#C4B5FD]">
+                <Shield className="h-4 w-4" />
+                <span className="hidden sm:inline">관리자</span>
+              </Button>
+            )}
+            <Button onClick={handleLogout} variant="ghost" size="sm"
+              className="text-[#8B949E] hover:text-white hover:bg-[#1C2128]">
               <LogOut className="w-4 h-4 mr-1.5" />
               로그아웃
             </Button>

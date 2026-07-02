@@ -16,8 +16,8 @@ export default function CalibrationHistory() {
 
   const { data: patient } = useQuery({
     queryKey: ['patient', patientId],
-    queryFn: () => {
-      const results = Patient.filter({ id: patientId });
+    queryFn: async () => {
+      const results = await Patient.filter({ id: patientId });
       return results[0] || null;
     },
     enabled: !!patientId,

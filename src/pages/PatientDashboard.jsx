@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { useAuth } from '@/context/AuthContext';
 import { ArrowLeft, LogOut, Plus, Edit, Trash2, Folder, RefreshCw, Calendar as CalendarIcon, Minus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -18,7 +19,7 @@ import { cn } from '@/lib/utils';
 import { darkPopoverCalendarClassNames } from '@/lib/darkPopoverCalendar';
 import { nextPatientCode } from '@/lib/patientCode';
 import { BreathingTypeBadge } from '@/components/breathing/BreathingTypeBadge';
-import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
 import { toast } from '@/components/ui/use-toast';
@@ -55,6 +56,7 @@ export default function PatientDashboard() {
     gender: 'male',
     treatment_session_count: 0,
     patient_code: '',
+    assigned_doctor_name: '',
   });
   const [editSessionManualMode, setEditSessionManualMode] = useState(false);
   const [editBirthPopoverOpen, setEditBirthPopoverOpen] = useState(false);
@@ -62,8 +64,8 @@ export default function PatientDashboard() {
 
   const { data: patient } = useQuery({
     queryKey: ['patient', patientId],
-    queryFn: () => {
-      const results = Patient.filter({ id: patientId });
+    queryFn: async () => {
+      const results = await Patient.filter({ id: patientId });
       return results[0] || null;
     },
     enabled: !!patientId,
@@ -167,8 +169,10 @@ export default function PatientDashboard() {
     return `/CalibrationReport?patientId=${encodeURIComponent(patientId)}&calibrationId=${encodeURIComponent(latestCalibration.id)}`;
   }, [patientId, latestCalibration?.id]);
 
+  const { logout } = useAuth();
   const handleLogout = () => {
-    navigate(createPageUrl('Login'));
+    logout();
+    navigate('/login', { replace: true });
   };
 
   const handleAddData = () => {
@@ -182,9 +186,9 @@ export default function PatientDashboard() {
   const handleEdit = () => setShowEditModal(true);
   const handleDelete = () => setShowDeleteModal(true);
 
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = async () => {
     if (patientId) {
-      Patient.delete(patientId);
+      await Patient.delete(patientId);
       queryClient.invalidateQueries({ queryKey: ['patients'] });
       navigate(createPageUrl('Home'));
     }
@@ -194,25 +198,27 @@ export default function PatientDashboard() {
   const handleSaveEdit = async (e) => {
     e.preventDefault();
     if (!patientId) return;
-    if (!editFormData.name.trim() || !editFormData.birth_date) {
+    if (!editFormData.name.trim() || editFormData.name.trim().length > 100 || !editFormData.birth_date) {
       return;
     }
     setIsSaving(true);
     try {
-      Patient.update(patientId, {
+      await Patient.update(patientId, {
         name: editFormData.name.trim(),
         birth_date: editFormData.birth_date,
         gender: editFormData.gender,
         treatment_session_count: editFormData.treatment_session_count,
         patient_code: editFormData.patient_code,
+        assigned_doctor_name: editFormData.assigned_doctor_name.trim(),
       });
       await queryClient.invalidateQueries({ queryKey: ['patient', patientId] });
       await queryClient.invalidateQueries({ queryKey: ['patients'] });
       setShowEditModal(false);
     } catch (err) {
+      console.error('[PatientDashboard] save edit failed:', err);
       toast({
         title: '저장 실패',
-        description: err instanceof Error ? err.message : String(err),
+        description: '환자 정보 저장에 실패했습니다. 다시 시도해 주세요.',
         variant: 'destructive',
       });
     } finally {
@@ -230,6 +236,7 @@ export default function PatientDashboard() {
         gender: patient.gender || 'male',
         treatment_session_count: patient.treatment_session_count ?? 0,
         patient_code: patient.patient_code || nextPatientCode(),
+        assigned_doctor_name: patient.assigned_doctor_name || '',
       });
     }
   }, [showEditModal, patient]);
@@ -263,11 +270,11 @@ export default function PatientDashboard() {
         {patientId && (
           <div className="space-y-5">
             {/* Patient summary card */}
-            <div className="relative overflow-hidden rounded-2xl border border-[#30363D] bg-[#1C2128] pl-1">
-              <div className="absolute bottom-0 left-0 top-0 w-1 rounded-l-2xl bg-[#3B82F6]" />
-              <div className="p-5 pl-6 sm:p-6">
+            <div className="rounded-2xl border border-[#30363D] bg-[#1C2128]">
+              <div className="p-5 sm:p-6">
                 <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                   <div className="flex flex-wrap items-center gap-3">
+                    <span className="h-7 w-1 shrink-0 rounded-full bg-gradient-to-b from-[#3B82F6] to-[#8B5CF6]" />
                     <h2 className="text-2xl font-bold text-white sm:text-3xl">{patient?.name ?? '—'}</h2>
                     {patient?.patient_code && (
                       <span className="rounded-full border border-[#30363D] bg-[#0D1117] px-3 py-1 text-xs font-medium text-[#8B949E]">
@@ -528,6 +535,7 @@ export default function PatientDashboard() {
           className="max-h-[92vh] max-w-lg overflow-y-auto border border-[#30363D] bg-[#1C2128] p-0 text-white sm:rounded-2xl"
         >
           <DialogTitle className="sr-only">환자 정보 수정</DialogTitle>
+          <DialogDescription className="sr-only">환자의 기본 정보를 수정합니다.</DialogDescription>
           <form onSubmit={handleSaveEdit} className="pb-6">
             <div className="flex items-center justify-between border-b border-[#30363D] px-6 py-4">
               <p className="text-sm font-semibold text-[#C9D1D9]">환자 정보 수정</p>
@@ -558,6 +566,19 @@ export default function PatientDashboard() {
                   onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
                   className="h-12 rounded-xl border-[#30363D] bg-[#0D1117] text-white placeholder:text-[#6E7681] focus-visible:ring-[#3B82F6]/40"
                   autoComplete="name"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="edit-doctor" className="mb-2 block font-medium text-[#8B949E]">
+                  담당 의사
+                </Label>
+                <Input
+                  id="edit-doctor"
+                  placeholder="담당 의사 이름을 입력하세요"
+                  value={editFormData.assigned_doctor_name}
+                  onChange={(e) => setEditFormData({ ...editFormData, assigned_doctor_name: e.target.value })}
+                  className="h-12 rounded-xl border-[#30363D] bg-[#0D1117] text-white placeholder:text-[#6E7681] focus-visible:ring-[#3B82F6]/40"
                 />
               </div>
 
@@ -754,6 +775,8 @@ export default function PatientDashboard() {
           hideClose
           className="max-w-[min(100%,420px)] gap-0 overflow-hidden border border-[#30363D] bg-[#1C2128] p-0 shadow-2xl sm:rounded-2xl"
         >
+          <DialogTitle className="sr-only">환자 삭제</DialogTitle>
+          <DialogDescription className="sr-only">환자 정보를 영구 삭제합니다.</DialogDescription>
           <div className="h-1 w-full bg-[#EF4444]/90" aria-hidden />
           <div className="px-6 pb-6 pt-8 text-center">
             <div

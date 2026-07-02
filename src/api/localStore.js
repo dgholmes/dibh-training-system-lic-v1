@@ -1,6 +1,8 @@
 // Local storage-based data store to replace base44
 
 import { upsertPatientRow, deletePatientRow } from '@/db/patientSqlite';
+import { tryWriteAuditLog, AUDIT_ACTIONS } from './auditStore';
+import { encryptPatient, decryptPatient } from '@/lib/crypto';
 
 const STORAGE_KEYS = {
   PATIENTS: 'dibh_patients',
@@ -33,88 +35,76 @@ const generateId = () => {
   return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 };
 
-// Patient entity
+// Patient entity — PII fields (name, birth_date, assigned_doctor_name) are AES-256-GCM
+// encrypted at rest inside an `_enc` blob. Non-PII fields stay plain for filtering/sorting.
 export const Patient = {
-  list: (sortBy = null) => {
-    const patients = getStorageItem(STORAGE_KEYS.PATIENTS);
-    
-    if (sortBy) {
-      // Handle sort order like '-last_training_date'
-      const isDesc = sortBy.startsWith('-');
-      const field = isDesc ? sortBy.substring(1) : sortBy;
-      
-      return [...patients].sort((a, b) => {
-        const aVal = a[field] || '';
-        const bVal = b[field] || '';
-        
-        if (isDesc) {
-          return bVal > aVal ? 1 : bVal < aVal ? -1 : 0;
-        } else {
-          return aVal > bVal ? 1 : aVal < bVal ? -1 : 0;
-        }
-      });
-    }
-    
-    return patients;
-  },
+  // Sync list of raw (encrypted) records — used only by nextPatientCode() which reads patient_code only.
+  listRaw: () => getStorageItem(STORAGE_KEYS.PATIENTS),
 
-  filter: (filters) => {
-    const patients = getStorageItem(STORAGE_KEYS.PATIENTS);
-    
-    if (filters.id) {
-      return patients.filter(p => p.id === filters.id);
-    }
-    
-    // Support other filters if needed
-    return patients.filter(patient => {
-      return Object.keys(filters).every(key => {
-        return patient[key] === filters[key];
-      });
+  async list(sortBy = null) {
+    const raw = getStorageItem(STORAGE_KEYS.PATIENTS);
+    const decrypted = await Promise.all(raw.map(decryptPatient));
+    if (!sortBy) return decrypted;
+    const isDesc = sortBy.startsWith('-');
+    const field = isDesc ? sortBy.slice(1) : sortBy;
+    return [...decrypted].sort((a, b) => {
+      const av = a[field] || '', bv = b[field] || '';
+      return isDesc ? (bv > av ? 1 : bv < av ? -1 : 0) : (av > bv ? 1 : av < bv ? -1 : 0);
     });
   },
 
-  get: (id) => {
-    const patients = getStorageItem(STORAGE_KEYS.PATIENTS);
-    return patients.find(p => p.id === id) || null;
+  async filter(filters) {
+    const raw = getStorageItem(STORAGE_KEYS.PATIENTS);
+    // Filter on non-encrypted fields first (fast), then decrypt matched records
+    const PII = ['name', 'birth_date', 'assigned_doctor_name'];
+    const nonPiiFilters = Object.fromEntries(Object.entries(filters).filter(([k]) => !PII.includes(k)));
+    const piiFilters = Object.fromEntries(Object.entries(filters).filter(([k]) => PII.includes(k)));
+
+    const preFiltered = Object.keys(nonPiiFilters).length
+      ? raw.filter(p => Object.entries(nonPiiFilters).every(([k, v]) => p[k] === v))
+      : raw;
+
+    const decrypted = await Promise.all(preFiltered.map(decryptPatient));
+
+    if (!Object.keys(piiFilters).length) return decrypted;
+    return decrypted.filter(p => Object.entries(piiFilters).every(([k, v]) => p[k] === v));
   },
 
-  create: (data) => {
+  async get(id) {
+    const raw = getStorageItem(STORAGE_KEYS.PATIENTS);
+    const found = raw.find(p => p.id === id) || null;
+    return found ? decryptPatient(found) : null;
+  },
+
+  async create(data) {
     const patients = getStorageItem(STORAGE_KEYS.PATIENTS);
-    const newPatient = {
-      id: generateId(),
-      ...data,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    };
-    patients.push(newPatient);
+    const plain = { id: generateId(), ...data, created_at: new Date().toISOString(), updated_at: new Date().toISOString() };
+    const encrypted = await encryptPatient(plain);
+    patients.push(encrypted);
     setStorageItem(STORAGE_KEYS.PATIENTS, patients);
-    void upsertPatientRow(newPatient).catch((e) => console.error('patientSqlite upsert', e));
-    return newPatient;
+    void upsertPatientRow(plain).catch((e) => console.error('patientSqlite upsert', e));
+    tryWriteAuditLog({ action: AUDIT_ACTIONS.PATIENT_CREATED, targetType: 'patient', targetId: plain.id, detail: plain.patient_code });
+    return plain;
   },
 
-  update: (id, data) => {
+  async update(id, data) {
     const patients = getStorageItem(STORAGE_KEYS.PATIENTS);
     const index = patients.findIndex(p => p.id === id);
-    
-    if (index === -1) {
-      throw new Error(`Patient with id ${id} not found`);
-    }
-    
-    patients[index] = {
-      ...patients[index],
-      ...data,
-      updated_at: new Date().toISOString(),
-    };
+    if (index === -1) throw new Error(`Patient with id ${id} not found`);
+    const existing = await decryptPatient(patients[index]);
+    const merged = { ...existing, ...data, updated_at: new Date().toISOString() };
+    patients[index] = await encryptPatient(merged);
     setStorageItem(STORAGE_KEYS.PATIENTS, patients);
-    void upsertPatientRow(patients[index]).catch((e) => console.error('patientSqlite upsert', e));
-    return patients[index];
+    void upsertPatientRow(merged).catch((e) => console.error('patientSqlite upsert', e));
+    tryWriteAuditLog({ action: AUDIT_ACTIONS.PATIENT_UPDATED, targetType: 'patient', targetId: id, detail: merged.patient_code });
+    return merged;
   },
 
-  delete: (id) => {
+  delete(id) {
     const patients = getStorageItem(STORAGE_KEYS.PATIENTS);
-    const filtered = patients.filter(p => p.id !== id);
-    setStorageItem(STORAGE_KEYS.PATIENTS, filtered);
+    setStorageItem(STORAGE_KEYS.PATIENTS, patients.filter(p => p.id !== id));
     void deletePatientRow(id).catch((e) => console.error('patientSqlite delete', e));
+    tryWriteAuditLog({ action: AUDIT_ACTIONS.PATIENT_DELETED, targetType: 'patient', targetId: id });
     return true;
   },
 };
@@ -362,7 +352,7 @@ export const CalibrationSession = {
   },
 
   // Complete a session - convert to Calibration record
-  complete: (sessionId, results) => {
+  complete: async (sessionId, results) => {
     const session = CalibrationSession.get(sessionId);
     if (!session) {
       throw new Error(`CalibrationSession with id ${sessionId} not found`);
@@ -391,10 +381,10 @@ export const CalibrationSession = {
     });
 
     // Update patient with calibration data
-    const currentPatient = Patient.get(session.patient_id);
+    const currentPatient = await Patient.get(session.patient_id);
     if (currentPatient) {
       const currentCalibrationCount = currentPatient.calibration_count || 0;
-      Patient.update(session.patient_id, {
+      await Patient.update(session.patient_id, {
         training_type: results.training_type,
         last_calibration_date: currentDate,
         calibration_count: currentCalibrationCount + 1,
