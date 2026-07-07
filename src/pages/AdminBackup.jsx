@@ -140,7 +140,7 @@ export default function AdminBackup() {
       a.download = `dibh-deidentified-${format(new Date(), 'yyyyMMdd')}.csv`;
       a.click();
       URL.revokeObjectURL(url);
-      tryWriteAuditLog({ action: 'DEIDENTIFIED_EXPORT', targetType: 'system', detail: `${decrypted.length}명 비식별 내보내기` });
+      tryWriteAuditLog({ action: AUDIT_ACTIONS.DEIDENTIFIED_EXPORT, targetType: 'system', detail: `${decrypted.length}명 비식별 내보내기` });
       setStatus({ type: 'success', message: `비식별 데이터가 내보내졌습니다 (${decrypted.length}명). 이름·생년월일은 포함되지 않습니다.` });
     } catch (err) {
       console.error('[AdminBackup] de-identified export failed:', err);

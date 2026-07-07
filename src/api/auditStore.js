@@ -53,7 +53,9 @@ export function writeAuditLog({ action, targetType = null, targetId = null, deta
   log.push(entry);
   if (log.length > MAX_ENTRIES) log.splice(0, log.length - MAX_ENTRIES);
 
-  secDbg('UC-04/UC-06/UC-07', 'Audit Log Entry Written', {
+  secDbg('UC-04/UC-06/UC-07', '감사 로그 항목 기록 — Audit Log Entry Written', {
+    설명: '보안 이벤트를 감사 로그에 기록합니다. 사용자 ID·타임스탬프·액션 코드를 포함하여 부인 방지(UC-07) 및 추적성(UC-04)을 보장합니다.',
+    description: 'Records a security event to the audit log. Includes userId, timestamp, and action code for non-repudiation (UC-07) and traceability (UC-04).',
     action: entry.action,
     userId: entry.userId,
     username: entry.username,
@@ -71,7 +73,9 @@ export function writeAuditLog({ action, targetType = null, targetId = null, deta
   } catch (e) {
     const isQuota = e instanceof DOMException && (e.name === 'QuotaExceededError' || e.code === 22);
     if (isQuota) {
-      secDbg('UC-05', 'QuotaExceededError — emergency trim 20% oldest entries', {
+      secDbg('UC-05', '저장소 용량 초과 긴급 조치 — QuotaExceededError Emergency Trim', {
+        설명: 'localStorage 용량 초과 시 오래된 감사 로그 20%를 삭제하고 쓰기를 재시도합니다. 최신 기록을 보존하기 위한 긴급 조치입니다.',
+        description: 'On localStorage QuotaExceededError, drops the oldest 20% of audit entries and retries the write to preserve the most recent records.',
         entries_before: log.length,
       });
       const trimmed = log.slice(Math.floor(log.length * 0.2));
@@ -135,6 +139,7 @@ export function getAuditLogCapacity() {
 export const AUDIT_ACTIONS = {
   LOGIN: 'LOGIN',
   LOGOUT: 'LOGOUT',
+  SESSION_TIMEOUT: 'SESSION_TIMEOUT',      // UC-04: auto-logout distinguished from manual
   LOGIN_FAILED: 'LOGIN_FAILED',
   ACCOUNT_LOCKED: 'ACCOUNT_LOCKED',
   USER_CREATED: 'USER_CREATED',
@@ -152,4 +157,5 @@ export const AUDIT_ACTIONS = {
   CALIBRATION_DELETED: 'CALIBRATION_DELETED',
   BACKUP_CREATED: 'BACKUP_CREATED',
   BACKUP_RESTORED: 'BACKUP_RESTORED',
+  DEIDENTIFIED_EXPORT: 'DEIDENTIFIED_EXPORT', // UC-04: de-identified CSV export
 };

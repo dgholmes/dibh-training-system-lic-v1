@@ -44,8 +44,10 @@ export async function initCrypto() {
     false,
     ['encrypt', 'decrypt']
   );
-  secDbg('DC-01', 'AES-256-GCM Installation Key Loaded', {
-    status: isNew ? 'new key generated and stored' : 'existing key loaded from localStorage',
+  secDbg('DC-01', 'AES-256-GCM 설치 키 로드 — Installation Key Loaded', {
+    설명: '앱 설치 시 생성된 256비트 AES-GCM 키를 로드합니다. 환자 PII 암호화에 사용되며, 키는 메모리에만 유지되고 외부로 추출 불가합니다.',
+    description: 'Loads the 256-bit AES-GCM installation key used to encrypt patient PII. Key stays in memory only — not extractable.',
+    status: isNew ? '신규 키 생성 및 저장 (new key generated)' : 'localStorage에서 기존 키 로드 (existing key loaded)',
     algorithm: 'AES-GCM',
     key_length_bits: 256,
     extractable: false,
@@ -62,14 +64,16 @@ export async function encryptValue(plaintext) {
   const ciphertext = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, _key, enc.encode(plaintext));
   const ivHex = hexEncode(iv.buffer);
   const result = `enc:${ivHex}:${hexEncode(ciphertext)}`;
-  secDbg('DC-01', 'AES-256-GCM Encrypt', {
+  secDbg('DC-01', 'AES-256-GCM 암호화 수행 — Encrypt', {
+    설명: '환자 PII(이름·생년월일·담당의사명)를 AES-256-GCM으로 암호화합니다. 매 암호화마다 새로운 랜덤 IV가 생성됩니다.',
+    description: 'Encrypts patient PII (name, DOB, doctor) using AES-256-GCM. A fresh random IV is generated for every operation.',
     algorithm: 'AES-256-GCM',
     iv_hex: ivHex,
     iv_length_bits: 96,
     plaintext_length_bytes: new TextEncoder().encode(plaintext).length,
     ciphertext_length_bytes: ciphertext.byteLength,
     output_format: 'enc:<ivHex>:<ciphertextHex>',
-    note: 'Fresh random IV generated per operation — plaintext and key not logged',
+    note: '매 암호화마다 새 랜덤 IV 생성 — 평문·키 미포함 | Fresh random IV per op — plaintext & key not logged',
   });
   return result;
 }
@@ -101,12 +105,14 @@ export async function decryptValue(value) {
     _key,
     hexDecode(ciphertextHex)
   );
-  secDbg('DC-01', 'AES-256-GCM Decrypt', {
+  secDbg('DC-01', 'AES-256-GCM 복호화 수행 — Decrypt', {
+    설명: '암호화된 환자 PII를 복호화합니다. GCM 인증 태그 검증으로 데이터 변조 여부를 자동 확인합니다.',
+    description: 'Decrypts encrypted patient PII. GCM authentication tag verification automatically detects any tampering.',
     algorithm: 'AES-256-GCM',
     iv_hex: ivHex,
     ciphertext_length_bytes: hexDecode(ciphertextHex).length,
-    status: 'success — GCM authentication tag verified',
-    note: 'Plaintext not logged',
+    status: '성공 — GCM 인증 태그 검증 완료 (변조 없음) | success — GCM auth tag verified (no tampering)',
+    note: '복호화된 평문 미포함 — Plaintext not logged',
   });
   return new TextDecoder().decode(plaintext);
 }
@@ -115,7 +121,9 @@ export async function decryptValue(value) {
 export async function sha256Hex(buffer) {
   const digest = await crypto.subtle.digest('SHA-256', buffer);
   const hash = hexEncode(digest);
-  secDbg('SI-04', 'SHA-256 Integrity Hash', {
+  secDbg('SI-04', 'SHA-256 무결성 해시 계산 — Integrity Hash', {
+    설명: '파일의 SHA-256 해시값을 계산합니다. 호흡 데이터 파일 무결성 검증 및 앱 번들 변조 탐지에 사용됩니다.',
+    description: 'Computes SHA-256 hash of a file. Used for breathing data file integrity and app bundle tamper detection.',
     algorithm: 'SHA-256',
     input_length_bytes: buffer.byteLength,
     hash_hex: hash,

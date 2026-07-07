@@ -8,7 +8,7 @@
 //
 // Output appears in the browser DevTools console grouped by requirement code.
 
-export const SECURITY_DEBUG = false;
+export const SECURITY_DEBUG = true; // KTC AUDIT DEMO — set back to false before production build
 
 const PREFIX = '[SECURITY-AUDIT]';
 

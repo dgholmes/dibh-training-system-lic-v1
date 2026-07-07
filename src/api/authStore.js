@@ -66,13 +66,15 @@ async function pbkdf2Hash(password, salt) {
     key,
     256
   );
-  secDbg('IA-01/IA-05', 'PBKDF2-SHA256 Password Hash', {
+  secDbg('IA-01/IA-05', 'PBKDF2-SHA256 비밀번호 해시 생성 — Password Hash', {
+    설명: '비밀번호를 PBKDF2-SHA256으로 단방향 해시 처리합니다. 100,000회 반복과 랜덤 솔트로 무차별 대입 공격을 방어합니다.',
+    description: 'One-way password hash using PBKDF2-SHA256. 100,000 iterations + random salt defends against brute-force attacks.',
     algorithm: 'PBKDF2-SHA256',
     iterations: 100_000,
     salt_hex: salt,
     salt_length_bytes: salt.length / 2,
     output_length_bits: 256,
-    note: 'Password not logged',
+    note: '비밀번호 평문은 로그에 포함되지 않음 — Plaintext password not logged',
   });
   return hexEncode(bits);
 }
@@ -142,10 +144,14 @@ export async function loginUser(username, password) {
       // Re-entering after app restart: pin into monotonic tracker for this session
       _sessionLockouts.set(user.id, performance.now() - (LOCKOUT_TICKS - ticks) * HEARTBEAT_MS);
     }
-    secDbg('IA-07', 'Lockout Active', {
-      ticks_remaining: ticks,
-      remaining_min: remainingMin,
+    secDbg('IA-07', '계정 잠금 상태 확인 — Lockout Active', {
+      설명: '연속 로그인 실패로 인해 계정이 잠금 상태입니다. OS 시계 조작 내성을 위해 이중 레이어 잠금이 적용되어 있습니다.',
+      description: 'Account is locked due to repeated login failures. Dual-layer lockout is immune to OS clock manipulation.',
+      남은_틱: ticks, ticks_remaining: ticks,
+      남은_시간_분: remainingMin, remaining_min: remainingMin,
+      레이어1: '틱 카운터 (실시간 인터벌, OS 시계 무관, 세션 간 유지)',
       layer1: 'tick counter (real-time interval, OS-clock immune, cross-session)',
+      레이어2: 'performance.now() — 동일 세션 내 정밀 측정',
       layer2: 'performance.now() pinned for this session',
     });
     return {
@@ -168,13 +174,20 @@ export async function loginUser(username, password) {
     }
     users[idx] = { ...user, ...update };
     saveUsers(users);
-    secDbg('IA-07', update.lockoutTicksRemaining ? 'Account Locked' : 'Login Failed', {
+    secDbg('IA-07', update.lockoutTicksRemaining ? '계정 잠금 처리 — Account Locked' : '로그인 실패 — Login Failed', {
+      설명: update.lockoutTicksRemaining
+        ? `${MAX_FAILED_ATTEMPTS}회 연속 실패로 계정이 잠금 처리되었습니다. 15분 후 자동 해제됩니다.`
+        : '비밀번호가 일치하지 않아 로그인이 실패하였습니다.',
+      description: update.lockoutTicksRemaining
+        ? `Account locked after ${MAX_FAILED_ATTEMPTS} consecutive failures. Auto-unlocks after 15 minutes.`
+        : 'Login failed — password mismatch.',
       username,
-      failed_attempt: attempts,
-      max_attempts: MAX_FAILED_ATTEMPTS,
-      account_locked: !!update.lockoutTicksRemaining,
-      lockout_ticks: update.lockoutTicksRemaining ?? 'N/A',
-      lockout_duration_min: LOCKOUT_MS / 60_000,
+      실패_횟수: attempts, failed_attempt: attempts,
+      최대_허용_횟수: MAX_FAILED_ATTEMPTS, max_attempts: MAX_FAILED_ATTEMPTS,
+      계정_잠금_여부: !!update.lockoutTicksRemaining, account_locked: !!update.lockoutTicksRemaining,
+      잠금_틱: update.lockoutTicksRemaining ?? 'N/A', lockout_ticks: update.lockoutTicksRemaining ?? 'N/A',
+      잠금_시간_분: LOCKOUT_MS / 60_000, lockout_duration_min: LOCKOUT_MS / 60_000,
+      시계_조작_방어: '레이어1: 실시간 틱 카운터 (세션 간 유지) | 레이어2: performance.now() (동일 세션)',
       clock_protection: 'Layer 1: real-time tick counter (cross-session safe) | Layer 2: performance.now() (same-session)',
     });
 
@@ -242,6 +255,17 @@ export function clearSession() {
   if (s) {
     import('./auditStore').then(({ tryWriteAuditLog, AUDIT_ACTIONS }) => {
       tryWriteAuditLog({ action: AUDIT_ACTIONS.LOGOUT, targetType: 'user', targetId: s.userId, detail: `username: ${s.username}` });
+    });
+  }
+}
+
+/** Like clearSession() but logs SESSION_TIMEOUT instead of LOGOUT — used by the inactivity timer. */
+export function clearSessionForTimeout() {
+  const s = getSession();
+  sessionStorage.removeItem(SESSION_KEY);
+  if (s) {
+    import('./auditStore').then(({ tryWriteAuditLog, AUDIT_ACTIONS }) => {
+      tryWriteAuditLog({ action: AUDIT_ACTIONS.SESSION_TIMEOUT, targetType: 'user', targetId: s.userId, detail: `username: ${s.username}, reason: 30min inactivity` });
     });
   }
 }
