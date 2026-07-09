@@ -1,0 +1,39 @@
+{
+  "attempts": [
+    {
+      "idx": 1,
+      "hold_duration_sec": null,
+      "hold_quality_pct": null,
+      "hold_mean": null,
+      "hold_std": null,
+      "hold_min": null,
+      "hold_max": null,
+      "valid": false,
+      "reason": "timeout_wait_hold_start"
+    },
+    {
+      "idx": 2,
+      "hold_duration_sec": null,
+      "hold_quality_pct": null,
+      "hold_mean": null,
+      "hold_std": null,
+      "hold_min": null,
+      "hold_max": null,
+      "valid": false,
+      "reason": "timeout_wait_hold_start"
+    },
+    {
+      "idx": 3,
+      "hold_duration_sec": null,
+      "hold_quality_pct": null,
+      "hold_mean": null,
+      "hold_std": null,
+      "hold_min": null,
+      "hold_max": null,
+      "valid": false,
+      "reason": "timeout_wait_hold_start"
+    }
+  ],
+  "avg_dibh_sec": null,
+  "dibh_type": null
+}
