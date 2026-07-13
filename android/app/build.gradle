@@ -1,3 +1,12 @@
+import groovy.json.JsonSlurper
+
+// Single source of truth for the app version is package.json at the repo root.
+// Bump it with `npm version patch|minor|major` — every Android build then
+// picks up the new versionName/versionCode automatically, no manual sync needed.
+def packageJson = new JsonSlurper().parse(new File(rootDir, '../package.json'))
+def appVersionName = packageJson.version
+def appVersionCode = appVersionName.tokenize('.').collect { it.toInteger() }.inject(0) { code, part -> code * 100 + part }
+
 apply plugin: 'com.android.application'
 
 android {
@@ -7,8 +16,8 @@ android {
         applicationId "com.thepict.dibhtraining"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionCode appVersionCode
+        versionName appVersionName
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.

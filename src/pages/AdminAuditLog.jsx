@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef, useLayoutEffect, useCallback } from 'react';
 import { ArrowLeft, Search, ShieldCheck, Users, ClipboardList, Database, AlertTriangle } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -35,7 +35,13 @@ function fmtBytes(b) {
   return `${(b / (1024 * 1024)).toFixed(2)} MB`;
 }
 
-const PAGE_SIZE = 50;
+// Table row height is fixed by the Tailwind classes below (px-4 py-2.5/py-3
+// with text-sm/text-xs) — both header and body rows render at ~40px.
+const ROW_HEIGHT_PX = 40;
+const MIN_PAGE_SIZE = 5;
+const DEFAULT_PAGE_SIZE = 10;
+// Space reserved below the table: pagination controls + version footer + page bottom padding (p-6 = 24px).
+const RESERVED_BELOW_TABLE_PX = 130;
 
 const ACTION_COLORS = {
   LOGIN: 'text-[#22C55E]',
@@ -59,23 +65,61 @@ const ACTION_COLORS = {
 export default function AdminAuditLog() {
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(0);
+  const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
+
+  const tableWrapRef = useRef(null);
+
+  // Fit as many rows as the current viewport allows below the table's
+  // position on the page, so the whole page never needs to scroll.
+  const recalcPageSize = useCallback(() => {
+    const el = tableWrapRef.current;
+    if (!el) return;
+    const top = el.getBoundingClientRect().top;
+    const available = window.innerHeight - top - RESERVED_BELOW_TABLE_PX - ROW_HEIGHT_PX /* header row */;
+    const fit = Math.floor(available / ROW_HEIGHT_PX);
+    setPageSize((prev) => {
+      const next = Math.max(MIN_PAGE_SIZE, fit);
+      return prev === next ? prev : next;
+    });
+  }, []);
+
+  useLayoutEffect(() => {
+    recalcPageSize();
+  });
+
+  useLayoutEffect(() => {
+    let timeoutId;
+    const onResize = () => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(recalcPageSize, 150);
+    };
+    window.addEventListener('resize', onResize);
+    return () => {
+      window.removeEventListener('resize', onResize);
+      clearTimeout(timeoutId);
+    };
+  }, [recalcPageSize]);
 
   const { entries, total } = useMemo(
-    () => getAuditLogEntries({ search, limit: PAGE_SIZE, offset: page * PAGE_SIZE }),
-    [search, page]
+    () => getAuditLogEntries({ search, limit: pageSize, offset: page * pageSize }),
+    [search, page, pageSize]
   );
 
   const capacity = useMemo(() => getAuditLogCapacity(), [total]);
 
-  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+
+  useLayoutEffect(() => {
+    if (page > totalPages - 1) setPage(Math.max(0, totalPages - 1));
+  }, [page, totalPages]);
 
   const handleSearch = (v) => { setSearch(v); setPage(0); };
 
   return (
-    <div className="min-h-screen bg-[#0D1117] p-6 pb-24">
+    <div className="bg-[#0D1117] p-6">
       <div className="mx-auto max-w-4xl">
         {/* Header */}
-        <div className="mb-6 flex items-center gap-3">
+        <div className="sticky top-0 z-20 mb-6 flex items-center gap-3 bg-[#0D1117] py-1">
           <Link to="/home">
             <Button variant="ghost" size="icon" className="text-[#8B949E] hover:bg-[#1C2128] hover:text-white">
               <ArrowLeft className="h-5 w-5" />
@@ -140,7 +184,7 @@ export default function AdminAuditLog() {
         </p>
 
         {/* Log table */}
-        <div className="overflow-hidden rounded-2xl border border-[#30363D] bg-[#1C2128]">
+        <div ref={tableWrapRef} className="overflow-hidden rounded-2xl border border-[#30363D] bg-[#1C2128]">
           {entries.length === 0 ? (
             <div className="py-16 text-center text-sm text-[#8B949E]">
               {search ? '검색 결과가 없습니다.' : '기록된 감사 로그가 없습니다.'}
@@ -197,6 +241,8 @@ export default function AdminAuditLog() {
             </Button>
           </div>
         )}
+
+        <p className="mt-8 text-center text-xs text-[#8B949E]">DIBH - Flow v{__APP_VERSION__}</p>
       </div>
     </div>
   );

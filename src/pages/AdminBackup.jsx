@@ -36,6 +36,12 @@ function AdminNav() {
   );
 }
 
+const COLOR_ACTION_BTN = {
+  blue: 'border-[#3B82F6]/40 bg-transparent text-[#3B82F6] shadow-none hover:border-[#3B82F6]/70 hover:bg-[#3B82F6]/10 hover:text-[#3B82F6]',
+  green: 'border-[#22C55E]/40 bg-transparent text-[#22C55E] shadow-none hover:border-[#22C55E]/70 hover:bg-[#22C55E]/10 hover:text-[#22C55E]',
+  purple: 'border-[#A78BFA]/40 bg-transparent text-[#A78BFA] shadow-none hover:border-[#A78BFA]/70 hover:bg-[#A78BFA]/10 hover:text-[#A78BFA]',
+};
+
 const BACKUP_KEYS = ['dibh_patients', 'dibh_calibrations', 'dibh_training_sessions', 'dibh_audit_log'];
 
 /** SHA-256 hex of a string — used for pseudonymisation (DC-02) */
@@ -178,7 +184,7 @@ export default function AdminBackup() {
   return (
     <div className="min-h-screen bg-[#0D1117] p-6 pb-24">
       <div className="mx-auto max-w-2xl">
-        <div className="mb-6 flex items-center gap-3">
+        <div className="sticky top-0 z-20 mb-6 flex items-center gap-3 bg-[#0D1117] py-1">
           <Link to="/home">
             <Button variant="ghost" size="icon" className="text-[#8B949E] hover:bg-[#1C2128] hover:text-white">
               <ArrowLeft className="h-5 w-5" />
@@ -204,56 +210,71 @@ export default function AdminBackup() {
         <div className="space-y-4">
           {/* Export */}
           <div className="rounded-2xl border border-[#30363D] bg-[#1C2128] p-6">
-            <h2 className="mb-1 flex items-center gap-2 text-base font-bold text-white">
-              <Download className="h-4 w-4 text-[#3B82F6]" /> 데이터 백업 (내보내기)
-            </h2>
-            <p className="mb-5 text-sm text-[#8B949E]">
-              모든 환자·캘리브레이션·감사 로그를 AES-256으로 암호화한 파일로 내보냅니다.
-              백업 중에는 시스템 사용에 영향을 주지 않습니다.
-            </p>
-            <Button onClick={handleExport} disabled={exporting}
-              className="gap-2 bg-gradient-to-r from-[#3B82F6] to-[#8B5CF6] text-white">
-              <Download className="h-4 w-4" />
-              {exporting ? '생성 중…' : '백업 파일 생성'}
-            </Button>
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <h2 className="mb-1 flex items-center gap-2 text-base font-bold text-white">
+                  <Download className="h-4 w-4 text-[#3B82F6]" /> 데이터 백업 (내보내기)
+                </h2>
+                <p className="text-sm text-[#8B949E]">
+                  모든 환자·캘리브레이션·감사 로그를 AES-256으로 암호화한 파일로 내보냅니다.
+                  백업 중에는 시스템 사용에 영향을 주지 않습니다.
+                </p>
+              </div>
+              <Button size="sm" variant="outline" onClick={handleExport} disabled={exporting}
+                className={cn('shrink-0 gap-1.5', COLOR_ACTION_BTN.blue)}>
+                <Download className="h-3.5 w-3.5" />
+                <span>{exporting ? '생성 중…' : '백업 파일 생성'}</span>
+              </Button>
+            </div>
           </div>
 
           {/* De-identified export (DC-02) */}
           <div className="rounded-2xl border border-[#30363D] bg-[#1C2128] p-6">
-            <h2 className="mb-1 flex items-center gap-2 text-base font-bold text-white">
-              <FileDown className="h-4 w-4 text-[#22C55E]" /> 비식별 데이터 내보내기 (DC-02)
-            </h2>
-            <p className="mb-5 text-sm text-[#8B949E]">
-              이름·생년월일을 제외한 캘리브레이션 결과를 CSV로 내보냅니다.
-              환자 코드·성별·치료회차·분석결과만 포함됩니다.
-            </p>
-            <Button onClick={handleDeidentifiedExport} disabled={deidentifying} variant="outline"
-              className="gap-2 border-[#22C55E]/40 text-[#22C55E] hover:bg-[#22C55E]/10">
-              <FileDown className="h-4 w-4" />
-              {deidentifying ? '생성 중…' : '비식별 CSV 내보내기'}
-            </Button>
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <h2 className="mb-1 flex items-center gap-2 text-base font-bold text-white">
+                  <FileDown className="h-4 w-4 text-[#22C55E]" /> 비식별 데이터 내보내기 (DC-02)
+                </h2>
+                <p className="text-sm text-[#8B949E]">
+                  이름·생년월일을 제외한 캘리브레이션 결과를 CSV로 내보냅니다.
+                  환자 코드·성별·치료회차·분석결과만 포함됩니다.
+                </p>
+              </div>
+              <Button size="sm" variant="outline" onClick={handleDeidentifiedExport} disabled={deidentifying}
+                className={cn('shrink-0 gap-1.5', COLOR_ACTION_BTN.green)}>
+                <FileDown className="h-3.5 w-3.5" />
+                <span>{deidentifying ? '생성 중…' : '비식별 CSV 내보내기'}</span>
+              </Button>
+            </div>
           </div>
 
           {/* Import */}
           <div className="rounded-2xl border border-[#30363D] bg-[#1C2128] p-6">
-            <h2 className="mb-1 flex items-center gap-2 text-base font-bold text-white">
-              <Upload className="h-4 w-4 text-[#A78BFA]" /> 데이터 복구 (가져오기)
-            </h2>
-            <p className="mb-2 text-sm text-[#8B949E]">
-              이전에 생성한 백업 파일(.enc)을 불러와 복구합니다.
-              무결성 검증 후 적용되며, 현재 데이터를 덮어씁니다.
-            </p>
-            <div className="mb-5 rounded-xl border border-[#EAB308]/30 bg-[#EAB308]/10 px-4 py-3 text-xs text-[#EAB308]">
-              ⚠ 복구 시 현재 저장된 데이터가 백업 시점으로 대체됩니다.
+            <div className="flex flex-col gap-4 sm:flex-row sm:justify-between">
+              <div className="flex-1">
+                <h2 className="mb-1 flex items-center gap-2 text-base font-bold text-white">
+                  <Upload className="h-4 w-4 text-[#A78BFA]" /> 데이터 복구 (가져오기)
+                </h2>
+                <p className="text-sm text-[#8B949E]">
+                  이전에 생성한 백업 파일(.enc)을 불러와 복구합니다.
+                  무결성 검증 후 적용되며, 현재 데이터를 덮어씁니다.
+                </p>
+              </div>
+              <div className="flex shrink-0 flex-col items-end justify-between gap-2">
+                <span className="text-right text-xs text-[#EAB308]">⚠ 복구 시 현재 저장된 데이터가 백업 시점으로 대체됩니다.</span>
+                <label className={cn('inline-flex h-8 items-center gap-1.5 rounded-md border px-3 text-xs font-medium transition-colors',
+                  COLOR_ACTION_BTN.purple,
+                  importing ? 'pointer-events-none opacity-50' : 'cursor-pointer')}>
+                  <Upload className="h-3.5 w-3.5" />
+                  <span>{importing ? '복구 중…' : '백업 파일 선택'}</span>
+                  <input type="file" accept=".enc" className="hidden" disabled={importing} onChange={handleImport} />
+                </label>
+              </div>
             </div>
-            <label className={cn('inline-flex cursor-pointer items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold text-white transition-colors',
-              importing ? 'bg-[#30363D] opacity-60' : 'bg-[#8B5CF6] hover:bg-[#7C3AED]')}>
-              <Upload className="h-4 w-4" />
-              {importing ? '복구 중…' : '백업 파일 선택'}
-              <input type="file" accept=".enc" className="hidden" disabled={importing} onChange={handleImport} />
-            </label>
           </div>
         </div>
+
+        <p className="mt-8 text-center text-xs text-[#8B949E]">DIBH - Flow v{__APP_VERSION__}</p>
       </div>
     </div>
   );

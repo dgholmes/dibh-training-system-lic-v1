@@ -8,6 +8,7 @@ import { useQuery } from '@tanstack/react-query';
 import ComprehensiveBreathingReportCard from '@/components/breathing/ComprehensiveBreathingReportCard';
 import BreathingTypeComparisonModal from '@/components/breathing/BreathingTypeComparisonModal';
 import AnalysisPlaybackPanel from '@/components/breathing/AnalysisPlaybackPanel';
+import { getLatestCalibration } from '@/lib/calibration/sortCalibrations';
 
 /**
  * Calibration report (route: /CalibrationReport) — same UI as TypeDecision,
@@ -40,12 +41,7 @@ export default function TrainingReport() {
         return null;
       }
       const list = Calibration.filter({ patient_id: patientId });
-      if (!list.length) return null;
-      return [...list].sort(
-        (a, b) =>
-          new Date(b.calibration_date || b.created_at || 0) -
-          new Date(a.calibration_date || a.created_at || 0)
-      )[0];
+      return getLatestCalibration(list);
     },
     enabled: !!patientId,
   });

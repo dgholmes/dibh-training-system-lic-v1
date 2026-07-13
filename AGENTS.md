@@ -54,7 +54,7 @@ Routes are defined in `src/pages/index.jsx`. All non-public routes require authe
 | `/traininghistory` | Training session history | |
 | `/typedecision` | Post-analysis type confirmation | |
 | `/admin/accounts` | User account management | Admin only |
-| `/admin/auditlog` | Audit log viewer (50/page, searchable) | Admin only |
+| `/admin/auditlog` | Audit log viewer (page size fits viewport height, searchable) | Admin only |
 | `/admin/backup` | AES-256 encrypted backup/restore + de-identified CSV export | Admin only |
 
 Legacy routes (`/calibration`, `/trainingmonitor`, etc.) redirect to `/home` via `LegacyFlowRedirect`.

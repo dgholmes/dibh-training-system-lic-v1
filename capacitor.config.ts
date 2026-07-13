@@ -2,7 +2,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'com.thepict.dibhtraining',
-  appName: 'DIBH 훈련 시스템',
+  appName: 'DIBH - Flow',
   webDir: 'dist',
   server: {
     androidScheme: 'https',

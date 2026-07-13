@@ -8,6 +8,7 @@ import { useQuery } from '@tanstack/react-query';
 import ComprehensiveBreathingReportCard from '@/components/breathing/ComprehensiveBreathingReportCard';
 import BreathingTypeComparisonModal from '@/components/breathing/BreathingTypeComparisonModal';
 import AnalysisPlaybackPanel from '@/components/breathing/AnalysisPlaybackPanel';
+import { getLatestCalibration } from '@/lib/calibration/sortCalibrations';
 
 export default function TypeDecision() {
   const navigate = useNavigate();
@@ -29,13 +30,7 @@ export default function TypeDecision() {
     queryKey: ['latestCalibration', patientId],
     queryFn: () => {
       const calibrations = Calibration.filter({ patient_id: patientId });
-      if (calibrations.length === 0) return null;
-      return [...calibrations].sort(
-        (a, b) =>
-          new Date(b.calibration_date || b.created_at || 0) -
-          new Date(a.calibration_date || a.created_at || 0) ||
-          new Date(b.created_at || 0) - new Date(a.created_at || 0)
-      )[0];
+      return getLatestCalibration(calibrations);
     },
     enabled: !!patientId,
     staleTime: 0,

@@ -46,7 +46,7 @@ export default function Home() {
     <div className="min-h-screen bg-[#0D1117] p-6 pb-24">
       <div className="max-w-2xl mx-auto">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="sticky top-0 z-20 mb-6 flex items-center justify-between bg-[#0D1117] py-1">
           <h1 className="text-2xl font-bold text-white">환자 정보 선택</h1>
           <div className="flex items-center gap-2">
             {/* Admin panel — visible to admin role only (UC-01) */}

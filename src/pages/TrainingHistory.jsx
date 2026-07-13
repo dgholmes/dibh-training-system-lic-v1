@@ -8,6 +8,7 @@ import { useQuery } from '@tanstack/react-query';
 import { format, parseISO } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { BreathingTypeBadge } from '@/components/breathing/BreathingTypeBadge';
+import { sortCalibrationsDesc } from '@/lib/calibration/sortCalibrations';
 
 export default function CalibrationHistory() {
   const navigate = useNavigate();
@@ -27,9 +28,7 @@ export default function CalibrationHistory() {
     queryKey: ['calibrations', patientId],
     queryFn: () => {
       if (!patientId) return [];
-      return Calibration.filter({ patient_id: patientId }).sort(
-        (a, b) => new Date(b.calibration_date || b.created_at || 0) - new Date(a.calibration_date || a.created_at || 0)
-      );
+      return sortCalibrationsDesc(Calibration.filter({ patient_id: patientId }));
     },
     enabled: !!patientId,
   });

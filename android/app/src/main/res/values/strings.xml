@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">DIBH 훈련 시스템</string>
-    <string name="title_activity_main">DIBH 훈련 시스템</string>
+    <string name="app_name">DIBH - Flow</string>
+    <string name="title_activity_main">DIBH - Flow</string>
     <string name="package_name">com.thepict.dibhtraining</string>
     <string name="custom_url_scheme">com.thepict.dibhtraining</string>
 </resources>

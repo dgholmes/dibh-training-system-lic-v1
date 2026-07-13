@@ -145,7 +145,7 @@ export default function AdminAccounts() {
     <div className="min-h-screen bg-[#0D1117] p-6 pb-24">
       <div className="mx-auto max-w-3xl">
         {/* Header */}
-        <div className="mb-6 flex items-center gap-3">
+        <div className="sticky top-0 z-20 mb-6 flex items-center gap-3 bg-[#0D1117] py-1">
           <Link to="/home">
             <Button variant="ghost" size="icon" className="text-[#8B949E] hover:bg-[#1C2128] hover:text-white">
               <ArrowLeft className="h-5 w-5" />
@@ -236,6 +236,8 @@ export default function AdminAccounts() {
             </ul>
           )}
         </div>
+
+        <p className="mt-8 text-center text-xs text-[#8B949E]">DIBH - Flow v{__APP_VERSION__}</p>
       </div>
 
       {/* Create account modal */}

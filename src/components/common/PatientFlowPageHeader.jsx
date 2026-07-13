@@ -12,7 +12,7 @@ export function PatientFlowPageHeader({ backHref, title, patient, trailing = nul
   return (
     <div
       className={cn(
-        'mb-4 flex items-center gap-4',
+        'sticky top-0 z-20 mb-4 flex items-center gap-4 bg-[#0D1117] py-1',
         trailing ? 'justify-between' : null,
         className
       )}

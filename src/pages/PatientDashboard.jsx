@@ -14,6 +14,7 @@ import {
 } from '@/api/entities';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { getCalibrationStatus, getRecalibrationReason } from '@/utils/recalibration';
+import { getLatestCalibration, sortCalibrationsDesc } from '@/lib/calibration/sortCalibrations';
 import { format, parseISO, isValid } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { darkPopoverCalendarClassNames } from '@/lib/darkPopoverCalendar';
@@ -112,9 +113,7 @@ export default function PatientDashboard() {
   const lastAnalysisLabel = useMemo(() => {
     const dates = [];
     if (calibrations.length) {
-      const latest = [...calibrations].sort(
-        (a, b) => new Date(b.calibration_date) - new Date(a.calibration_date)
-      )[0];
+      const latest = getLatestCalibration(calibrations);
       if (latest?.calibration_date) dates.push(new Date(latest.calibration_date));
     }
     breathingFiles.forEach((f) => {
@@ -128,7 +127,7 @@ export default function PatientDashboard() {
   const hasBreathingData = breathingFiles.length > 0;
   const historyRows = useMemo(() => {
     const rows = [];
-    calibrations.forEach((c) => {
+    sortCalibrationsDesc(calibrations).forEach((c) => {
       const t = c.training_type;
       const tl = typeLabels[t] || { label: `Type ${t || '—'}`, className: '' };
       const fileDetail = (() => {
@@ -154,15 +153,10 @@ export default function PatientDashboard() {
           `/CalibrationReport?patientId=${encodeURIComponent(patientId)}&calibrationId=${encodeURIComponent(c.id)}`,
       });
     });
-    return rows.sort((a, b) => new Date(b.date) - new Date(a.date));
+    return rows;
   }, [patientId, calibrations]);
 
-  const latestCalibration = useMemo(() => {
-    if (!calibrations.length) return null;
-    return [...calibrations].sort(
-      (a, b) => new Date(b.calibration_date || 0) - new Date(a.calibration_date || 0)
-    )[0];
-  }, [calibrations]);
+  const latestCalibration = useMemo(() => getLatestCalibration(calibrations), [calibrations]);
 
   const analysisReportCardHref = useMemo(() => {
     if (!patientId || !latestCalibration?.id) return null;
@@ -245,7 +239,7 @@ export default function PatientDashboard() {
     <div className="min-h-screen bg-[#0D1117] p-6 pb-28">
       <div className="mx-auto max-w-3xl">
         {/* Top bar */}
-        <div className="mb-6 flex items-center gap-3">
+        <div className="sticky top-0 z-20 mb-6 flex items-center gap-3 bg-[#0D1117] py-1">
           <Link to={createPageUrl('Home')}>
             <Button variant="ghost" size="icon" className="text-[#8B949E] hover:bg-[#1C2128] hover:text-white">
               <ArrowLeft className="h-6 w-6" />

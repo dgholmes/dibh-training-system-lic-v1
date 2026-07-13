@@ -171,6 +171,13 @@ button:focus-visible {
   }
   body {
     @apply bg-background text-foreground;
+    /* App is dark-only (no light theme toggle) — pin the body background so any
+       page shorter than the viewport doesn't expose the light `--background` default. */
+    background-color: #0D1117;
+    /* Korean text wraps at word boundaries, not mid-syllable; long unbreakable
+       strings (URLs, tokens) still fall back to breaking so they don't overflow. */
+    word-break: keep-all;
+    overflow-wrap: break-word;
   }
 }
 
