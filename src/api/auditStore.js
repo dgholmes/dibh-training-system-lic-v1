@@ -186,4 +186,5 @@ export const AUDIT_ACTIONS = {
   BACKUP_RESTORED: 'BACKUP_RESTORED',
   DEIDENTIFIED_EXPORT: 'DEIDENTIFIED_EXPORT', // UC-04: de-identified CSV export
   DEBUG_SEED_ENTRY: 'DEBUG_SEED_ENTRY', // debug-build only — never appears in a production audit log
+  USAGE_NOTICE_UPDATED: 'USAGE_NOTICE_UPDATED',
 };

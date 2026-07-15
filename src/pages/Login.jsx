@@ -9,6 +9,7 @@ import { UserStore } from '@/api/authStore';
 import { validatePassword } from '@/lib/passwordUtils';
 import { cn } from '@/lib/utils';
 import logoSrc from '@/assets/logo.png';
+import { getCustomUsageNotice } from '@/api/usageNoticeStore';
 
 function useCapsLock() {
   const [on, setOn] = useState(false);
@@ -17,7 +18,15 @@ function useCapsLock() {
 }
 
 // ── System usage notice banner (IA-08) ────────────────────────────────────────
+/** Returns an array of non-empty trimmed lines from the admin's custom notice, or null to use the default styled JSX. */
+export function resolveUsageNoticeParagraphs() {
+  const custom = getCustomUsageNotice();
+  if (!custom) return null;
+  return custom.split('\n').map((line) => line.trim()).filter(Boolean);
+}
+
 function UsageNoticeBanner({ onAcknowledge }) {
+  const customLines = resolveUsageNoticeParagraphs();
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#0D1117] p-6">
       <div className="w-full max-w-lg rounded-2xl border border-[#EAB308]/40 bg-[#1C2128] p-8 shadow-2xl">
@@ -28,10 +37,16 @@ function UsageNoticeBanner({ onAcknowledge }) {
           <h2 className="text-lg font-bold text-white">시스템 사용 알림</h2>
         </div>
         <div className="space-y-3 rounded-xl border border-[#30363D] bg-[#0D1117] p-5 text-sm leading-relaxed text-[#C9D1D9]">
-          <p>본 시스템은 <span className="font-semibold text-white">인가된 의료진 및 관리자</span>만 사용할 수 있습니다.</p>
-          <p>시스템에 접속하고 수행되는 모든 활동은 <span className="font-semibold text-white">모니터링, 기록 및 감사의 대상</span>이 됩니다.</p>
-          <p><span className="font-semibold text-[#EF4444]">인가되지 않은 시스템 접근 및 사용은 금지</span>되며, 관련 법령에 따라 민·형사상 처벌을 받을 수 있습니다.</p>
-          <p>시스템 접속은 위 내용에 동의함을 의미합니다.</p>
+          {customLines ? (
+            customLines.map((line, i) => <p key={i}>{line}</p>)
+          ) : (
+            <>
+              <p>본 시스템은 <span className="font-semibold text-white">인가된 의료진 및 관리자</span>만 사용할 수 있습니다.</p>
+              <p>시스템에 접속하고 수행되는 모든 활동은 <span className="font-semibold text-white">모니터링, 기록 및 감사의 대상</span>이 됩니다.</p>
+              <p><span className="font-semibold text-[#EF4444]">인가되지 않은 시스템 접근 및 사용은 금지</span>되며, 관련 법령에 따라 민·형사상 처벌을 받을 수 있습니다.</p>
+              <p>시스템 접속은 위 내용에 동의함을 의미합니다.</p>
+            </>
+          )}
         </div>
         <Button
           onClick={onAcknowledge}
