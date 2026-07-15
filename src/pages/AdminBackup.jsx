@@ -12,6 +12,7 @@ import { cn } from '@/lib/utils';
 import { encryptValue, decryptValue, sha256Hex, decryptPatient } from '@/lib/crypto';
 import { tryWriteAuditLog, AUDIT_ACTIONS } from '@/api/auditStore';
 import { exportDbBinaryBase64, importDbBinaryBase64 } from '@/db/sqliteDb';
+import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 import { format } from 'date-fns';
 
 function AdminNav() {
@@ -120,15 +121,15 @@ export default function AdminBackup() {
     setStatus(null);
     try {
       const encrypted = await createBackup();
-      const blob = new Blob([encrypted], { type: 'text/plain' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `dibh-backup-${format(new Date(), 'yyyyMMdd-HHmmss')}.enc`;
-      a.click();
-      URL.revokeObjectURL(url);
-      tryWriteAuditLog({ action: AUDIT_ACTIONS.BACKUP_CREATED, targetType: 'system', detail: '암호화된 백업 생성됨' });
-      setStatus({ type: 'success', message: '백업 파일이 생성되었습니다.' });
+      const fileName = `dibh-backup-${format(new Date(), 'yyyyMMdd-HHmmss')}.enc`;
+      await Filesystem.writeFile({
+        path: fileName,
+        data: encrypted,
+        directory: Directory.Documents,
+        encoding: Encoding.UTF8,
+      });
+      tryWriteAuditLog({ action: AUDIT_ACTIONS.BACKUP_CREATED, targetType: 'system', detail: `암호화된 백업 생성됨: ${fileName}` });
+      setStatus({ type: 'success', message: `백업 파일이 생성되었습니다. (기기 내 Documents/${fileName})` });
     } catch (err) {
       console.error('[AdminBackup] export failed:', err);
       setStatus({ type: 'error', message: '백업 생성에 실패했습니다.' });
@@ -146,15 +147,15 @@ export default function AdminBackup() {
       // Decrypt patient PII first
       const decrypted = await Promise.all(patients.map(decryptPatient));
       const csv = await createDeidentifiedCsv(decrypted, calibrations);
-      const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `dibh-deidentified-${format(new Date(), 'yyyyMMdd')}.csv`;
-      a.click();
-      URL.revokeObjectURL(url);
-      tryWriteAuditLog({ action: AUDIT_ACTIONS.DEIDENTIFIED_EXPORT, targetType: 'system', detail: `${decrypted.length}명 비식별 내보내기` });
-      setStatus({ type: 'success', message: `비식별 데이터가 내보내졌습니다 (${decrypted.length}명). 이름·생년월일은 포함되지 않습니다.` });
+      const fileName = `dibh-deidentified-${format(new Date(), 'yyyyMMdd')}.csv`;
+      await Filesystem.writeFile({
+        path: fileName,
+        data: '﻿' + csv, // BOM for Excel UTF-8 compatibility, matches prior Blob-based behavior
+        directory: Directory.Documents,
+        encoding: Encoding.UTF8,
+      });
+      tryWriteAuditLog({ action: AUDIT_ACTIONS.DEIDENTIFIED_EXPORT, targetType: 'system', detail: `${decrypted.length}명 비식별 내보내기: ${fileName}` });
+      setStatus({ type: 'success', message: `비식별 데이터가 내보내졌습니다 (${decrypted.length}명, 기기 내 Documents/${fileName}). 이름·생년월일은 포함되지 않습니다.` });
     } catch (err) {
       console.error('[AdminBackup] de-identified export failed:', err);
       setStatus({ type: 'error', message: '비식별 내보내기에 실패했습니다.' });
