@@ -1,5 +1,5 @@
 // Audit log — MFDS UC-04 (logging), UC-05 (failure handling), UC-06 (timestamps), UC-07 (non-repudiation)
-import { secDbg } from '@/lib/securityDebug';
+import { secDbg, SECURITY_DEBUG } from '@/lib/securityDebug';
 // Entries are append-only; never modified or deleted via the UI.
 
 import { getSession } from './authStore';
@@ -101,6 +101,33 @@ export function tryWriteAuditLog(params) {
 }
 
 /**
+ * Debug-only: append `count` synthetic entries in one bulk write, respecting the
+ * existing MAX_ENTRIES FIFO trim. Bypasses per-entry writeAuditLog() to avoid
+ * O(n^2) re-serialization of the growing array on every single call.
+ * Throws unless SECURITY_DEBUG is true — structurally cannot run in a production build.
+ */
+export function seedDebugAuditEntries(count = 10_000) {
+  if (!SECURITY_DEBUG) throw new Error('seedDebugAuditEntries is only available in debug builds');
+  const log = loadLog();
+  const now = Date.now();
+  for (let i = 0; i < count; i++) {
+    log.push({
+      id: `debug-${now}-${i}`,
+      userId: 'system',
+      username: 'system',
+      action: 'DEBUG_SEED_ENTRY',
+      targetType: 'debug',
+      targetId: null,
+      detail: 'QA 테스트용 자동 생성 항목 (디버그 빌드 전용)',
+      timestamp: new Date(now + i).toISOString(),
+    });
+  }
+  const trimmed = log.length > MAX_ENTRIES ? log.slice(log.length - MAX_ENTRIES) : log;
+  localStorage.setItem(AUDIT_KEY, JSON.stringify(trimmed));
+  return { generated: count, totalAfterTrim: trimmed.length };
+}
+
+/**
  * Read audit entries, newest first.
  * @returns {{ entries: object[], total: number }}
  */
@@ -158,4 +185,5 @@ export const AUDIT_ACTIONS = {
   BACKUP_CREATED: 'BACKUP_CREATED',
   BACKUP_RESTORED: 'BACKUP_RESTORED',
   DEIDENTIFIED_EXPORT: 'DEIDENTIFIED_EXPORT', // UC-04: de-identified CSV export
+  DEBUG_SEED_ENTRY: 'DEBUG_SEED_ENTRY', // debug-build only — never appears in a production audit log
 };
