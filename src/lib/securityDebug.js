@@ -8,7 +8,9 @@
 //
 // Output appears in the browser DevTools console grouped by requirement code.
 
-export const SECURITY_DEBUG = false; // KTC AUDIT DEMO — set back to false before production build
+// Build-time only — set VITE_DEBUG_MODE=true in .env for a debug/QA build.
+// Must be false/absent in every production and submission build.
+export const SECURITY_DEBUG = import.meta.env.VITE_DEBUG_MODE === 'true';
 
 const PREFIX = '[SECURITY-AUDIT]';
 
