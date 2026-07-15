@@ -1,15 +1,18 @@
 import { useState, useEffect } from 'react';
-import { ArrowLeft, Plus, Trash2, Unlock, ShieldCheck, ShieldAlert, UserCog, Eye, EyeOff, Users, ClipboardList, Database, KeyRound } from 'lucide-react';
+import { ArrowLeft, Plus, Trash2, Unlock, ShieldCheck, ShieldAlert, UserCog, Eye, EyeOff, Users, ClipboardList, Database, KeyRound, MessageSquareWarning } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
 import { UserStore } from '@/api/authStore';
 import { tryWriteAuditLog, AUDIT_ACTIONS } from '@/api/auditStore';
 import { validatePassword } from '@/lib/passwordUtils';
+import { getCustomUsageNotice, setUsageNotice, resetUsageNotice, validateUsageNotice } from '@/api/usageNoticeStore';
 import { useAuth } from '@/context/AuthContext';
+import { toast } from '@/components/ui/use-toast';
 import { format } from 'date-fns';
 
 const ROLE_LABELS = { admin: '관리자', clinician: '임상의' };
@@ -57,6 +60,35 @@ export default function AdminAccounts() {
 
   const reload = () => setUsers(UserStore.list());
   useEffect(() => { reload(); }, []);
+
+  // ── Usage notice editor (IA-08) ─────────────────────────────────────────────
+  const [noticeText, setNoticeText] = useState('');
+  const [noticeErrors, setNoticeErrors] = useState([]);
+  const [savingNotice, setSavingNotice] = useState(false);
+
+  useEffect(() => { setNoticeText(getCustomUsageNotice() ?? ''); }, []);
+
+  const handleSaveNotice = () => {
+    const errors = validateUsageNotice(noticeText);
+    if (errors.length) { setNoticeErrors(errors); return; }
+    setSavingNotice(true);
+    try {
+      setUsageNotice(noticeText);
+      tryWriteAuditLog({ action: AUDIT_ACTIONS.USAGE_NOTICE_UPDATED, targetType: 'system', detail: '시스템 사용 알림 문구 변경' });
+      setNoticeErrors([]);
+      toast({ title: '저장되었습니다', description: '로그인 화면에 새 공지 문구가 표시됩니다.' });
+    } finally {
+      setSavingNotice(false);
+    }
+  };
+
+  const handleResetNotice = () => {
+    resetUsageNotice();
+    setNoticeText('');
+    setNoticeErrors([]);
+    tryWriteAuditLog({ action: AUDIT_ACTIONS.USAGE_NOTICE_UPDATED, targetType: 'system', detail: '기본 문구로 재설정' });
+    toast({ title: '기본 문구로 재설정되었습니다' });
+  };
 
   // ── Create user form ────────────────────────────────────────────────────────
   const [form, setForm] = useState({ username: '', displayName: '', password: '', role: 'clinician' });
@@ -235,6 +267,38 @@ export default function AdminAccounts() {
               ))}
             </ul>
           )}
+        </div>
+
+        {/* Usage notice editor (IA-08) */}
+        <div className="mt-6 rounded-2xl border border-[#30363D] bg-[#1C2128] p-6">
+          <h2 className="mb-1 flex items-center gap-2 text-base font-bold text-white">
+            <MessageSquareWarning className="h-4 w-4 text-[#EAB308]" /> 시스템 사용 알림 문구
+          </h2>
+          <p className="mb-4 text-sm text-[#8B949E]">
+            로그인 화면에 표시되는 사전 접속 안내 문구입니다. 비워두면 기본 문구가 표시됩니다. (최대 1000자)
+          </p>
+          <Textarea
+            value={noticeText}
+            onChange={(e) => setNoticeText(e.target.value)}
+            placeholder="비워두면 기본 문구가 표시됩니다."
+            rows={5}
+            className="rounded-xl border-[#30363D] bg-[#0D1117] text-white"
+          />
+          {noticeErrors.length > 0 && (
+            <div className="mt-3 rounded-xl border border-[#EF4444]/30 bg-[#EF4444]/10 px-4 py-3 text-sm text-[#FCA5A5]">
+              {noticeErrors.map((e) => <p key={e}>{e}</p>)}
+            </div>
+          )}
+          <div className="mt-4 flex gap-3">
+            <Button variant="outline" onClick={handleResetNotice}
+              className="border-[#30363D] bg-transparent text-[#C9D1D9] hover:bg-[#30363D] hover:text-white">
+              기본값으로 재설정
+            </Button>
+            <Button onClick={handleSaveNotice} disabled={savingNotice}
+              className="gap-2 bg-gradient-to-r from-[#3B82F6] to-[#8B5CF6] text-white">
+              {savingNotice ? '저장 중…' : '저장'}
+            </Button>
+          </div>
         </div>
 
         <p className="mt-8 text-center text-xs text-[#8B949E]">DIBH - Flow v{__APP_VERSION__}</p>
