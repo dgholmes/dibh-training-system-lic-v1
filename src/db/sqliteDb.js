@@ -112,6 +112,43 @@ export function persistDb(db) {
   return persistQueue;
 }
 
+const CHUNK_SIZE = 8192; // avoids spreading a large Uint8Array into String.fromCharCode's arguments
+
+export function bytesToBase64(bytes) {
+  let binary = '';
+  for (let i = 0; i < bytes.length; i += CHUNK_SIZE) {
+    binary += String.fromCharCode(...bytes.subarray(i, i + CHUNK_SIZE));
+  }
+  return btoa(binary);
+}
+
+export function base64ToBytes(base64) {
+  const binary = atob(base64);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return bytes;
+}
+
+/** Exports the entire SQLite DB (all tables) as a base64 string, for inclusion in an encrypted backup. */
+export async function exportDbBinaryBase64() {
+  const db = await getSqliteDatabase();
+  return bytesToBase64(db.export());
+}
+
+/**
+ * Imports a base64-encoded SQLite DB binary, replacing the current IndexedDB-persisted DB.
+ * Validates the blob is a loadable SQLite DB before committing (throws on corrupt/invalid input).
+ * Does NOT reconcile the in-memory getSqliteDatabase() singleton — callers must instruct the
+ * user to refresh the page (same pattern already used for localStorage-based restore), which
+ * resets all JS module state including the cached dbPromise.
+ */
+export async function importDbBinaryBase64(base64) {
+  await getSqliteDatabase(); // ensures SQLModule is initialized
+  const bytes = base64ToBytes(base64);
+  new SQLModule.Database(bytes); // throws if corrupt/invalid — caller catches
+  await saveDbBinary(bytes);
+}
+
 export async function getSqliteDatabase() {
   if (dbPromise) return dbPromise;
 
