@@ -1,8 +1,9 @@
 import { useState, useMemo, useRef, useLayoutEffect, useCallback } from 'react';
-import { ArrowLeft, Search, ShieldCheck, Users, ClipboardList, Database, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, Search, ShieldCheck, Users, ClipboardList, Database, AlertTriangle, Bug } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { SECURITY_DEBUG } from '@/lib/securityDebug';
 
 function AdminNav() {
   const { pathname } = useLocation();
@@ -26,7 +27,7 @@ function AdminNav() {
     </div>
   );
 }
-import { getAuditLogEntries, getAuditLogCapacity } from '@/api/auditStore';
+import { getAuditLogEntries, getAuditLogCapacity, seedDebugAuditEntries } from '@/api/auditStore';
 import { format } from 'date-fns';
 
 function fmtBytes(b) {
@@ -66,6 +67,7 @@ export default function AdminAuditLog() {
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const tableWrapRef = useRef(null);
 
@@ -102,10 +104,10 @@ export default function AdminAuditLog() {
 
   const { entries, total } = useMemo(
     () => getAuditLogEntries({ search, limit: pageSize, offset: page * pageSize }),
-    [search, page, pageSize]
+    [search, page, pageSize, refreshKey]
   );
 
-  const capacity = useMemo(() => getAuditLogCapacity(), [total]);
+  const capacity = useMemo(() => getAuditLogCapacity(), [total, refreshKey]);
 
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
@@ -114,6 +116,12 @@ export default function AdminAuditLog() {
   }, [page, totalPages]);
 
   const handleSearch = (v) => { setSearch(v); setPage(0); };
+
+  const handleDebugSeed = () => {
+    seedDebugAuditEntries(10_000);
+    setPage(0);
+    setRefreshKey((k) => k + 1);
+  };
 
   return (
     <div className="bg-[#0D1117] p-6">
@@ -133,6 +141,17 @@ export default function AdminAuditLog() {
             <ShieldCheck className="h-3.5 w-3.5 text-[#22C55E]" />
             <span className="text-xs font-medium text-[#22C55E]">읽기 전용</span>
           </div>
+          {SECURITY_DEBUG && (
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={handleDebugSeed}
+              className="ml-2 gap-1.5 border-[#EF4444]/40 bg-transparent text-[#EF4444] shadow-none hover:bg-[#EF4444]/10"
+            >
+              <Bug className="h-3.5 w-3.5" />
+              디버그: 10,000건 생성
+            </Button>
+          )}
         </div>
 
         <AdminNav />
