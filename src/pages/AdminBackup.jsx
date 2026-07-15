@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { encryptValue, decryptValue, sha256Hex, decryptPatient } from '@/lib/crypto';
 import { tryWriteAuditLog, AUDIT_ACTIONS } from '@/api/auditStore';
+import { exportDbBinaryBase64, importDbBinaryBase64 } from '@/db/sqliteDb';
 import { format } from 'date-fns';
 
 function AdminNav() {
@@ -42,7 +43,8 @@ const COLOR_ACTION_BTN = {
   purple: 'border-[#A78BFA]/40 bg-transparent text-[#A78BFA] shadow-none hover:border-[#A78BFA]/70 hover:bg-[#A78BFA]/10 hover:text-[#A78BFA]',
 };
 
-const BACKUP_KEYS = ['dibh_patients', 'dibh_calibrations', 'dibh_training_sessions', 'dibh_audit_log'];
+const BACKUP_KEYS = ['dibh_patients', 'dibh_calibrations', 'dibh_training_sessions', 'dibh_audit_log', 'dibh_users', 'dibh_calibration_sessions'];
+const BACKUP_FORMAT_VERSION = 2;
 
 /** SHA-256 hex of a string — used for pseudonymisation (DC-02) */
 async function pseudonymize(value) {
@@ -67,7 +69,7 @@ async function createDeidentifiedCsv(patients, calibrations) {
   return rows.join('\n');
 }
 
-async function createBackup() {
+export async function createBackup() {
   const payload = {};
   for (const key of BACKUP_KEYS) {
     const raw = localStorage.getItem(key);
@@ -75,6 +77,8 @@ async function createBackup() {
   }
   payload._created_at = new Date().toISOString();
   payload._version = typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '1.0.0';
+  payload._backup_format_version = BACKUP_FORMAT_VERSION;
+  payload._sqlite_blob_base64 = await exportDbBinaryBase64();
 
   const json = JSON.stringify(payload);
   const hash = await sha256Hex(new TextEncoder().encode(json).buffer);
@@ -83,7 +87,7 @@ async function createBackup() {
   return encrypted;
 }
 
-async function restoreBackup(encryptedText) {
+export async function restoreBackup(encryptedText) {
   const envelopeJson = await decryptValue(encryptedText.trim());
   const envelope = JSON.parse(envelopeJson);
   const { hash, data } = envelope;
@@ -98,6 +102,9 @@ async function restoreBackup(encryptedText) {
     if (Array.isArray(payload[key])) {
       localStorage.setItem(key, JSON.stringify(payload[key]));
     }
+  }
+  if (payload._backup_format_version >= 2 && payload._sqlite_blob_base64) {
+    await importDbBinaryBase64(payload._sqlite_blob_base64);
   }
   return { created_at: payload._created_at, version: payload._version };
 }
