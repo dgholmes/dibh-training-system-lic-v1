@@ -27,7 +27,7 @@ function AdminNav() {
     </div>
   );
 }
-import { getAuditLogEntries, getAuditLogCapacity, seedDebugAuditEntries } from '@/api/auditStore';
+import { getAuditLogEntries, getAuditLogCapacity, seedDebugAuditEntries, verifyAuditChain } from '@/api/auditStore';
 import { format } from 'date-fns';
 
 function fmtBytes(b) {
@@ -47,6 +47,7 @@ const RESERVED_BELOW_TABLE_PX = 130;
 const ACTION_COLORS = {
   LOGIN: 'text-[#22C55E]',
   LOGOUT: 'text-[#8B949E]',
+  SESSION_TIMEOUT: 'text-[#8B949E]',
   LOGIN_FAILED: 'text-[#EAB308]',
   ACCOUNT_LOCKED: 'text-[#EF4444]',
   USER_CREATED: 'text-[#3B82F6]',
@@ -54,6 +55,7 @@ const ACTION_COLORS = {
   USER_ROLE_CHANGED: 'text-[#A78BFA]',
   USER_UNLOCKED: 'text-[#22C55E]',
   PASSWORD_CHANGED: 'text-[#EAB308]',
+  PASSWORD_RESET_BY_ADMIN: 'text-[#EAB308]',
   PATIENT_CREATED: 'text-[#3B82F6]',
   PATIENT_UPDATED: 'text-[#8B949E]',
   PATIENT_DELETED: 'text-[#EF4444]',
@@ -61,6 +63,15 @@ const ACTION_COLORS = {
   FILE_DELETED: 'text-[#EF4444]',
   ANALYSIS_RUN: 'text-[#A78BFA]',
   CALIBRATION_DELETED: 'text-[#EF4444]',
+  BACKUP_CREATED: 'text-[#3B82F6]',
+  BACKUP_CREATE_FAILED: 'text-[#EF4444]',
+  BACKUP_RESTORED: 'text-[#22C55E]',
+  BACKUP_RESTORE_FAILED: 'text-[#EF4444]',
+  DEIDENTIFIED_EXPORT: 'text-[#3B82F6]',
+  DEIDENTIFIED_EXPORT_FAILED: 'text-[#EF4444]',
+  USAGE_NOTICE_UPDATED: 'text-[#A78BFA]',
+  DEBUG_SEED_ENTRY: 'text-[#8B949E]',
+  INTEGRITY_CHECK_FAILED: 'text-[#EF4444]',
 };
 
 export default function AdminAuditLog() {
@@ -68,6 +79,18 @@ export default function AdminAuditLog() {
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [chainStatus, setChainStatus] = useState(null); // null = not yet checked this session
+  const [verifyingChain, setVerifyingChain] = useState(false);
+
+  const handleVerifyChain = async () => {
+    setVerifyingChain(true);
+    try {
+      const result = await verifyAuditChain();
+      setChainStatus(result);
+    } finally {
+      setVerifyingChain(false);
+    }
+  };
 
   const tableWrapRef = useRef(null);
 
@@ -117,8 +140,8 @@ export default function AdminAuditLog() {
 
   const handleSearch = (v) => { setSearch(v); setPage(0); };
 
-  const handleDebugSeed = () => {
-    seedDebugAuditEntries(10_000);
+  const handleDebugSeed = async () => {
+    await seedDebugAuditEntries(10_000);
     setPage(0);
     setRefreshKey((k) => k + 1);
   };
@@ -155,6 +178,29 @@ export default function AdminAuditLog() {
         </div>
 
         <AdminNav />
+
+        {/* UC-07 — Audit log hash-chain integrity */}
+        <div className="mb-4 flex items-center justify-between rounded-xl border border-[#30363D] bg-[#1C2128] px-4 py-3">
+          <div className="flex items-center gap-2 text-sm">
+            {chainStatus == null ? (
+              <span className="text-[#8B949E]">체인 무결성: 검증 필요 (UC-07)</span>
+            ) : chainStatus.valid ? (
+              <span className="flex items-center gap-1.5 text-[#22C55E]">
+                <ShieldCheck className="h-4 w-4" />
+                체인 무결성: 정상 ({chainStatus.checkedCount.toLocaleString()}건 검증)
+              </span>
+            ) : (
+              <span className="flex items-center gap-1.5 text-[#EF4444]">
+                <AlertTriangle className="h-4 w-4" />
+                체인 무결성 손상 — 항목 #{chainStatus.brokenAtIndex} (id: {chainStatus.brokenAtId})
+              </span>
+            )}
+          </div>
+          <Button size="sm" variant="outline" onClick={handleVerifyChain} disabled={verifyingChain}
+            className="border-[#30363D] bg-transparent text-[#C9D1D9] shadow-none hover:bg-[#30363D] hover:text-white">
+            {verifyingChain ? '검증 중…' : '지금 검증'}
+          </Button>
+        </div>
 
         {/* UC-05 — Capacity warnings (entry count + device storage) */}
         {(capacity.pct >= 80 || capacity.storagePct >= 80) && (() => {
