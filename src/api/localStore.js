@@ -2,7 +2,7 @@
 
 import { upsertPatientRow, deletePatientRow } from '@/db/patientSqlite';
 import { tryWriteAuditLog, AUDIT_ACTIONS } from './auditStore';
-import { encryptPatient, decryptPatient } from '@/lib/crypto';
+import { encryptPatient, decryptPatient, computeRecordHash } from '@/lib/crypto';
 
 const STORAGE_KEYS = {
   PATIENTS: 'dibh_patients',
@@ -82,7 +82,7 @@ export const Patient = {
     const encrypted = await encryptPatient(plain);
     patients.push(encrypted);
     setStorageItem(STORAGE_KEYS.PATIENTS, patients);
-    void upsertPatientRow(plain).catch((e) => console.error('patientSqlite upsert', e));
+    void upsertPatientRow(encrypted).catch((e) => console.error('patientSqlite upsert', e));
     tryWriteAuditLog({ action: AUDIT_ACTIONS.PATIENT_CREATED, targetType: 'patient', targetId: plain.id, detail: plain.patient_code });
     return plain;
   },
@@ -95,7 +95,7 @@ export const Patient = {
     const merged = { ...existing, ...data, updated_at: new Date().toISOString() };
     patients[index] = await encryptPatient(merged);
     setStorageItem(STORAGE_KEYS.PATIENTS, patients);
-    void upsertPatientRow(merged).catch((e) => console.error('patientSqlite upsert', e));
+    void upsertPatientRow(patients[index]).catch((e) => console.error('patientSqlite upsert', e));
     tryWriteAuditLog({ action: AUDIT_ACTIONS.PATIENT_UPDATED, targetType: 'patient', targetId: id, detail: merged.patient_code });
     return merged;
   },
@@ -109,19 +109,40 @@ export const Patient = {
   },
 };
 
-// TrainingSession entity
+// Shared integrity-check helper for plaintext (non-PII) record types that only
+// need tamper detection, not encryption (training sessions, calibrations).
+async function verifyRecord(record, targetType) {
+  if (!record) return record;
+  if (!record._hash) return record; // legacy record — unverified, not flagged
+  const expected = await computeRecordHash(record);
+  if (expected === record._hash) return record;
+  tryWriteAuditLog({
+    action: AUDIT_ACTIONS.DATA_INTEGRITY_FAILED,
+    targetType,
+    targetId: record.id,
+    detail: `${targetType} record hash mismatch — possible tampering`,
+  });
+  return { ...record, _integrityFailed: true };
+}
+
+async function verifyRecords(records, targetType) {
+  return Promise.all(records.map((r) => verifyRecord(r, targetType)));
+}
+
+// TrainingSession entity — SHA-256 integrity-hashed (no encryption required for this data type)
 export const TrainingSession = {
-  list: (sortBy = null) => {
+  list: async (sortBy = null) => {
     const sessions = getStorageItem(STORAGE_KEYS.TRAINING_SESSIONS);
-    
+    const verified = await verifyRecords(sessions, 'training_session');
+
     if (sortBy) {
       const isDesc = sortBy.startsWith('-');
       const field = isDesc ? sortBy.substring(1) : sortBy;
-      
-      return [...sessions].sort((a, b) => {
+
+      return [...verified].sort((a, b) => {
         const aVal = a[field] || '';
         const bVal = b[field] || '';
-        
+
         if (isDesc) {
           return bVal > aVal ? 1 : bVal < aVal ? -1 : 0;
         } else {
@@ -129,30 +150,32 @@ export const TrainingSession = {
         }
       });
     }
-    
-    return sessions;
+
+    return verified;
   },
 
-  filter: (filters) => {
+  filter: async (filters) => {
     const sessions = getStorageItem(STORAGE_KEYS.TRAINING_SESSIONS);
-    
+    const verified = await verifyRecords(sessions, 'training_session');
+
     if (filters.id) {
-      return sessions.filter(s => s.id === filters.id);
+      return verified.filter(s => s.id === filters.id);
     }
-    
-    return sessions.filter(session => {
+
+    return verified.filter(session => {
       return Object.keys(filters).every(key => {
         return session[key] === filters[key];
       });
     });
   },
 
-  get: (id) => {
+  get: async (id) => {
     const sessions = getStorageItem(STORAGE_KEYS.TRAINING_SESSIONS);
-    return sessions.find(s => s.id === id) || null;
+    const found = sessions.find(s => s.id === id) || null;
+    return found ? verifyRecord(found, 'training_session') : null;
   },
 
-  create: (data) => {
+  create: async (data) => {
     const sessions = getStorageItem(STORAGE_KEYS.TRAINING_SESSIONS);
     const newSession = {
       id: generateId(),
@@ -160,24 +183,27 @@ export const TrainingSession = {
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };
+    newSession._hash = await computeRecordHash(newSession);
     sessions.push(newSession);
     setStorageItem(STORAGE_KEYS.TRAINING_SESSIONS, sessions);
     return newSession;
   },
 
-  update: (id, data) => {
+  update: async (id, data) => {
     const sessions = getStorageItem(STORAGE_KEYS.TRAINING_SESSIONS);
     const index = sessions.findIndex(s => s.id === id);
-    
+
     if (index === -1) {
       throw new Error(`TrainingSession with id ${id} not found`);
     }
-    
-    sessions[index] = {
+
+    const updated = {
       ...sessions[index],
       ...data,
       updated_at: new Date().toISOString(),
     };
+    updated._hash = await computeRecordHash(updated);
+    sessions[index] = updated;
     setStorageItem(STORAGE_KEYS.TRAINING_SESSIONS, sessions);
     return sessions[index];
   },
@@ -190,19 +216,20 @@ export const TrainingSession = {
   },
 };
 
-// Calibration entity
+// Calibration entity — SHA-256 integrity-hashed (no encryption required for this data type)
 export const Calibration = {
-  list: (sortBy = null) => {
+  list: async (sortBy = null) => {
     const calibrations = getStorageItem(STORAGE_KEYS.CALIBRATIONS);
-    
+    const verified = await verifyRecords(calibrations, 'calibration');
+
     if (sortBy) {
       const isDesc = sortBy.startsWith('-');
       const field = isDesc ? sortBy.substring(1) : sortBy;
-      
-      return [...calibrations].sort((a, b) => {
+
+      return [...verified].sort((a, b) => {
         const aVal = a[field] || '';
         const bVal = b[field] || '';
-        
+
         if (isDesc) {
           return bVal > aVal ? 1 : bVal < aVal ? -1 : 0;
         } else {
@@ -210,30 +237,32 @@ export const Calibration = {
         }
       });
     }
-    
-    return calibrations;
+
+    return verified;
   },
 
-  filter: (filters) => {
+  filter: async (filters) => {
     const calibrations = getStorageItem(STORAGE_KEYS.CALIBRATIONS);
-    
+    const verified = await verifyRecords(calibrations, 'calibration');
+
     if (filters.id) {
-      return calibrations.filter(c => c.id === filters.id);
+      return verified.filter(c => c.id === filters.id);
     }
-    
-    return calibrations.filter(calibration => {
+
+    return verified.filter(calibration => {
       return Object.keys(filters).every(key => {
         return calibration[key] === filters[key];
       });
     });
   },
 
-  get: (id) => {
+  get: async (id) => {
     const calibrations = getStorageItem(STORAGE_KEYS.CALIBRATIONS);
-    return calibrations.find(c => c.id === id) || null;
+    const found = calibrations.find(c => c.id === id) || null;
+    return found ? verifyRecord(found, 'calibration') : null;
   },
 
-  create: (data) => {
+  create: async (data) => {
     const calibrations = getStorageItem(STORAGE_KEYS.CALIBRATIONS);
     const newCalibration = {
       id: generateId(),
@@ -241,24 +270,27 @@ export const Calibration = {
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };
+    newCalibration._hash = await computeRecordHash(newCalibration);
     calibrations.push(newCalibration);
     setStorageItem(STORAGE_KEYS.CALIBRATIONS, calibrations);
     return newCalibration;
   },
 
-  update: (id, data) => {
+  update: async (id, data) => {
     const calibrations = getStorageItem(STORAGE_KEYS.CALIBRATIONS);
     const index = calibrations.findIndex(c => c.id === id);
-    
+
     if (index === -1) {
       throw new Error(`Calibration with id ${id} not found`);
     }
-    
-    calibrations[index] = {
+
+    const updated = {
       ...calibrations[index],
       ...data,
       updated_at: new Date().toISOString(),
     };
+    updated._hash = await computeRecordHash(updated);
+    calibrations[index] = updated;
     setStorageItem(STORAGE_KEYS.CALIBRATIONS, calibrations);
     return calibrations[index];
   },
@@ -369,7 +401,7 @@ export const CalibrationSession = {
       ...calibrationExtras
     } = results;
 
-    const calibration = Calibration.create({
+    const calibration = await Calibration.create({
       patient_id: session.patient_id,
       calibration_date: currentDate,
       training_type,
@@ -395,6 +427,13 @@ export const CalibrationSession = {
 
     // Delete the session
     CalibrationSession.delete(sessionId);
+
+    tryWriteAuditLog({
+      action: AUDIT_ACTIONS.ANALYSIS_RUN,
+      targetType: 'calibration',
+      targetId: calibration.id,
+      detail: `patient: ${session.patient_id}, type: ${training_type}, cv: ${cv}`,
+    });
 
     return calibration;
   },

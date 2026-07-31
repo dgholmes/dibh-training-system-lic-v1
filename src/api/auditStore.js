@@ -183,8 +183,13 @@ export const AUDIT_ACTIONS = {
   ANALYSIS_RUN: 'ANALYSIS_RUN',
   CALIBRATION_DELETED: 'CALIBRATION_DELETED',
   BACKUP_CREATED: 'BACKUP_CREATED',
+  BACKUP_CREATE_FAILED: 'BACKUP_CREATE_FAILED',       // UC-04: failure outcome, distinct from BACKUP_CREATED
   BACKUP_RESTORED: 'BACKUP_RESTORED',
+  BACKUP_RESTORE_FAILED: 'BACKUP_RESTORE_FAILED',     // UC-04: failure outcome, distinct from BACKUP_RESTORED
   DEIDENTIFIED_EXPORT: 'DEIDENTIFIED_EXPORT', // UC-04: de-identified CSV export
+  DEIDENTIFIED_EXPORT_FAILED: 'DEIDENTIFIED_EXPORT_FAILED', // UC-04: failure outcome, distinct from DEIDENTIFIED_EXPORT
   DEBUG_SEED_ENTRY: 'DEBUG_SEED_ENTRY', // debug-build only — never appears in a production audit log
   USAGE_NOTICE_UPDATED: 'USAGE_NOTICE_UPDATED',
+  INTEGRITY_CHECK_FAILED: 'INTEGRITY_CHECK_FAILED', // SI-04: app bundle tamper detected at startup, before login
+  DATA_INTEGRITY_FAILED: 'DATA_INTEGRITY_FAILED', // stored record hash mismatch detected on read (training session / calibration)
 };

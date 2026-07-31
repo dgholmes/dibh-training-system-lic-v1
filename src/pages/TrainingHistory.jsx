@@ -26,9 +26,9 @@ export default function CalibrationHistory() {
 
   const { data: calibrations = [] } = useQuery({
     queryKey: ['calibrations', patientId],
-    queryFn: () => {
+    queryFn: async () => {
       if (!patientId) return [];
-      return sortCalibrationsDesc(Calibration.filter({ patient_id: patientId }));
+      return sortCalibrationsDesc(await Calibration.filter({ patient_id: patientId }));
     },
     enabled: !!patientId,
   });

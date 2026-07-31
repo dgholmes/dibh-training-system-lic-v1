@@ -28,8 +28,8 @@ export default function TypeDecision() {
 
   const { data: latestCalibration, isFetched } = useQuery({
     queryKey: ['latestCalibration', patientId],
-    queryFn: () => {
-      const calibrations = Calibration.filter({ patient_id: patientId });
+    queryFn: async () => {
+      const calibrations = await Calibration.filter({ patient_id: patientId });
       return getLatestCalibration(calibrations);
     },
     enabled: !!patientId,

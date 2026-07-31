@@ -33,14 +33,14 @@ export default function TrainingReport() {
 
   const { data: calibration } = useQuery({
     queryKey: ['calibrationForReport', patientId, calibrationId],
-    queryFn: () => {
+    queryFn: async () => {
       if (!patientId) return null;
       if (calibrationId) {
-        const c = Calibration.get(calibrationId);
+        const c = await Calibration.get(calibrationId);
         if (c && c.patient_id === patientId) return c;
         return null;
       }
-      const list = Calibration.filter({ patient_id: patientId });
+      const list = await Calibration.filter({ patient_id: patientId });
       return getLatestCalibration(list);
     },
     enabled: !!patientId,
