@@ -3,10 +3,12 @@ import { secDbg, SECURITY_DEBUG } from '@/lib/securityDebug';
 // Entries are append-only; never modified or deleted via the UI.
 
 import { getSession } from './authStore';
+import { sha256Hex, stableStringify } from '@/lib/crypto';
 
 const AUDIT_KEY = 'dibh_audit_log';
 const MAX_ENTRIES = 10_000;
 const LS_WARN_BYTES = 4 * 1024 * 1024; // 4 MB — warn before typical WebView 5 MB quota
+const GENESIS_HASH = '0'.repeat(64); // prevHash for the first hash-chained entry ever written
 
 function estimateAuditLogBytes() {
   const raw = localStorage.getItem(AUDIT_KEY);
@@ -36,7 +38,7 @@ function loadLog() {
  *
  * @param {{ action: string, targetType?: string, targetId?: string, detail?: string }} params
  */
-export function writeAuditLog({ action, targetType = null, targetId = null, detail = null }) {
+export async function writeAuditLog({ action, targetType = null, targetId = null, detail = null }) {
   const session = getSession();
   const entry = {
     id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
@@ -50,12 +52,18 @@ export function writeAuditLog({ action, targetType = null, targetId = null, deta
   };
 
   const log = loadLog();
+  const previous = log[log.length - 1];
+  entry.prevHash = previous?.hash || GENESIS_HASH;
+  // Hash covers the entry's own content plus prevHash (already a field on entry at this point) —
+  // any edit, deletion, or reordering of a prior entry changes every hash after it (UC-07).
+  entry.hash = await sha256Hex(new TextEncoder().encode(stableStringify(entry)).buffer);
+
   log.push(entry);
   if (log.length > MAX_ENTRIES) log.splice(0, log.length - MAX_ENTRIES);
 
   secDbg('UC-04/UC-06/UC-07', '감사 로그 항목 기록 — Audit Log Entry Written', {
-    설명: '보안 이벤트를 감사 로그에 기록합니다. 사용자 ID·타임스탬프·액션 코드를 포함하여 부인 방지(UC-07) 및 추적성(UC-04)을 보장합니다.',
-    description: 'Records a security event to the audit log. Includes userId, timestamp, and action code for non-repudiation (UC-07) and traceability (UC-04).',
+    설명: '보안 이벤트를 감사 로그에 기록합니다. 사용자 ID·타임스탬프·액션 코드와 해시체인(prevHash/hash)을 포함하여 부인 방지(UC-07) 및 추적성(UC-04)을 보장합니다.',
+    description: 'Records a security event to the audit log. Includes userId, timestamp, action code, and a hash-chain link (prevHash/hash) for non-repudiation (UC-07) and traceability (UC-04).',
     action: entry.action,
     userId: entry.userId,
     username: entry.username,
@@ -92,9 +100,9 @@ export function writeAuditLog({ action, targetType = null, targetId = null, deta
 }
 
 /** Safe wrapper — logs to console if write fails instead of crashing non-critical paths. */
-export function tryWriteAuditLog(params) {
+export async function tryWriteAuditLog(params) {
   try {
-    writeAuditLog(params);
+    await writeAuditLog(params);
   } catch (err) {
     console.error('[AuditLog] Write failed:', err);
   }
@@ -160,6 +168,37 @@ export function getAuditLogCapacity() {
   const totalBytes = estimateTotalLocalStorageBytes();
   const storagePct = Math.min(100, Math.round((totalBytes / LS_WARN_BYTES) * 100));
   return { count, max: MAX_ENTRIES, pct, auditBytes, totalBytes, storagePct };
+}
+
+/**
+ * Walk the audit log in order and verify the hash-chain (UC-07). Entries written
+ * before this feature shipped have no `hash` field — they're skipped as legacy/
+ * unverified rather than counted as tampered. Verification starts from the first
+ * hash-bearing entry and checks every entry after it.
+ */
+export async function verifyAuditChain() {
+  const log = loadLog();
+  const firstHashedIndex = log.findIndex((e) => !!e.hash);
+  if (firstHashedIndex === -1) {
+    return { valid: true, checkedCount: 0, brokenAtIndex: null, brokenAtId: null };
+  }
+
+  let prevHash = log[firstHashedIndex].prevHash ?? GENESIS_HASH;
+  let checkedCount = 0;
+  for (let i = firstHashedIndex; i < log.length; i++) {
+    const entry = log[i];
+    if (entry.prevHash !== prevHash) {
+      return { valid: false, checkedCount, brokenAtIndex: i, brokenAtId: entry.id };
+    }
+    const { hash, ...rest } = entry;
+    const expected = await sha256Hex(new TextEncoder().encode(stableStringify(rest)).buffer);
+    if (expected !== hash) {
+      return { valid: false, checkedCount, brokenAtIndex: i, brokenAtId: entry.id };
+    }
+    checkedCount++;
+    prevHash = hash;
+  }
+  return { valid: true, checkedCount, brokenAtIndex: null, brokenAtId: null };
 }
 
 // ── Action constants (keep consistent across the app) ────────────────────────
