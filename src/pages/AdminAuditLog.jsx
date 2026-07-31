@@ -168,28 +168,30 @@ export default function AdminAuditLog() {
 
         <AdminNav />
 
-        {/* UC-07 — Audit log hash-chain integrity */}
-        <div className="mb-4 flex items-center justify-between rounded-xl border border-[#30363D] bg-[#1C2128] px-4 py-3">
-          <div className="flex items-center gap-2 text-sm">
-            {chainStatus == null ? (
-              <span className="text-[#8B949E]">체인 무결성: 검증 필요 (UC-07)</span>
-            ) : chainStatus.valid ? (
-              <span className="flex items-center gap-1.5 text-[#22C55E]">
-                <ShieldCheck className="h-4 w-4" />
-                체인 무결성: 정상 ({chainStatus.checkedCount.toLocaleString()}건 검증)
-              </span>
-            ) : (
-              <span className="flex items-center gap-1.5 text-[#EF4444]">
-                <AlertTriangle className="h-4 w-4" />
-                체인 무결성 손상 — 항목 #{chainStatus.brokenAtIndex} (id: {chainStatus.brokenAtId})
-              </span>
-            )}
+        {/* UC-07 — Audit log hash-chain integrity (debug/QA builds only, same gate as the debug-seed button) */}
+        {SECURITY_DEBUG && (
+          <div className="mb-4 flex items-center justify-between rounded-xl border border-[#30363D] bg-[#1C2128] px-4 py-3">
+            <div className="flex items-center gap-2 text-sm">
+              {chainStatus == null ? (
+                <span className="text-[#8B949E]">체인 무결성: 검증 필요 (UC-07)</span>
+              ) : chainStatus.valid ? (
+                <span className="flex items-center gap-1.5 text-[#22C55E]">
+                  <ShieldCheck className="h-4 w-4" />
+                  체인 무결성: 정상 ({chainStatus.checkedCount.toLocaleString()}건 검증)
+                </span>
+              ) : (
+                <span className="flex items-center gap-1.5 text-[#EF4444]">
+                  <AlertTriangle className="h-4 w-4" />
+                  체인 무결성 손상 — 항목 #{chainStatus.brokenAtIndex} (id: {chainStatus.brokenAtId})
+                </span>
+              )}
+            </div>
+            <Button size="sm" variant="outline" onClick={handleVerifyChain} disabled={verifyingChain}
+              className="border-[#30363D] bg-transparent text-[#C9D1D9] shadow-none hover:bg-[#30363D] hover:text-white">
+              {verifyingChain ? '검증 중…' : '지금 검증'}
+            </Button>
           </div>
-          <Button size="sm" variant="outline" onClick={handleVerifyChain} disabled={verifyingChain}
-            className="border-[#30363D] bg-transparent text-[#C9D1D9] shadow-none hover:bg-[#30363D] hover:text-white">
-            {verifyingChain ? '검증 중…' : '지금 검증'}
-          </Button>
-        </div>
+        )}
 
         {/* UC-05 — Capacity warnings (entry count + device storage) */}
         {(capacity.pct >= 80 || capacity.storagePct >= 80) && (() => {
