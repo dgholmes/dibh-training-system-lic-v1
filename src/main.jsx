@@ -5,6 +5,7 @@ import '@/index.css'
 import { getSqliteDatabase } from '@/db/sqliteDb'
 import { initCrypto, encryptValue, decryptValue, sha256Hex } from '@/lib/crypto'
 import { secDbg } from '@/lib/securityDebug'
+import { tryWriteAuditLog, AUDIT_ACTIONS } from '@/api/auditStore'
 
 // Security self-check (SI-03) — verify critical security subsystems before mounting the app
 async function securitySelfCheck() {
@@ -102,6 +103,13 @@ Promise.all([
   if (import.meta.env.PROD) {
     await integrityCheck().catch((e) => {
       console.error('[IntegrityCheck] FAILED:', e);
+      // SI-04 / TRE-01 test procedure requires the integrity-check failure itself to be
+      // audit-logged (timestamp, target, result, reason) — not just blocked from the UI.
+      tryWriteAuditLog({
+        action: AUDIT_ACTIONS.INTEGRITY_CHECK_FAILED,
+        targetType: 'system',
+        detail: e.message || String(e),
+      });
       document.getElementById('root').innerHTML = `
         <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0D1117;padding:2rem;">
           <div style="max-width:480px;border:1px solid #EF4444;border-radius:16px;background:#1C2128;padding:2rem;text-align:center;color:white;">

@@ -2,7 +2,8 @@ import { format } from 'date-fns';
 import { getSqliteDatabase, persistDb } from '@/db/sqliteDb';
 import { upsertPatientRow } from '@/db/patientSqlite';
 import { Patient } from './localStore';
-import { sha256Hex } from '@/lib/crypto';
+import { sha256Hex, encryptPatient, encryptBytes, decryptBytes } from '@/lib/crypto';
+import { tryWriteAuditLog, AUDIT_ACTIONS } from './auditStore';
 
 const genId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
 
@@ -75,7 +76,7 @@ export async function createBreathingFile({ patientId, category, file }) {
       `createBreathingFile: patient "${patientId}" not found in local storage; cannot save file`
     );
   }
-  await upsertPatientRow(patient);
+  await upsertPatientRow(await encryptPatient(patient));
   const buf = await file.arrayBuffer();
   const id = genId();
   const importedAt = new Date().toISOString();
@@ -94,16 +95,18 @@ export async function createBreathingFile({ patientId, category, file }) {
     existingSameCategory
   );
 
-  const contentHash = await sha256Hex(buf);
+  const contentHash = await sha256Hex(buf); // hash of the original plaintext, verified again after decryption on read
+  const encryptedContent = await encryptBytes(buf);
 
   const db = await getSqliteDatabase();
   db.run('PRAGMA foreign_keys = ON');
-  // Add content_hash column if it doesn't exist yet (migration for existing installs)
+  // Migrations for existing installs
   try { db.run(`ALTER TABLE breathing_files ADD COLUMN content_hash TEXT`); } catch { /* already exists */ }
+  try { db.run(`ALTER TABLE breathing_files ADD COLUMN content_encrypted INTEGER`); } catch { /* already exists */ }
 
   const stmt = db.prepare(
-    `INSERT INTO breathing_files (id, patient_id, category, original_name, size_bytes, mime, imported_at, content, content_hash)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
+    `INSERT INTO breathing_files (id, patient_id, category, original_name, size_bytes, mime, imported_at, content, content_hash, content_encrypted)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
   );
   try {
     stmt.run([
@@ -114,8 +117,9 @@ export async function createBreathingFile({ patientId, category, file }) {
       file.size,
       file.type || '',
       importedAt,
-      new Uint8Array(buf),
+      encryptedContent,
       contentHash,
+      1,
     ]);
   } catch (err) {
     stmt.free();
@@ -125,6 +129,12 @@ export async function createBreathingFile({ patientId, category, file }) {
   stmt.free();
 
   await persistDb(db);
+  tryWriteAuditLog({
+    action: AUDIT_ACTIONS.FILE_UPLOADED,
+    targetType: 'file',
+    targetId: id,
+    detail: `${storedName} (patient: ${patientId})`,
+  });
   return {
     id,
     patient_id: patientId,
@@ -194,10 +204,10 @@ export async function listAllBreathingFilesByPatient(patientId) {
   return rows;
 }
 
-/** Load file bytes for analysis pipeline — verifies SHA-256 integrity (SI-04) */
+/** Load file bytes for analysis pipeline — decrypts (DC-01) and verifies SHA-256 integrity (SI-04) */
 export async function getBreathingFileContent(fileId) {
   const db = await getSqliteDatabase();
-  const stmt = db.prepare(`SELECT content, original_name, mime, content_hash FROM breathing_files WHERE id = ?`);
+  const stmt = db.prepare(`SELECT content, original_name, mime, content_hash, content_encrypted FROM breathing_files WHERE id = ?`);
   try {
     stmt.bind([fileId]);
     if (!stmt.step()) return null;
@@ -206,8 +216,13 @@ export async function getBreathingFileContent(fileId) {
     const original_name = row[1];
     const mime = row[2];
     const storedHash = row[3];
+    const isEncrypted = row[4] === 1;
     const u8 = content instanceof Uint8Array ? content : new Uint8Array(content);
-    const buf = u8.buffer.slice(u8.byteOffset, u8.byteOffset + u8.byteLength);
+
+    // Legacy (pre-encryption) rows have content_encrypted unset — read the stored bytes as-is.
+    const buf = isEncrypted
+      ? await decryptBytes(u8)
+      : u8.buffer.slice(u8.byteOffset, u8.byteOffset + u8.byteLength);
 
     // Verify integrity if a stored hash exists
     if (storedHash) {
@@ -225,6 +240,21 @@ export async function getBreathingFileContent(fileId) {
 
 export async function deleteBreathingFile(fileId) {
   const db = await getSqliteDatabase();
+  const nameStmt = db.prepare(`SELECT original_name FROM breathing_files WHERE id = ?`);
+  let originalName = null;
+  try {
+    nameStmt.bind([fileId]);
+    if (nameStmt.step()) originalName = nameStmt.get()[0];
+  } finally {
+    nameStmt.free();
+  }
+
   db.run('DELETE FROM breathing_files WHERE id = ?', [fileId]);
   await persistDb(db);
+  tryWriteAuditLog({
+    action: AUDIT_ACTIONS.FILE_DELETED,
+    targetType: 'file',
+    targetId: fileId,
+    detail: originalName,
+  });
 }

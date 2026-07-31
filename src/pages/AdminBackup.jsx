@@ -13,7 +13,34 @@ import { encryptValue, decryptValue, sha256Hex, decryptPatient } from '@/lib/cry
 import { tryWriteAuditLog, AUDIT_ACTIONS } from '@/api/auditStore';
 import { exportDbBinaryBase64, importDbBinaryBase64 } from '@/db/sqliteDb';
 import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
+import { Capacitor } from '@capacitor/core';
 import { format } from 'date-fns';
+
+/**
+ * Saves export data to the native Documents directory on Android. `@capacitor/filesystem`
+ * has no real-filesystem web implementation — in a browser it silently writes into an
+ * IndexedDB shim instead of producing a retrievable file, so on the web this falls back
+ * to the pre-Filesystem Blob + <a download> approach for local/dev testing.
+ */
+async function saveExportFile(fileName, data, mimeType) {
+  if (Capacitor.isNativePlatform()) {
+    await Filesystem.writeFile({
+      path: fileName,
+      data,
+      directory: Directory.Documents,
+      encoding: Encoding.UTF8,
+    });
+    return `기기 내 Documents/${fileName}`;
+  }
+  const blob = new Blob([data], { type: mimeType });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = fileName;
+  a.click();
+  URL.revokeObjectURL(url);
+  return `다운로드 폴더/${fileName}`;
+}
 
 function AdminNav() {
   const { pathname } = useLocation();
@@ -122,16 +149,12 @@ export default function AdminBackup() {
     try {
       const encrypted = await createBackup();
       const fileName = `dibh-backup-${format(new Date(), 'yyyyMMdd-HHmmss')}.enc`;
-      await Filesystem.writeFile({
-        path: fileName,
-        data: encrypted,
-        directory: Directory.Documents,
-        encoding: Encoding.UTF8,
-      });
+      const location = await saveExportFile(fileName, encrypted, 'text/plain');
       tryWriteAuditLog({ action: AUDIT_ACTIONS.BACKUP_CREATED, targetType: 'system', detail: `암호화된 백업 생성됨: ${fileName}` });
-      setStatus({ type: 'success', message: `백업 파일이 생성되었습니다. (기기 내 Documents/${fileName})` });
+      setStatus({ type: 'success', message: `백업 파일이 생성되었습니다. (${location})` });
     } catch (err) {
       console.error('[AdminBackup] export failed:', err);
+      tryWriteAuditLog({ action: AUDIT_ACTIONS.BACKUP_CREATE_FAILED, targetType: 'system', detail: err.message || String(err) });
       setStatus({ type: 'error', message: '백업 생성에 실패했습니다.' });
     } finally {
       setExporting(false);
@@ -148,16 +171,12 @@ export default function AdminBackup() {
       const decrypted = await Promise.all(patients.map(decryptPatient));
       const csv = await createDeidentifiedCsv(decrypted, calibrations);
       const fileName = `dibh-deidentified-${format(new Date(), 'yyyyMMdd')}.csv`;
-      await Filesystem.writeFile({
-        path: fileName,
-        data: '﻿' + csv, // BOM for Excel UTF-8 compatibility, matches prior Blob-based behavior
-        directory: Directory.Documents,
-        encoding: Encoding.UTF8,
-      });
+      const location = await saveExportFile(fileName, '﻿' + csv, 'text/csv;charset=utf-8'); // BOM for Excel UTF-8 compatibility
       tryWriteAuditLog({ action: AUDIT_ACTIONS.DEIDENTIFIED_EXPORT, targetType: 'system', detail: `${decrypted.length}명 비식별 내보내기: ${fileName}` });
-      setStatus({ type: 'success', message: `비식별 데이터가 내보내졌습니다 (${decrypted.length}명, 기기 내 Documents/${fileName}). 이름·생년월일은 포함되지 않습니다.` });
+      setStatus({ type: 'success', message: `비식별 데이터가 내보내졌습니다 (${decrypted.length}명, ${location}). 이름·생년월일은 포함되지 않습니다.` });
     } catch (err) {
       console.error('[AdminBackup] de-identified export failed:', err);
+      tryWriteAuditLog({ action: AUDIT_ACTIONS.DEIDENTIFIED_EXPORT_FAILED, targetType: 'system', detail: err.message || String(err) });
       setStatus({ type: 'error', message: '비식별 내보내기에 실패했습니다.' });
     } finally {
       setDeidentifying(false);
@@ -178,6 +197,11 @@ export default function AdminBackup() {
     } catch (err) {
       console.error('[AdminBackup] restore failed:', err);
       const isKeyMismatch = err instanceof DOMException && err.name === 'OperationError';
+      tryWriteAuditLog({
+        action: AUDIT_ACTIONS.BACKUP_RESTORE_FAILED,
+        targetType: 'system',
+        detail: isKeyMismatch ? '설치 키 불일치(다른 기기에서 생성된 백업)' : (err.message || String(err)),
+      });
       setStatus({
         type: 'error',
         message: isKeyMismatch

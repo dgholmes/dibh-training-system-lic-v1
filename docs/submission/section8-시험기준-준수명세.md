@@ -140,10 +140,12 @@
 
 | 구분 | 내용 |
 |---|---|
-| **세부요구사항** | DIBH-Flow는 `src/api/auditStore.js`를 통해 다음 보안 이벤트에 대한 감사기록을 생성한다: LOGIN, LOGIN_FAILED, ACCOUNT_LOCKED, USER_CREATE/UPDATE/DELETE, PASSWORD_CHANGE, PATIENT_CREATE/UPDATE/DELETE, FILE_UPLOAD/DELETE, ANALYSIS_RUN, CALIBRATION_COMPLETE, BACKUP, RESTORE. 각 항목은 `{timestamp(ISO 8601), userId, username, action, category, target}` 필드를 포함한다. 최대 10,000건을 localStorage에 추가 전용으로 저장한다. |
+| **세부요구사항** | DIBH-Flow는 `src/api/auditStore.js`를 통해 다음 보안 이벤트에 대한 감사기록을 생성한다: LOGIN/LOGOUT/SESSION_TIMEOUT, LOGIN_FAILED, ACCOUNT_LOCKED, USER_CREATED/UPDATED(역할변경)/DELETED/UNLOCKED, PASSWORD_CHANGED/PASSWORD_RESET_BY_ADMIN, PATIENT_CREATED/UPDATED/DELETED, FILE_UPLOADED/FILE_DELETED, ANALYSIS_RUN(분석 완료 시 캘리브레이션 레코드 생성), BACKUP_CREATED/BACKUP_CREATE_FAILED, BACKUP_RESTORED/BACKUP_RESTORE_FAILED, DEIDENTIFIED_EXPORT/DEIDENTIFIED_EXPORT_FAILED, USAGE_NOTICE_UPDATED, INTEGRITY_CHECK_FAILED(SI-04 무결성 검사 실패). 각 항목은 `{id, timestamp(ISO 8601), userId, username, action, targetType, targetId, detail}` 필드를 포함한다. 최대 10,000건을 localStorage에 추가 전용으로 저장한다. (CALIBRATION_DELETED 액션 코드는 정의되어 있으나 해당 삭제 기능 자체가 UI에 구현되어 있지 않아 발생하지 않음 — 별도 기능 신설 여부 결정 필요) |
 | **시험기준** | 상기 이벤트 발생 시 감사기록이 생성되어야 하며, 각 항목에 timestamp(ISO 8601), userId, username, action이 포함되어야 한다. |
 | **적용예외사항** | 해당없음 |
 | **시험방법** | 1) 로그인 성공/실패, 환자 등록, 파일 업로드, 분석 실행, 백업 수행을 각각 수행한다.<br>2) 각 동작 후 /admin/auditlog에서 해당 이벤트 기록이 생성됨을 확인한다.<br>3) 각 로그 항목에 timestamp(ISO 8601), userId, username, action 필드가 존재함을 확인한다.<br>4) `auditStore.js`의 `writeAuditLog()` 코드를 검토하여 상기 필드가 모든 로그 항목에 기록됨을 확인한다.<br>5) /admin/auditlog의 검색 기능으로 특정 이벤트 유형을 필터링하고 결과가 올바름을 확인한다. |
+
+**참고 — 감사기록 최대 건수(10,000건) 도달 시 FIFO 삭제 동작 시연:** `VITE_DEBUG_MODE=true`로 빌드한 디버그/QA 전용 빌드에서만, `/admin/auditlog`에 실제 10,000건의 감사 항목을 생성하는 버튼(`seedDebugAuditEntries()`, `src/api/auditStore.js`)이 노출되어, 대체 수치가 아닌 실제 인증 기준 임계값(10,000건)에 대한 FIFO 삭제 동작을 직접 시연할 수 있다. 이 기능은 기본값(`VITE_DEBUG_MODE=false`)에서는 비활성화되며, 활성화 시 화면 상단에 상시 "DEBUG BUILD" 표시(`src/App.jsx`)가 나타나 프로덕션/제출 빌드와 명확히 구분된다. `MAX_ENTRIES`(10,000건) 값 자체는 모든 빌드에서 동일하게 하드코딩되어 있으며 환경변수로 변경할 수 없다.
 
 ---
 
@@ -232,10 +234,10 @@
 
 | 구분 | 내용 |
 |---|---|
-| **세부요구사항** | DIBH-Flow는 모든 폼 입력에 Zod 스키마 유효성 검사를 적용한다. React DOM의 기본 XSS 방지(HTML 이스케이프)를 활용한다. sql.js 파라미터화 쿼리로 SQL 인젝션을 방지한다. 파일 업로드 시 확장자(CSV/VXP), MIME 타입, 파일 크기를 검증하며 환자당 카테고리별 최대 10개 파일로 제한한다. |
+| **세부요구사항** | DIBH-Flow는 각 화면의 수기 작성 검증 함수(예: `NewPatient.jsx`의 `validateBasicInfo()`, `passwordUtils.js`의 `validatePassword()`, `usageNoticeStore.js`의 `validateUsageNotice()`)로 폼 입력의 필수값·형식·길이를 검증한다. React DOM의 기본 XSS 방지(HTML 이스케이프)를 활용한다. sql.js는 `db.prepare()` + `stmt.bind()`/`stmt.run()` 파라미터화 쿼리만 사용하여 SQL 인젝션을 방지한다(코드 전수 검토 결과 사용자 입력을 SQL 문자열에 직접 결합하는 코드 없음). 파일 업로드 시 확장자(CSV/VXP), MIME 타입, 파일 크기를 검증하며 환자당 카테고리별 최대 10개 파일로 제한한다. |
 | **시험기준** | 모든 입력 유형(범위 이탈, 유효하지 않은 문자, XSS, SQL 인젝션, 잘못된 파일 형식)에 대한 검증이 수행되어야 한다. |
 | **적용예외사항** | 해당없음 |
-| **시험방법** | 1) 환자 등록 폼에서 필수 필드를 빈 값으로 제출하고 Zod 유효성 오류가 표시됨을 확인한다.<br>2) 이름 필드에 `<script>alert(1)</script>` 입력 후 저장하고 스크립트가 실행되지 않으며 텍스트로만 표시됨을 확인한다.<br>3) 검색 필드에 `' OR '1'='1` 입력 후 앱이 정상 동작하고 비정상 데이터 반환이 없음을 확인한다.<br>4) .exe, .js 등 허용되지 않는 형식의 파일 업로드 시도 시 차단됨을 확인한다.<br>5) `breathingFileRepository.js` 코드에서 sql.js 파라미터화 쿼리 사용을 검토한다. |
+| **시험방법** | 1) 환자 등록 폼에서 필수 필드를 빈 값으로 제출하고 유효성 검증 오류(누락 항목 안내 모달)가 표시됨을 확인한다.<br>2) 이름 필드에 `<script>alert(1)</script>` 입력 후 저장하고 스크립트가 실행되지 않으며 텍스트로만 표시됨을 확인한다.<br>3) 검색 필드에 `' OR '1'='1` 입력 후 앱이 정상 동작하고 비정상 데이터 반환이 없음을 확인한다.<br>4) .exe, .js 등 허용되지 않는 형식의 파일 업로드 시도 시 차단됨을 확인한다.<br>5) `breathingFileRepository.js`, `patientSqlite.js`, `sqliteDb.js` 코드를 검토하여 모든 SQL 실행이 `?` 파라미터 바인딩을 사용함을 확인한다. |
 
 ---
 
@@ -313,7 +315,7 @@
 
 | 구분 | 내용 |
 |---|---|
-| **세부요구사항** | DIBH-Flow는 `src/lib/crypto.js`의 AES-256-GCM(Web Crypto API)을 사용하여 환자 PII(이름, 생년월일, 환자 코드)를 localStorage에 암호화 저장한다. 암호화 키는 설치별 고유 256비트 키로 `localStorage['dibh_install_key']`에 저장된다. 암호화된 값은 `enc:<ivHex>:<ciphertextHex>` 형식으로 저장된다. 외부 전송 기능이 없어 전송 중 기밀성은 해당없다. |
+| **세부요구사항** | DIBH-Flow는 `src/lib/crypto.js`의 AES-256-GCM(Web Crypto API)을 사용하여 환자 PII(이름, 생년월일, 담당의사명)를 localStorage에 암호화 저장한다(`PII_FIELDS` 상수, `src/lib/crypto.js`). 환자 코드는 비식별 조회·정렬에 필요한 메타데이터로 평문 저장된다. 암호화 키는 설치별 고유 256비트 키로 `localStorage['dibh_install_key']`에 저장된다. 암호화된 값은 `enc:<ivHex>:<ciphertextHex>` 형식으로 저장된다. 동일한 암호화는 SQLite `patients` 테이블의 환자 미러 레코드(`payload` 컬럼) 및 호흡 파일 BLOB(`breathing_files.content`)에도 적용된다(2026-07-16 반영). 외부 전송 기능이 없어 전송 중 기밀성은 해당없다. |
 | **시험기준** | localStorage에 저장된 환자 PII가 암호화된 형태로 저장되어야 하며 평문이 없어야 한다. |
 | **적용예외사항** | 해당없음 |
 | **시험방법** | 1) 환자를 등록한 후 브라우저 개발자 도구 > Application > localStorage > `dibh_patients`를 조회한다.<br>2) 이름, 생년월일 필드가 `enc:<ivHex>:<ciphertextHex>` 형식의 암호화된 값으로 저장되고 평문이 없음을 확인한다.<br>3) `src/lib/crypto.js` 코드를 검토하여 AES-256-GCM 알고리즘과 `crypto.getRandomValues()`로 생성된 무작위 IV 사용이 구현됨을 확인한다.<br>4) localStorage의 `dibh_install_key`가 존재하고 256비트(64자리 hex) 길이임을 확인한다.<br>5) 브라우저 네트워크 탭에서 외부로 데이터가 전송되지 않음을 확인한다. |
@@ -376,10 +378,10 @@
 
 | 구분 | 내용 |
 |---|---|
-| **세부요구사항** | DIBH-Flow는 `src/pages/AdminBackup.jsx`를 통해 AES-256-GCM으로 암호화된 전체 백업 파일을 생성한다. 백업 파일에는 환자 데이터, 훈련 세션, 캘리브레이션 결과, 사용자 계정이 포함된다. 백업은 정상 운영 중 언제든 실행 가능하며 앱 동작에 영향을 주지 않는다. |
-| **시험기준** | 백업 기능이 정상 동작해야 하며, 백업 중 앱 정상 기능에 영향이 없어야 하고, 백업 파일이 AES-256-GCM으로 암호화되어야 한다. |
+| **세부요구사항** | DIBH-Flow는 `src/pages/AdminBackup.jsx`를 통해 AES-256-GCM으로 암호화된 전체 백업 파일을 생성한다. 백업 파일에는 환자 데이터, 훈련 세션, 캘리브레이션 결과, 캘리브레이션 세션, 사용자 계정, 감사 로그, 그리고 SQLite(sql.js)에 저장된 호흡 파일 BLOB 전체(`exportDbBinaryBase64()`)가 포함된다(백업 포맷 v2, `_backup_format_version: 2`). 백업 파일은 `@capacitor/filesystem`을 통해 기기 내 `Directory.Documents`(`Android/data/com.thepict.dibhtraining/files/Documents/`)에 저장된다. 백업은 정상 운영 중 언제든 실행 가능하며 앱 동작에 영향을 주지 않는다. |
+| **시험기준** | 백업 기능이 정상 동작해야 하며, 백업 중 앱 정상 기능에 영향이 없어야 하고, 백업 파일이 AES-256-GCM으로 암호화되어야 하며, 백업 범위가 환자 데이터·계정·감사 로그·호흡 파일 원본까지 포함하는 전체 백업이어야 한다. |
 | **적용예외사항** | 해당없음 |
-| **시험방법** | 1) admin 계정으로 /admin/backup에 접근하여 백업을 실행하고 파일이 다운로드됨을 확인한다.<br>2) 백업 실행 중 다른 화면(환자 조회, 파일 업로드)이 정상 동작함을 확인한다.<br>3) 다운로드된 백업 파일을 텍스트 에디터로 열어 내용이 암호화(평문 없음)됨을 확인한다.<br>4) `AdminBackup.jsx` 코드를 검토하여 AES-256-GCM 암호화가 적용됨을 확인한다.<br>5) 백업 파일이 민감한 데이터(비밀번호 해시 포함)를 암호화하여 보호함을 확인한다. |
+| **시험방법** | 1) admin 계정으로 /admin/backup에 접근하여 백업을 실행하고, 기기 내 `Android/data/com.thepict.dibhtraining/files/Documents/` 경로에 `.enc` 파일이 생성됨을 확인한다(USB 연결 또는 파일 관리자 앱으로 확인).<br>2) 백업 실행 중 다른 화면(환자 조회, 파일 업로드)이 정상 동작함을 확인한다.<br>3) 저장된 백업 파일을 텍스트 에디터로 열어 내용이 암호화(평문 없음)됨을 확인한다.<br>4) `AdminBackup.jsx`·`sqliteDb.js` 코드를 검토하여 AES-256-GCM 암호화 및 SQLite 전체 export(호흡 파일 BLOB 포함)가 적용됨을 확인한다.<br>5) 백업 파일이 민감한 데이터(비밀번호 해시 포함)를 암호화하여 보호함을 확인한다.<br>6) 이전 포맷(v1, 4개 키만 포함)으로 생성된 구버전 백업 파일을 복원하여 오류 없이 정상 복원됨을 확인한다(하위 호환성). |
 
 ---
 

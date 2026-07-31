@@ -119,16 +119,18 @@ if (user.lockedUntil && new Date(user.lockedUntil) > new Date()) {
 | `FILE_UPLOADED` | 호흡 파일 업로드 | CSV/VXP 파일 업로드 완료 | 파일 관리 |
 | `FILE_DELETED` | 호흡 파일 삭제 | 호흡 데이터 파일 삭제 | 파일 관리 |
 | `ANALYSIS_RUN` | 분석 실행 | 호흡 분석 파이프라인 실행 | 분석 |
-| `CALIBRATION_DELETED` | 캘리브레이션 삭제 | 캘리브레이션 결과 레코드 삭제 | 분석 |
+| `CALIBRATION_DELETED` | 캘리브레이션 삭제 | **정의된 액션 코드일 뿐, 실제로는 발생하지 않음** — 캘리브레이션 결과를 삭제하는 UI 기능 자체가 앱에 구현되어 있지 않음(2026-07-16 전수 검색으로 확인). 기능을 신설할지, 미사용 코드로 정리할지 별도 결정 필요 | 분석(미구현) |
 
-**현재 미기록 이벤트 (향후 추가 권장):**
+> ⚠️ **2026-07-16 갱신 안내:** 본 섹션은 2026년 6월 12일 작성 당시 기준이며, 이후 `FILE_UPLOADED`/`FILE_DELETED`/`ANALYSIS_RUN`(당시 미구현이었으나 2026-07-16 구현 완료), `BACKUP_CREATED`/`BACKUP_RESTORED`/`DEIDENTIFIED_EXPORT`/`SESSION_TIMEOUT`(아래 "미기록 이벤트" 목록에 있었으나 이미 구현되어 있었음— 아래 목록은 작성 당시의 착오 또는 이후 반영 확인 누락)이 모두 실제로 기록되고 있습니다. 최신 전체 이벤트 목록(26종)은 `docs/submission/cybersecurity-review-combined-response-2026-07-16.md`의 "IV. UC-04" 표를 참조하시기 바랍니다.
 
-| 이벤트 | 권장 사유 |
+**현재 미기록 이벤트(2026-06-12 작성 당시 기준 — 아래는 모두 이후 구현 완료됨, 취소선 참고용으로 유지):**
+
+| 이벤트 | 상태 |
 |---|---|
-| 백업 생성 | 데이터 전체 추출 추적 필요 |
-| 백업 복원 | 데이터 전체 덮어쓰기 추적 필요 |
-| 비식별 CSV 내보내기 | 데이터 외부 반출 추적 필요 |
-| 세션 타임아웃 자동 로그아웃 | LOGOUT과 구분하여 자동 만료 이력 추적 |
+| ~~백업 생성~~ | `BACKUP_CREATED`로 구현 완료(2026-07-16 기준 실패 케이스 `BACKUP_CREATE_FAILED`도 추가) |
+| ~~백업 복원~~ | `BACKUP_RESTORED`로 구현 완료(실패 케이스 `BACKUP_RESTORE_FAILED`도 추가) |
+| ~~비식별 CSV 내보내기~~ | `DEIDENTIFIED_EXPORT`로 구현 완료(실패 케이스 `DEIDENTIFIED_EXPORT_FAILED`도 추가) |
+| ~~세션 타임아웃 자동 로그아웃~~ | `SESSION_TIMEOUT`으로 구현 완료 |
 
 ### 감사 로그 항목 상세 구조
 

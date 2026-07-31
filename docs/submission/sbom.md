@@ -6,6 +6,8 @@
 **Prepared:** 2026-04-28  
 **Product:** DIBH 훈련 시스템 (Software as a Medical Device, SaMD)
 
+**Generation tool:** [`@cyclonedx/cyclonedx-npm`](https://github.com/CycloneDX/cyclonedx-node-npm) (CycloneDX 1.6, JSON) — run via `npm run sbom`, which reads `package-lock.json` and writes the full machine-readable component list (including transitive dependencies) to `docs/submission/sbom.cdx.json`. This human-readable document summarizes the direct/first-party dependencies from that machine-readable SBOM; regenerate `sbom.cdx.json` before each release with `npm run sbom`.
+
 ---
 
 ## 1. Product Overview
@@ -107,6 +109,7 @@ These are used only during development and are not shipped to end users.
 | @types/react-dom | 18.2.22 | MIT | TypeScript types for ReactDOM |
 | @types/node | 22.13.5 | MIT | TypeScript types for Node.js |
 | @flydotio/dockerfile | 0.7.8 | MIT | Dockerfile generator |
+| @cyclonedx/cyclonedx-npm | 6.x | Apache-2.0 | SBOM generation (this document's machine-readable counterpart, `sbom.cdx.json`) |
 
 ---
 
@@ -143,7 +146,9 @@ These are loaded from external CDNs at runtime (not bundled).
 npm audit --production
 ```
 
-No high or critical vulnerabilities found as of the date above. sql.js (WebAssembly SQLite) and react/react-dom are the highest-risk packages due to their size and complexity. Monitor:
+No high or critical vulnerabilities found in **runtime** (shipped) dependencies as of the date above. sql.js (WebAssembly SQLite) and react/react-dom are the highest-risk runtime packages due to their size and complexity. Monitor:
+
+> **Note:** `npm audit` flags a transitive high-severity advisory in `libxmljs2` (pulled in by `@cyclonedx/cyclonedx-npm` → `@cyclonedx/cyclonedx-library`). This is a build-time-only dependency used solely to run `npm run sbom` on a developer machine — it is never bundled or shipped to end users, so it does not affect the deployed medical device software. Tracked for an upstream fix.
 
 - https://github.com/sql-js/sql.js/security/advisories
 - https://github.com/facebook/react/security/advisories

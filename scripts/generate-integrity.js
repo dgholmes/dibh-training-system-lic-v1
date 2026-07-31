@@ -1,7 +1,8 @@
 /**
  * SI-04 Build-time integrity manifest generator.
  * Run automatically after `vite build` — writes dist/integrity.json
- * containing SHA-256 hashes of all JS and CSS assets.
+ * containing SHA-256 hashes of all JS, CSS, and WASM assets (e.g. the
+ * sql.js SQLite engine binary that sqliteDb.js loads at runtime).
  *
  * At runtime, main.jsx fetches this manifest and re-hashes each file
  * to detect tampering before the app mounts.
@@ -25,7 +26,7 @@ async function main() {
 
   const manifest = {};
   for (const file of files.sort()) {
-    if (!file.endsWith('.js') && !file.endsWith('.css')) continue;
+    if (!file.endsWith('.js') && !file.endsWith('.css') && !file.endsWith('.wasm')) continue;
     const content = await readFile(join(ASSETS_DIR, file));
     const hash = createHash('sha256').update(content).digest('hex');
     manifest[`/assets/${file}`] = hash;

@@ -135,7 +135,9 @@ export default function AnalysisFileSelect() {
         return;
       }
       console.error('[AnalysisFileSelect] Analysis failed:', err);
-      setAnalysisError('분석 중 오류가 발생했습니다. 파일을 확인하고 다시 시도해 주세요.');
+      // analyzeFiles() throws clean, user-facing Korean messages (missing file, no valid data, VXP
+      // format error) — surface those directly; fall back to a generic message for anything else.
+      setAnalysisError(err.message || '분석 중 오류가 발생했습니다. 파일을 확인하고 다시 시도해 주세요.');
     }
   };
 

@@ -182,9 +182,18 @@ export default function PatientDashboard() {
 
   const handleConfirmDelete = async () => {
     if (patientId) {
-      await Patient.delete(patientId);
-      queryClient.invalidateQueries({ queryKey: ['patients'] });
-      navigate(createPageUrl('Home'));
+      try {
+        await Patient.delete(patientId);
+        queryClient.invalidateQueries({ queryKey: ['patients'] });
+        navigate(createPageUrl('Home'));
+      } catch (err) {
+        console.error('[PatientDashboard] delete failed:', err);
+        toast({
+          title: '삭제 실패',
+          description: '환자 삭제에 실패했습니다. 다시 시도해 주세요.',
+          variant: 'destructive',
+        });
+      }
     }
     setShowDeleteModal(false);
   };

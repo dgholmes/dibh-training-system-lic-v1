@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { UserStore } from '@/api/authStore';
+import { tryWriteAuditLog, AUDIT_ACTIONS } from '@/api/auditStore';
 import { validatePassword } from '@/lib/passwordUtils';
 import { cn } from '@/lib/utils';
 import logoSrc from '@/assets/logo.png';
@@ -77,6 +78,7 @@ function ChangePasswordModal({ userId, onDone }) {
     setSaving(true);
     try {
       await UserStore.changePassword(userId, newPw);
+      tryWriteAuditLog({ action: AUDIT_ACTIONS.PASSWORD_CHANGED, targetType: 'user', targetId: userId, detail: '본인 비밀번호 변경' });
       onDone();
     } catch (err) {
       setErrors([err.message]);

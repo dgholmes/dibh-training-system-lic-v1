@@ -388,7 +388,7 @@ DIBH-Flow의 위험관리 프로세스는 충분한 위해 요인의 식별과 �
 - **위험산정(통제 전):** S=2, P=3, R=6 → **Unacceptable**
 - **위험통제대안분석:** 설계에 의한 고유의 안전성
 - **위험통제조치의 실행:**
-  - LOGIN/LOGOUT/SESSION_TIMEOUT/LOGIN_FAILED/ACCOUNT_LOCKED, USER_*, PASSWORD_*, PATIENT_*, FILE_*, ANALYSIS_RUN, CALIBRATION_DELETED, BACKUP_*, DEIDENTIFIED_EXPORT 등 감사 대상 액션 정의 — `src/api/auditStore.js` (`AUDIT_ACTIONS`)
+  - LOGIN/LOGOUT/SESSION_TIMEOUT/LOGIN_FAILED/ACCOUNT_LOCKED, USER_*, PASSWORD_*, PATIENT_*, FILE_*, ANALYSIS_RUN, BACKUP_*, DEIDENTIFIED_EXPORT 등은 실제 이벤트 발생 시 기록됨 — `src/api/auditStore.js` (`AUDIT_ACTIONS`). `CALIBRATION_DELETED`는 액션 코드만 정의되어 있으며, 대상 기능(캘리브레이션 삭제 UI)이 앱에 구현되어 있지 않아 실제로는 발생하지 않음(별도 기능 신설 여부 결정 필요)
   - 모든 항목에 userId·username·ISO 8601 타임스탬프 기록(UC-06, UC-07 부인방지)
   - 추가·수정 UI 없이 append-only, 최대 10,000건(초과 시 오래된 항목부터 트림)
   - 감사로그 조회는 관리자 전용 읽기 전용 뷰어(`/admin/auditlog`)로 제한(TRE-01) — `AdminAuditLog.jsx`

@@ -39,6 +39,17 @@ export default defineConfig({
     port: 5174,
     allowedHosts: 'all',
     headers: { 'Content-Security-Policy': CSP },
+    watch: {
+      ignored: [
+        '**/android/**',
+        '**/godirect-react-webbt/**',
+        '**/docs/**',
+        '**/docs_to_write/**',
+        '**/docs to confirm/**',
+        '**/vxp data/**',
+        '**/resources/**',
+      ],
+    },
   },
   resolve: {
     alias: {
