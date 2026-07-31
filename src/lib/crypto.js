@@ -253,3 +253,57 @@ export async function decryptPatient(raw) {
     };
   }
 }
+
+// ── User account metadata helpers ────────────────────────────────────────────
+
+const USER_META_FIELDS = ['role', 'mustChangePassword', 'failedAttempts', 'lockedUntil', 'lockoutTicksRemaining'];
+
+/**
+ * Separate the sensitive user-account fields (role, lockout state) from the
+ * rest of the record and encrypt them into an `_enc` blob. `username`/`displayName`/
+ * `id`/`passwordHash`/`salt`/timestamps stay plaintext — needed for synchronous
+ * username lookup and admin-list display; the password is already one-way hashed
+ * separately (PBKDF2-SHA256), so it isn't part of this encrypted blob.
+ */
+export async function encryptUserMeta(user) {
+  const meta = {};
+  const rest = {};
+  for (const [k, v] of Object.entries(user)) {
+    if (USER_META_FIELDS.includes(k)) meta[k] = v ?? null;
+    else rest[k] = v;
+  }
+  rest._enc = await encryptValue(JSON.stringify(meta));
+  return rest;
+}
+
+/**
+ * Decrypt the `_enc` blob and merge the user metadata fields back into the
+ * record. Handles legacy unencrypted records (no `_enc`) transparently. If
+ * decryption fails (e.g. install key changed), returns safe defaults instead
+ * of throwing, so login/account management never crashes on one bad record.
+ */
+export async function decryptUserMeta(raw) {
+  if (!raw) return raw;
+  if (!raw._enc) return raw; // legacy record — metadata already in plain fields
+  try {
+    const metaJson = await decryptValue(raw._enc);
+    const meta = JSON.parse(metaJson);
+    // eslint-disable-next-line no-unused-vars
+    const { _enc, ...rest } = raw;
+    return { ...rest, ...meta };
+  } catch {
+    console.warn('[crypto] decryptUserMeta: decryption failed for user', raw.id,
+      '— install key may have changed. Clear localStorage to reset.');
+    // eslint-disable-next-line no-unused-vars
+    const { _enc, ...rest } = raw;
+    return {
+      ...rest,
+      role: 'clinician',
+      mustChangePassword: false,
+      failedAttempts: 0,
+      lockedUntil: null,
+      lockoutTicksRemaining: 0,
+      _decryptionFailed: true,
+    };
+  }
+}
