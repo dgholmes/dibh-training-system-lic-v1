@@ -111,4 +111,115 @@ describe('authStore — encrypted user metadata', () => {
     const result = await loginUser('admin', 'Admin@1234!'); // the genuinely correct password
     expect(result.success).toBe(false);
   });
+
+  it('refuses every UserStore mutation on an undecryptable record and leaves it byte-identical', async () => {
+    const { initCrypto } = await import('@/lib/crypto');
+    await initCrypto();
+    const { ensureDefaultAdmin, UserStore } = await import('./authStore.js');
+    await ensureDefaultAdmin();
+
+    const users = JSON.parse(localStorage.getItem('dibh_users'));
+    const adminId = users[0].id;
+    users[0]._enc = 'enc:not-valid-hex-data-000000:also-not-valid';
+    localStorage.setItem('dibh_users', JSON.stringify(users));
+    const before = localStorage.getItem('dibh_users');
+
+    const CORRUPT_MSG = '이 계정의 데이터가 손상되어 복호화할 수 없습니다. 계정을 삭제한 후 다시 생성해 주세요.';
+    await expect(UserStore.unlock(adminId)).rejects.toThrow(CORRUPT_MSG);
+    await expect(UserStore.setRole(adminId, 'clinician')).rejects.toThrow(CORRUPT_MSG);
+    await expect(UserStore.changePassword(adminId, 'NewPass@1234!')).rejects.toThrow(CORRUPT_MSG);
+    await expect(UserStore.resetPassword(adminId, 'NewPass@1234!')).rejects.toThrow(CORRUPT_MSG);
+
+    // The real (unrecoverable) ciphertext must not have been overwritten with the
+    // permissive fallback values, and _decryptionFailed must never be persisted.
+    expect(localStorage.getItem('dibh_users')).toBe(before);
+    expect(JSON.parse(localStorage.getItem('dibh_users'))[0]._decryptionFailed).toBeUndefined();
+
+    // Rejected mutations must not stall the write queue for everyone else.
+    await UserStore.create({ username: 'recovery', password: 'Recovery@1234!' });
+    expect((await UserStore.list()).map((u) => u.username)).toContain('recovery');
+
+    // Delete is the documented recovery path — it must still work on a corrupt record.
+    await UserStore.delete(adminId);
+    expect((await UserStore.list()).map((u) => u.username)).toEqual(['recovery']);
+  });
+
+  it('serializes concurrent UserStore mutations so no write is lost', async () => {
+    const { initCrypto } = await import('@/lib/crypto');
+    await initCrypto();
+    const { ensureDefaultAdmin, UserStore } = await import('./authStore.js');
+    await ensureDefaultAdmin();
+
+    // Two concurrent creates: without serialization the second saveUsers() would
+    // write a snapshot taken before the first one landed, dropping that account.
+    const [alpha, beta] = await Promise.all([
+      UserStore.create({ username: 'alpha', password: 'Alpha@1234!' }),
+      UserStore.create({ username: 'beta', password: 'Beta@12345!' }),
+    ]);
+    const afterCreate = await UserStore.list();
+    expect(afterCreate.map((u) => u.username).sort()).toEqual(['admin', 'alpha', 'beta']);
+
+    // Two concurrent mutations on *different* records — both must persist.
+    const hashBefore = JSON.parse(localStorage.getItem('dibh_users'))
+      .find((u) => u.id === beta.id).passwordHash;
+    await Promise.all([
+      UserStore.setRole(alpha.id, 'admin'),
+      UserStore.resetPassword(beta.id, 'Reset@12345!'),
+    ]);
+    const afterMutations = await UserStore.list();
+    expect(afterMutations).toHaveLength(3);
+    expect(afterMutations.find((u) => u.id === alpha.id).role).toBe('admin'); // setRole not clobbered
+    const hashAfter = JSON.parse(localStorage.getItem('dibh_users'))
+      .find((u) => u.id === beta.id).passwordHash;
+    expect(hashAfter).not.toBe(hashBefore); // resetPassword not clobbered
+  });
+
+  it('migrateLegacyUserMetadata encrypts plaintext records once and is a no-op on re-run', async () => {
+    const { initCrypto } = await import('@/lib/crypto');
+    await initCrypto();
+    // Legacy (pre-upgrade) record: role/lockout still stored as plaintext fields.
+    localStorage.setItem('dibh_users', JSON.stringify([{
+      id: 'u-legacy', username: 'legacy', displayName: '레거시',
+      passwordHash: 'hash', salt: 'salt',
+      role: 'admin', mustChangePassword: false, failedAttempts: 0, lockedUntil: null,
+      createdAt: '2025-01-01T00:00:00.000Z', updatedAt: '2025-01-01T00:00:00.000Z',
+    }]));
+    const { migrateLegacyUserMetadata, UserStore } = await import('./authStore.js');
+
+    expect(await migrateLegacyUserMetadata()).toEqual({ migrated: 1 });
+    const raw = JSON.parse(localStorage.getItem('dibh_users'))[0];
+    expect(raw.role).toBeUndefined();
+    expect(raw._enc).toMatch(/^enc:/);
+    expect((await UserStore.list())[0].role).toBe('admin'); // role survived the migration
+
+    const afterFirst = localStorage.getItem('dibh_users');
+    expect(await migrateLegacyUserMetadata()).toEqual({ migrated: 0 });
+    // Byte-identical — already-encrypted records are not re-encrypted with a new IV.
+    expect(localStorage.getItem('dibh_users')).toBe(afterFirst);
+  });
+
+  it('migrateLegacyUserMetadata only touches the legacy records in a mixed dataset', async () => {
+    const { initCrypto, encryptUserMeta } = await import('@/lib/crypto');
+    await initCrypto();
+    const modern = await encryptUserMeta({
+      id: 'u-modern', username: 'modern', passwordHash: 'h', salt: 's',
+      role: 'clinician', mustChangePassword: false, failedAttempts: 0, lockedUntil: null,
+    });
+    const legacy = {
+      id: 'u-legacy', username: 'legacy', passwordHash: 'h', salt: 's',
+      role: 'admin', mustChangePassword: false, failedAttempts: 0, lockedUntil: null,
+    };
+    localStorage.setItem('dibh_users', JSON.stringify([modern, legacy]));
+    const { migrateLegacyUserMetadata, UserStore } = await import('./authStore.js');
+
+    expect(await migrateLegacyUserMetadata()).toEqual({ migrated: 1 });
+    const stored = JSON.parse(localStorage.getItem('dibh_users'));
+    expect(stored[0]._enc).toBe(modern._enc); // untouched ciphertext
+    expect(stored[1]._enc).toMatch(/^enc:/);
+    expect(stored[1].role).toBeUndefined();
+
+    const list = await UserStore.list();
+    expect(list.find((u) => u.id === 'u-modern').role).toBe('clinician');
+    expect(list.find((u) => u.id === 'u-legacy').role).toBe('admin');
+  });
 });

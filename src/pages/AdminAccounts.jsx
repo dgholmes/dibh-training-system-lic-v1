@@ -126,20 +126,28 @@ export default function AdminAccounts() {
       alert('마지막 관리자 계정의 권한은 변경할 수 없습니다.');
       return;
     }
-    await UserStore.setRole(user.id, newRole);
-    tryWriteAuditLog({ action: AUDIT_ACTIONS.USER_ROLE_CHANGED, targetType: 'user', targetId: user.id, detail: `username: ${user.username}, role: ${user.role} → ${newRole}` });
-    await reload();
+    try {
+      await UserStore.setRole(user.id, newRole);
+      tryWriteAuditLog({ action: AUDIT_ACTIONS.USER_ROLE_CHANGED, targetType: 'user', targetId: user.id, detail: `username: ${user.username}, role: ${user.role} → ${newRole}` });
+      await reload();
+    } catch (err) {
+      alert(err.message);
+    }
   };
 
   const handleUnlock = async (user) => {
-    await UserStore.unlock(user.id);
-    tryWriteAuditLog({ action: AUDIT_ACTIONS.USER_UNLOCKED, targetType: 'user', targetId: user.id, detail: `username: ${user.username}` });
-    await reload();
+    try {
+      await UserStore.unlock(user.id);
+      tryWriteAuditLog({ action: AUDIT_ACTIONS.USER_UNLOCKED, targetType: 'user', targetId: user.id, detail: `username: ${user.username}` });
+      await reload();
+    } catch (err) {
+      alert(err.message);
+    }
   };
 
   const handleDelete = async () => {
     try {
-      UserStore.delete(deleteTarget.id);
+      await UserStore.delete(deleteTarget.id);
       tryWriteAuditLog({ action: AUDIT_ACTIONS.USER_DELETED, targetType: 'user', targetId: deleteTarget.id, detail: `username: ${deleteTarget.username}` });
       setDeleteTarget(null);
       await reload();

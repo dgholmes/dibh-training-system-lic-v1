@@ -26,28 +26,47 @@ const LOCKOUT_TICKS = LOCKOUT_MS / HEARTBEAT_MS; // 90 ticks
 //
 const _sessionLockouts = new Map(); // userId → perfNow at lockout start (layer 2)
 
+// ── Write serialization ───────────────────────────────────────────────────────
+//
+// Every writer here does loadUsers() → await (PBKDF2 / AES) → saveUsers(): a
+// read-modify-write with an async gap in the middle. Two overlapping callers would
+// each snapshot the array before the other's saveUsers(), and the later write would
+// silently discard the earlier one (e.g. a heartbeat tick clobbering a password
+// reset). Chaining every mutation onto a single promise makes each one atomic with
+// respect to the others. Same pattern as auditStore.js's `writeQueue`.
+let userQueue = Promise.resolve();
+
+function mutateUsers(fn) {
+  const task = userQueue.then(fn);
+  userQueue = task.then(() => {}, () => {}); // keep the queue alive even if this mutation rejects
+  return task;
+}
+
 // Heartbeat: decrement lockoutTicksRemaining for every locked user every 10 real seconds.
 // Auto-starts on module import so it runs even before the React tree mounts.
-setInterval(async () => {
-  const users = loadUsers();
-  const decrypted = await Promise.all(users.map(decryptUserMeta));
-  let dirty = false;
-  for (let i = 0; i < decrypted.length; i++) {
-    if (decrypted[i]._decryptionFailed) continue;
-    if (!decrypted[i].lockoutTicksRemaining || decrypted[i].lockoutTicksRemaining <= 0) continue;
-    decrypted[i] = { ...decrypted[i], lockoutTicksRemaining: decrypted[i].lockoutTicksRemaining - 1 };
-    if (decrypted[i].lockoutTicksRemaining === 0) {
-      decrypted[i] = { ...decrypted[i], lockedUntil: null, failedAttempts: 0 };
-      _sessionLockouts.delete(decrypted[i].id);
+setInterval(() => {
+  void mutateUsers(async () => {
+    const users = loadUsers();
+    const decrypted = await Promise.all(users.map(decryptUserMeta));
+    const changed = new Set();
+    for (let i = 0; i < decrypted.length; i++) {
+      if (decrypted[i]._decryptionFailed) continue;
+      if (!decrypted[i].lockoutTicksRemaining || decrypted[i].lockoutTicksRemaining <= 0) continue;
+      decrypted[i] = { ...decrypted[i], lockoutTicksRemaining: decrypted[i].lockoutTicksRemaining - 1 };
+      if (decrypted[i].lockoutTicksRemaining === 0) {
+        decrypted[i] = { ...decrypted[i], lockedUntil: null, failedAttempts: 0 };
+        _sessionLockouts.delete(decrypted[i].id);
+      }
+      changed.add(i);
     }
-    dirty = true;
-  }
-  if (dirty) {
-    const reEncrypted = await Promise.all(
-      decrypted.map((u, i) => (u._decryptionFailed ? users[i] : encryptUserMeta(u)))
+    if (changed.size === 0) return;
+    // Only the users whose tick counter actually moved get re-encrypted; every other
+    // record is written back exactly as loaded (no pointless new IV per tick).
+    const next = await Promise.all(
+      users.map((rawUser, i) => (changed.has(i) ? encryptUserMeta(decrypted[i]) : rawUser))
     );
-    saveUsers(reEncrypted);
-  }
+    saveUsers(next);
+  }).catch((err) => console.error('[authStore] lockout heartbeat failed:', err));
 }, HEARTBEAT_MS);
 
 // ── Crypto helpers ────────────────────────────────────────────────────────────
@@ -109,31 +128,60 @@ function generateId() {
 
 /** Creates the default admin account if no users exist yet. */
 export async function ensureDefaultAdmin() {
-  const users = loadUsers();
-  if (users.length > 0) return;
-  const salt = randomHex(16);
-  const passwordHash = await pbkdf2Hash('Admin@1234!', salt);
-  const admin = await encryptUserMeta({
-    id: generateId(),
-    username: 'admin',
-    displayName: '관리자',
-    passwordHash,
-    salt,
-    role: 'admin',
-    mustChangePassword: true,
-    failedAttempts: 0,
-    lockedUntil: null,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+  return mutateUsers(async () => {
+    const users = loadUsers();
+    if (users.length > 0) return;
+    const salt = randomHex(16);
+    const passwordHash = await pbkdf2Hash('Admin@1234!', salt);
+    const admin = await encryptUserMeta({
+      id: generateId(),
+      username: 'admin',
+      displayName: '관리자',
+      passwordHash,
+      salt,
+      role: 'admin',
+      mustChangePassword: true,
+      failedAttempts: 0,
+      lockedUntil: null,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    });
+    saveUsers([admin]);
   });
-  saveUsers([admin]);
+}
+
+/**
+ * One-time, idempotent upgrade for installs created before user metadata was
+ * encrypted: any record still carrying plaintext role/lockout fields (no `_enc`)
+ * is encrypted in place. Records that already have `_enc` are left byte-identical —
+ * re-running this is a no-op, so it is safe to call on every app start.
+ * Returns `{ migrated }` — the number of legacy records that were upgraded.
+ */
+export async function migrateLegacyUserMetadata() {
+  return mutateUsers(async () => {
+    const users = loadUsers();
+    const legacy = users.filter((u) => !u._enc);
+    if (legacy.length === 0) return { migrated: 0 };
+    const migratedUsers = await Promise.all(users.map((u) => (u._enc ? u : encryptUserMeta(u))));
+    saveUsers(migratedUsers);
+    return { migrated: legacy.length };
+  });
 }
 
 // ── Login / session ───────────────────────────────────────────────────────────
 
 const GENERIC_ERROR = '아이디 또는 비밀번호가 올바르지 않습니다.';
 
+/**
+ * Authenticate a user. Serialized through the user-write queue because both the
+ * failure path (attempt counter / lockout) and the success path (counter reset)
+ * rewrite the stored record.
+ */
 export async function loginUser(username, password) {
+  return mutateUsers(() => doLoginUser(username, password));
+}
+
+async function doLoginUser(username, password) {
   const users = loadUsers();
   const idx = users.findIndex((u) => u.username === username);
 
@@ -286,7 +334,21 @@ export function clearSessionForTimeout() {
 
 // ── User management (admin) ───────────────────────────────────────────────────
 
+// A record whose `_enc` blob cannot be decrypted/verified has no recoverable
+// role or lockout state — decryptUserMeta() only returns permissive placeholders.
+// Merging an update onto those placeholders would bake the fallback values in as
+// if they were real (silently demoting an admin to clinician, and destroying the
+// original ciphertext). Refuse the mutation instead and point the admin at the
+// only safe recovery: delete the account and recreate it.
+const CORRUPTED_RECORD_ERROR =
+  '이 계정의 데이터가 손상되어 복호화할 수 없습니다. 계정을 삭제한 후 다시 생성해 주세요.';
+
+function assertDecryptable(decrypted) {
+  if (decrypted._decryptionFailed) throw new Error(CORRUPTED_RECORD_ERROR);
+}
+
 export const UserStore = {
+  // Read-only — nothing to serialize against, so it stays off the write queue.
   async list() {
     const users = loadUsers();
     const decrypted = await Promise.all(users.map(decryptUserMeta));
@@ -294,81 +356,99 @@ export const UserStore = {
   },
 
   async create({ username, displayName = '', password, role = 'clinician' }) {
-    const users = loadUsers();
-    if (users.find((u) => u.username === username)) throw new Error('이미 존재하는 아이디입니다.');
-    const salt = randomHex(16);
-    const passwordHash = await pbkdf2Hash(password, salt);
-    const user = {
-      id: generateId(),
-      username,
-      displayName: displayName.trim() || username,
-      passwordHash,
-      salt,
-      role,
-      mustChangePassword: true,
-      failedAttempts: 0,
-      lockedUntil: null,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-    users.push(await encryptUserMeta(user));
-    saveUsers(users);
-    return { ...user, passwordHash: undefined, salt: undefined };
+    return mutateUsers(async () => {
+      const users = loadUsers();
+      if (users.find((u) => u.username === username)) throw new Error('이미 존재하는 아이디입니다.');
+      const salt = randomHex(16);
+      const passwordHash = await pbkdf2Hash(password, salt);
+      const user = {
+        id: generateId(),
+        username,
+        displayName: displayName.trim() || username,
+        passwordHash,
+        salt,
+        role,
+        mustChangePassword: true,
+        failedAttempts: 0,
+        lockedUntil: null,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+      users.push(await encryptUserMeta(user));
+      saveUsers(users);
+      return { ...user, passwordHash: undefined, salt: undefined };
+    });
   },
 
   async changePassword(userId, newPassword) {
-    const users = loadUsers();
-    const idx = users.findIndex((u) => u.id === userId);
-    if (idx === -1) throw new Error('사용자를 찾을 수 없습니다.');
-    const salt = randomHex(16);
-    const passwordHash = await pbkdf2Hash(newPassword, salt);
-    const decrypted = await decryptUserMeta(users[idx]);
-    const merged = { ...decrypted, passwordHash, salt, mustChangePassword: false, updatedAt: new Date().toISOString() };
-    users[idx] = await encryptUserMeta(merged);
-    saveUsers(users);
-    // Update active session if changing own password
-    const s = getSession();
-    if (s && s.userId === userId) {
-      sessionStorage.setItem(SESSION_KEY, JSON.stringify({ ...s, mustChangePassword: false }));
-    }
+    return mutateUsers(async () => {
+      const users = loadUsers();
+      const idx = users.findIndex((u) => u.id === userId);
+      if (idx === -1) throw new Error('사용자를 찾을 수 없습니다.');
+      const salt = randomHex(16);
+      const passwordHash = await pbkdf2Hash(newPassword, salt);
+      const decrypted = await decryptUserMeta(users[idx]);
+      assertDecryptable(decrypted);
+      const merged = { ...decrypted, passwordHash, salt, mustChangePassword: false, updatedAt: new Date().toISOString() };
+      users[idx] = await encryptUserMeta(merged);
+      saveUsers(users);
+      // Update active session if changing own password
+      const s = getSession();
+      if (s && s.userId === userId) {
+        sessionStorage.setItem(SESSION_KEY, JSON.stringify({ ...s, mustChangePassword: false }));
+      }
+    });
   },
 
   async resetPassword(userId, newPassword) {
-    const users = loadUsers();
-    const idx = users.findIndex((u) => u.id === userId);
-    if (idx === -1) throw new Error('사용자를 찾을 수 없습니다.');
-    const salt = randomHex(16);
-    const passwordHash = await pbkdf2Hash(newPassword, salt);
-    const decrypted = await decryptUserMeta(users[idx]);
-    const merged = { ...decrypted, passwordHash, salt, mustChangePassword: true, updatedAt: new Date().toISOString() };
-    users[idx] = await encryptUserMeta(merged);
-    saveUsers(users);
+    return mutateUsers(async () => {
+      const users = loadUsers();
+      const idx = users.findIndex((u) => u.id === userId);
+      if (idx === -1) throw new Error('사용자를 찾을 수 없습니다.');
+      const salt = randomHex(16);
+      const passwordHash = await pbkdf2Hash(newPassword, salt);
+      const decrypted = await decryptUserMeta(users[idx]);
+      assertDecryptable(decrypted);
+      const merged = { ...decrypted, passwordHash, salt, mustChangePassword: true, updatedAt: new Date().toISOString() };
+      users[idx] = await encryptUserMeta(merged);
+      saveUsers(users);
+    });
   },
 
   async unlock(userId) {
-    const users = loadUsers();
-    const idx = users.findIndex((u) => u.id === userId);
-    if (idx === -1) throw new Error('사용자를 찾을 수 없습니다.');
-    const decrypted = await decryptUserMeta(users[idx]);
-    const merged = { ...decrypted, failedAttempts: 0, lockedUntil: null, lockoutTicksRemaining: 0, updatedAt: new Date().toISOString() };
-    users[idx] = await encryptUserMeta(merged);
-    saveUsers(users);
-    _sessionLockouts.delete(userId); // clear both layers
+    return mutateUsers(async () => {
+      const users = loadUsers();
+      const idx = users.findIndex((u) => u.id === userId);
+      if (idx === -1) throw new Error('사용자를 찾을 수 없습니다.');
+      const decrypted = await decryptUserMeta(users[idx]);
+      assertDecryptable(decrypted);
+      const merged = { ...decrypted, failedAttempts: 0, lockedUntil: null, lockoutTicksRemaining: 0, updatedAt: new Date().toISOString() };
+      users[idx] = await encryptUserMeta(merged);
+      saveUsers(users);
+      _sessionLockouts.delete(userId); // clear both layers
+    });
   },
 
   async setRole(userId, role) {
-    const users = loadUsers();
-    const idx = users.findIndex((u) => u.id === userId);
-    if (idx === -1) throw new Error('사용자를 찾을 수 없습니다.');
-    const decrypted = await decryptUserMeta(users[idx]);
-    const merged = { ...decrypted, role, updatedAt: new Date().toISOString() };
-    users[idx] = await encryptUserMeta(merged);
-    saveUsers(users);
+    return mutateUsers(async () => {
+      const users = loadUsers();
+      const idx = users.findIndex((u) => u.id === userId);
+      if (idx === -1) throw new Error('사용자를 찾을 수 없습니다.');
+      const decrypted = await decryptUserMeta(users[idx]);
+      assertDecryptable(decrypted);
+      const merged = { ...decrypted, role, updatedAt: new Date().toISOString() };
+      users[idx] = await encryptUserMeta(merged);
+      saveUsers(users);
+    });
   },
 
-  delete(userId) {
-    const users = loadUsers();
-    if (users.length <= 1) throw new Error('마지막 계정은 삭제할 수 없습니다.');
-    saveUsers(users.filter((u) => u.id !== userId));
+  // Deleting is the documented recovery path for an undecryptable record, so it
+  // deliberately has no assertDecryptable() guard. Now async (queued) — callers must await.
+  async delete(userId) {
+    return mutateUsers(async () => {
+      const users = loadUsers();
+      if (users.length <= 1) throw new Error('마지막 계정은 삭제할 수 없습니다.');
+      saveUsers(users.filter((u) => u.id !== userId));
+    });
   },
 };
