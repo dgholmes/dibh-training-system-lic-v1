@@ -97,22 +97,18 @@ describe('authStore — encrypted user metadata', () => {
     expect(unlocked.failedAttempts).toBe(0);
   });
 
-  it('fails closed: a user record with an undecryptable _enc blob cannot log in with any password', async () => {
+  it('rejects login for a user whose _enc metadata cannot be decrypted, even with the correct password', async () => {
     const { initCrypto } = await import('@/lib/crypto');
     await initCrypto();
-    const { loginUser } = await import('./authStore.js');
+    const { ensureDefaultAdmin, loginUser } = await import('./authStore.js');
+    await ensureDefaultAdmin();
 
-    const corrupted = {
-      id: 'u-corrupted',
-      username: 'broken',
-      displayName: 'broken',
-      passwordHash: 'irrelevant',
-      salt: 'irrelevant',
-      _enc: 'enc:not-valid-hex-data-000000:also-not-valid',
-    };
-    localStorage.setItem('dibh_users', JSON.stringify([corrupted]));
+    // Corrupt only the _enc blob directly in storage — passwordHash/salt stay genuine and untouched
+    const users = JSON.parse(localStorage.getItem('dibh_users'));
+    users[0]._enc = 'enc:not-valid-hex-data-000000:also-not-valid';
+    localStorage.setItem('dibh_users', JSON.stringify(users));
 
-    const result = await loginUser('broken', 'any-password-at-all');
+    const result = await loginUser('admin', 'Admin@1234!'); // the genuinely correct password
     expect(result.success).toBe(false);
   });
 });
