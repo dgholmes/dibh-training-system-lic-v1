@@ -198,7 +198,9 @@ export function stableStringify(obj) {
  * (training sessions, calibrations) that don't need encryption, only integrity.
  */
 export async function computeRecordHash(record) {
-  const { _hash, _integrityFailed, ...rest } = record;
+  const rest = { ...record };
+  delete rest._hash;
+  delete rest._integrityFailed;
   const json = stableStringify(rest);
   return sha256Hex(new TextEncoder().encode(json).buffer);
 }
