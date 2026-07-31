@@ -117,6 +117,50 @@ export async function decryptValue(value) {
   return new TextDecoder().decode(plaintext);
 }
 
+/**
+ * Encrypt raw bytes (e.g. breathing data file BLOBs) with AES-256-GCM.
+ * Returns a single Uint8Array: [12-byte IV][ciphertext] — compact for BLOB storage,
+ * unlike encryptValue()'s hex-string format which is meant for JSON/localStorage values.
+ */
+export async function encryptBytes(bytes) {
+  if (!_key) throw new Error('[crypto] Not initialised — call initCrypto() first');
+  const iv = new Uint8Array(12);
+  crypto.getRandomValues(iv);
+  const data = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes);
+  const ciphertext = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, _key, data);
+  const result = new Uint8Array(iv.length + ciphertext.byteLength);
+  result.set(iv, 0);
+  result.set(new Uint8Array(ciphertext), iv.length);
+  secDbg('DC-01', 'AES-256-GCM 암호화 수행 — Encrypt (파일 BLOB)', {
+    설명: '호흡 데이터 파일(CSV/VXP) 원본 바이트를 AES-256-GCM으로 암호화합니다. 매 암호화마다 새로운 랜덤 IV가 생성됩니다.',
+    description: 'Encrypts breathing data file (CSV/VXP) raw bytes using AES-256-GCM. A fresh random IV is generated for every operation.',
+    algorithm: 'AES-256-GCM',
+    plaintext_length_bytes: data.byteLength,
+    ciphertext_length_bytes: result.byteLength,
+    output_format: '[12-byte IV][ciphertext]',
+    note: '매 암호화마다 새 랜덤 IV 생성 — 평문·키 미포함 | Fresh random IV per op — plaintext & key not logged',
+  });
+  return result;
+}
+
+/** Decrypt bytes produced by encryptBytes(). Returns an ArrayBuffer of the original plaintext. */
+export async function decryptBytes(bytes) {
+  if (!_key) throw new Error('[crypto] Not initialised — call initCrypto() first');
+  const data = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes);
+  const iv = data.slice(0, 12);
+  const ciphertext = data.slice(12);
+  const plaintext = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, _key, ciphertext);
+  secDbg('DC-01', 'AES-256-GCM 복호화 수행 — Decrypt (파일 BLOB)', {
+    설명: '암호화된 호흡 데이터 파일을 복호화합니다. GCM 인증 태그 검증으로 데이터 변조 여부를 자동 확인합니다.',
+    description: 'Decrypts encrypted breathing data file. GCM authentication tag verification automatically detects any tampering.',
+    algorithm: 'AES-256-GCM',
+    ciphertext_length_bytes: ciphertext.byteLength,
+    status: '성공 — GCM 인증 태그 검증 완료 (변조 없음) | success — GCM auth tag verified (no tampering)',
+    note: '복호화된 평문 미포함 — Plaintext not logged',
+  });
+  return plaintext;
+}
+
 /** Compute SHA-256 hex digest of an ArrayBuffer — used for file integrity (SI-04). */
 export async function sha256Hex(buffer) {
   const digest = await crypto.subtle.digest('SHA-256', buffer);
@@ -130,6 +174,33 @@ export async function sha256Hex(buffer) {
     hash_length_bits: 256,
   });
   return hash;
+}
+
+/** Deterministic JSON.stringify — sorts object keys recursively so field order never affects the output. */
+export function stableStringify(obj) {
+  const sortValue = (value) => {
+    if (Array.isArray(value)) return value.map(sortValue);
+    if (value && typeof value === 'object') {
+      return Object.keys(value).sort().reduce((acc, key) => {
+        acc[key] = sortValue(value[key]);
+        return acc;
+      }, {});
+    }
+    return value;
+  };
+  return JSON.stringify(sortValue(obj));
+}
+
+/**
+ * Compute a SHA-256 integrity hash over a record's content (order-independent).
+ * Excludes `_hash`/`_integrityFailed` so hashing an already-hashed/flagged record
+ * is idempotent — used for tamper detection on plaintext localStorage records
+ * (training sessions, calibrations) that don't need encryption, only integrity.
+ */
+export async function computeRecordHash(record) {
+  const { _hash, _integrityFailed, ...rest } = record;
+  const json = stableStringify(rest);
+  return sha256Hex(new TextEncoder().encode(json).buffer);
 }
 
 // ── Patient PII helpers ───────────────────────────────────────────────────────
