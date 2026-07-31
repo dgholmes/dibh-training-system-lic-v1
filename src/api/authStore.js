@@ -1,5 +1,6 @@
 // Authentication store — MFDS cybersecurity guideline IA-01 through IA-07
 import { secDbg } from '@/lib/securityDebug';
+import { encryptUserMeta, decryptUserMeta } from '@/lib/crypto';
 // Audit logging imported lazily to avoid circular dep (auditStore → authStore → auditStore)
 // Passwords hashed with PBKDF2-SHA256 (100k iterations + random 16-byte salt)
 // Sessions stored in sessionStorage (cleared on tab/browser close)
@@ -27,19 +28,23 @@ const _sessionLockouts = new Map(); // userId → perfNow at lockout start (laye
 
 // Heartbeat: decrement lockoutTicksRemaining for every locked user every 10 real seconds.
 // Auto-starts on module import so it runs even before the React tree mounts.
-setInterval(() => {
+setInterval(async () => {
   const users = loadUsers();
+  const decrypted = await Promise.all(users.map(decryptUserMeta));
   let dirty = false;
-  for (let i = 0; i < users.length; i++) {
-    if (!users[i].lockoutTicksRemaining || users[i].lockoutTicksRemaining <= 0) continue;
-    users[i] = { ...users[i], lockoutTicksRemaining: users[i].lockoutTicksRemaining - 1 };
-    if (users[i].lockoutTicksRemaining === 0) {
-      users[i] = { ...users[i], lockedUntil: null, failedAttempts: 0 };
-      _sessionLockouts.delete(users[i].id);
+  for (let i = 0; i < decrypted.length; i++) {
+    if (!decrypted[i].lockoutTicksRemaining || decrypted[i].lockoutTicksRemaining <= 0) continue;
+    decrypted[i] = { ...decrypted[i], lockoutTicksRemaining: decrypted[i].lockoutTicksRemaining - 1 };
+    if (decrypted[i].lockoutTicksRemaining === 0) {
+      decrypted[i] = { ...decrypted[i], lockedUntil: null, failedAttempts: 0 };
+      _sessionLockouts.delete(decrypted[i].id);
     }
     dirty = true;
   }
-  if (dirty) saveUsers(users);
+  if (dirty) {
+    const reEncrypted = await Promise.all(decrypted.map(encryptUserMeta));
+    saveUsers(reEncrypted);
+  }
 }, HEARTBEAT_MS);
 
 // ── Crypto helpers ────────────────────────────────────────────────────────────
@@ -105,21 +110,20 @@ export async function ensureDefaultAdmin() {
   if (users.length > 0) return;
   const salt = randomHex(16);
   const passwordHash = await pbkdf2Hash('Admin@1234!', salt);
-  saveUsers([
-    {
-      id: generateId(),
-      username: 'admin',
-      displayName: '관리자',
-      passwordHash,
-      salt,
-      role: 'admin',
-      mustChangePassword: true,
-      failedAttempts: 0,
-      lockedUntil: null,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    },
-  ]);
+  const admin = await encryptUserMeta({
+    id: generateId(),
+    username: 'admin',
+    displayName: '관리자',
+    passwordHash,
+    salt,
+    role: 'admin',
+    mustChangePassword: true,
+    failedAttempts: 0,
+    lockedUntil: null,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  });
+  saveUsers([admin]);
 }
 
 // ── Login / session ───────────────────────────────────────────────────────────
@@ -133,7 +137,7 @@ export async function loginUser(username, password) {
   // Do not reveal whether the username exists (IA-06)
   if (idx === -1) return { success: false, error: GENERIC_ERROR };
 
-  const user = users[idx];
+  const user = await decryptUserMeta(users[idx]);
 
   // Lockout check (IA-07) — tick counter (primary) + performance.now() (same-session layer)
   const ticks = user.lockoutTicksRemaining ?? 0;
@@ -172,7 +176,8 @@ export async function loginUser(username, password) {
       update.failedAttempts = 0;
       _sessionLockouts.set(user.id, performance.now()); // layer 2: same-session monotonic
     }
-    users[idx] = { ...user, ...update };
+    const merged = { ...user, ...update };
+    users[idx] = await encryptUserMeta(merged);
     saveUsers(users);
     secDbg('IA-07', update.lockoutTicksRemaining ? '계정 잠금 처리 — Account Locked' : '로그인 실패 — Login Failed', {
       설명: update.lockoutTicksRemaining
@@ -212,7 +217,8 @@ export async function loginUser(username, password) {
   }
 
   // Success — reset counter and create session
-  users[idx] = { ...user, failedAttempts: 0, lockedUntil: null, updatedAt: new Date().toISOString() };
+  const merged = { ...user, failedAttempts: 0, lockedUntil: null, updatedAt: new Date().toISOString() };
+  users[idx] = await encryptUserMeta(merged);
   saveUsers(users);
 
   const session = {
@@ -273,8 +279,10 @@ export function clearSessionForTimeout() {
 // ── User management (admin) ───────────────────────────────────────────────────
 
 export const UserStore = {
-  list() {
-    return loadUsers().map(({ passwordHash, salt, ...safe }) => safe);
+  async list() {
+    const users = loadUsers();
+    const decrypted = await Promise.all(users.map(decryptUserMeta));
+    return decrypted.map(({ passwordHash, salt, ...safe }) => safe);
   },
 
   async create({ username, displayName = '', password, role = 'clinician' }) {
@@ -295,7 +303,7 @@ export const UserStore = {
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
-    users.push(user);
+    users.push(await encryptUserMeta(user));
     saveUsers(users);
     return { ...user, passwordHash: undefined, salt: undefined };
   },
@@ -306,7 +314,9 @@ export const UserStore = {
     if (idx === -1) throw new Error('사용자를 찾을 수 없습니다.');
     const salt = randomHex(16);
     const passwordHash = await pbkdf2Hash(newPassword, salt);
-    users[idx] = { ...users[idx], passwordHash, salt, mustChangePassword: false, updatedAt: new Date().toISOString() };
+    const decrypted = await decryptUserMeta(users[idx]);
+    const merged = { ...decrypted, passwordHash, salt, mustChangePassword: false, updatedAt: new Date().toISOString() };
+    users[idx] = await encryptUserMeta(merged);
     saveUsers(users);
     // Update active session if changing own password
     const s = getSession();
@@ -321,30 +331,30 @@ export const UserStore = {
     if (idx === -1) throw new Error('사용자를 찾을 수 없습니다.');
     const salt = randomHex(16);
     const passwordHash = await pbkdf2Hash(newPassword, salt);
-    users[idx] = {
-      ...users[idx],
-      passwordHash,
-      salt,
-      mustChangePassword: true,
-      updatedAt: new Date().toISOString(),
-    };
+    const decrypted = await decryptUserMeta(users[idx]);
+    const merged = { ...decrypted, passwordHash, salt, mustChangePassword: true, updatedAt: new Date().toISOString() };
+    users[idx] = await encryptUserMeta(merged);
     saveUsers(users);
   },
 
-  unlock(userId) {
+  async unlock(userId) {
     const users = loadUsers();
     const idx = users.findIndex((u) => u.id === userId);
     if (idx === -1) throw new Error('사용자를 찾을 수 없습니다.');
-    users[idx] = { ...users[idx], failedAttempts: 0, lockedUntil: null, lockoutTicksRemaining: 0, updatedAt: new Date().toISOString() };
+    const decrypted = await decryptUserMeta(users[idx]);
+    const merged = { ...decrypted, failedAttempts: 0, lockedUntil: null, lockoutTicksRemaining: 0, updatedAt: new Date().toISOString() };
+    users[idx] = await encryptUserMeta(merged);
     saveUsers(users);
     _sessionLockouts.delete(userId); // clear both layers
   },
 
-  setRole(userId, role) {
+  async setRole(userId, role) {
     const users = loadUsers();
     const idx = users.findIndex((u) => u.id === userId);
     if (idx === -1) throw new Error('사용자를 찾을 수 없습니다.');
-    users[idx] = { ...users[idx], role, updatedAt: new Date().toISOString() };
+    const decrypted = await decryptUserMeta(users[idx]);
+    const merged = { ...decrypted, role, updatedAt: new Date().toISOString() };
+    users[idx] = await encryptUserMeta(merged);
     saveUsers(users);
   },
 
