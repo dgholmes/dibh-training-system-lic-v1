@@ -58,7 +58,7 @@ export default function AdminAccounts() {
   const [resetErrors, setResetErrors] = useState([]);
   const [resetting, setResetting] = useState(false);
 
-  const reload = () => setUsers(UserStore.list());
+  const reload = async () => setUsers(await UserStore.list());
   useEffect(() => { reload(); }, []);
 
   // ── Usage notice editor (IA-08) ─────────────────────────────────────────────
@@ -111,7 +111,7 @@ export default function AdminAccounts() {
       setForm({ username: '', password: '', role: 'clinician' });
       setShowCreate(false);
       setFormErrors([]);
-      reload();
+      await reload();
     } catch (err) {
       setFormErrors([err.message]);
     } finally {
@@ -119,30 +119,30 @@ export default function AdminAccounts() {
     }
   };
 
-  const handleRoleToggle = (user) => {
+  const handleRoleToggle = async (user) => {
     const newRole = user.role === 'admin' ? 'clinician' : 'admin';
     // Prevent removing last admin
     if (user.role === 'admin' && users.filter(u => u.role === 'admin').length <= 1) {
       alert('마지막 관리자 계정의 권한은 변경할 수 없습니다.');
       return;
     }
-    UserStore.setRole(user.id, newRole);
+    await UserStore.setRole(user.id, newRole);
     tryWriteAuditLog({ action: AUDIT_ACTIONS.USER_ROLE_CHANGED, targetType: 'user', targetId: user.id, detail: `username: ${user.username}, role: ${user.role} → ${newRole}` });
-    reload();
+    await reload();
   };
 
-  const handleUnlock = (user) => {
-    UserStore.unlock(user.id);
+  const handleUnlock = async (user) => {
+    await UserStore.unlock(user.id);
     tryWriteAuditLog({ action: AUDIT_ACTIONS.USER_UNLOCKED, targetType: 'user', targetId: user.id, detail: `username: ${user.username}` });
-    reload();
+    await reload();
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     try {
       UserStore.delete(deleteTarget.id);
       tryWriteAuditLog({ action: AUDIT_ACTIONS.USER_DELETED, targetType: 'user', targetId: deleteTarget.id, detail: `username: ${deleteTarget.username}` });
       setDeleteTarget(null);
-      reload();
+      await reload();
     } catch (err) {
       alert(err.message);
     }
