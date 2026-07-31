@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 
 function createMockLocalStorage(initial = {}) {
   const store = new Map(Object.entries(initial));
@@ -14,6 +14,10 @@ describe('audit log hash-chain', () => {
     vi.resetModules();
     vi.stubGlobal('localStorage', createMockLocalStorage());
     vi.stubGlobal('sessionStorage', createMockLocalStorage());
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
   });
 
   it('produces a valid chain across sequential writes', async () => {
@@ -70,5 +74,34 @@ describe('audit log hash-chain', () => {
     const { verifyAuditChain } = await import('./auditStore.js');
     const result = await verifyAuditChain();
     expect(result).toEqual({ valid: true, checkedCount: 0, brokenAtIndex: null, brokenAtId: null });
+  });
+
+  it('does not drop entries when writes happen concurrently', async () => {
+    const { initCrypto } = await import('@/lib/crypto');
+    await initCrypto();
+    const { writeAuditLog, verifyAuditChain, getAuditLogEntries } = await import('./auditStore.js');
+    await Promise.all([
+      writeAuditLog({ action: 'LOGIN' }),
+      writeAuditLog({ action: 'LOGOUT' }),
+      writeAuditLog({ action: 'LOGIN' }),
+    ]);
+    expect(getAuditLogEntries({ limit: 10 }).total).toBe(3);
+    const result = await verifyAuditChain();
+    expect(result.valid).toBe(true);
+    expect(result.checkedCount).toBe(3);
+  });
+
+  it('keeps the chain valid when seedDebugAuditEntries runs after real entries already exist', async () => {
+    vi.stubEnv('VITE_DEBUG_MODE', 'true');
+    const { initCrypto } = await import('@/lib/crypto');
+    await initCrypto();
+    const { writeAuditLog, seedDebugAuditEntries, verifyAuditChain } = await import('./auditStore.js');
+    await writeAuditLog({ action: 'LOGIN' });
+    await writeAuditLog({ action: 'LOGOUT' });
+    await seedDebugAuditEntries(5);
+
+    const result = await verifyAuditChain();
+    expect(result.valid).toBe(true);
+    expect(result.checkedCount).toBe(7);
   });
 });

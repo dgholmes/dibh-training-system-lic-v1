@@ -21,13 +21,14 @@ describe('seedDebugAuditEntries', () => {
   it('throws when SECURITY_DEBUG is false', async () => {
     vi.stubEnv('VITE_DEBUG_MODE', undefined);
     const { seedDebugAuditEntries } = await import('./auditStore.js');
-    expect(() => seedDebugAuditEntries(10)).toThrow(/debug builds/);
+    // seedDebugAuditEntries is now async, so a synchronous throw becomes a rejected promise.
+    await expect(seedDebugAuditEntries(10)).rejects.toThrow(/debug builds/);
   });
 
   it('generates exactly `count` entries and applies the FIFO trim on a bulk write', async () => {
     vi.stubEnv('VITE_DEBUG_MODE', 'true');
     const { seedDebugAuditEntries, getAuditLogCapacity } = await import('./auditStore.js');
-    const result = seedDebugAuditEntries(10_000);
+    const result = await seedDebugAuditEntries(10_000);
     expect(result).toEqual({ generated: 10_000, totalAfterTrim: 10_000 });
     expect(getAuditLogCapacity().count).toBe(10_000);
   });
@@ -35,8 +36,8 @@ describe('seedDebugAuditEntries', () => {
   it('trims oldest entries first when seeding pushes the log over MAX_ENTRIES', async () => {
     vi.stubEnv('VITE_DEBUG_MODE', 'true');
     const { seedDebugAuditEntries, getAuditLogEntries } = await import('./auditStore.js');
-    seedDebugAuditEntries(10_000);
-    seedDebugAuditEntries(5); // pushes total to 10,005 — oldest 5 must be trimmed
+    await seedDebugAuditEntries(10_000);
+    await seedDebugAuditEntries(5); // pushes total to 10,005 — oldest 5 must be trimmed
     const { total } = getAuditLogEntries({ limit: 1 });
     expect(total).toBe(10_000);
   });

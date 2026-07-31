@@ -161,18 +161,26 @@ export async function decryptBytes(bytes) {
   return plaintext;
 }
 
-/** Compute SHA-256 hex digest of an ArrayBuffer — used for file integrity (SI-04). */
-export async function sha256Hex(buffer) {
+/**
+ * Compute SHA-256 hex digest of an ArrayBuffer — used for file integrity (SI-04).
+ * @param {ArrayBuffer} buffer
+ * @param {{ quiet?: boolean }} [options] - pass `quiet: true` to suppress the per-call
+ *   secDbg audit trail entry (e.g. bulk verification loops that would otherwise spam
+ *   thousands of console groups for a single logical operation).
+ */
+export async function sha256Hex(buffer, { quiet = false } = {}) {
   const digest = await crypto.subtle.digest('SHA-256', buffer);
   const hash = hexEncode(digest);
-  secDbg('SI-04', 'SHA-256 무결성 해시 계산 — Integrity Hash', {
-    설명: '파일의 SHA-256 해시값을 계산합니다. 호흡 데이터 파일 무결성 검증 및 앱 번들 변조 탐지에 사용됩니다.',
-    description: 'Computes SHA-256 hash of a file. Used for breathing data file integrity and app bundle tamper detection.',
-    algorithm: 'SHA-256',
-    input_length_bytes: buffer.byteLength,
-    hash_hex: hash,
-    hash_length_bits: 256,
-  });
+  if (!quiet) {
+    secDbg('SI-04', 'SHA-256 무결성 해시 계산 — Integrity Hash', {
+      설명: '파일의 SHA-256 해시값을 계산합니다. 호흡 데이터 파일 무결성 검증 및 앱 번들 변조 탐지에 사용됩니다.',
+      description: 'Computes SHA-256 hash of a file. Used for breathing data file integrity and app bundle tamper detection.',
+      algorithm: 'SHA-256',
+      input_length_bytes: buffer.byteLength,
+      hash_hex: hash,
+      hash_length_bits: 256,
+    });
+  }
   return hash;
 }
 

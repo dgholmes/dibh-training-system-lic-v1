@@ -33,12 +33,28 @@ function loadLog() {
   }
 }
 
+/** Hash-chain helper — computes an entry's `hash` from its content (including `prevHash`). */
+async function computeEntryHash(entry, options) {
+  return sha256Hex(new TextEncoder().encode(stableStringify(entry)).buffer, options);
+}
+
+// Serializes writeAuditLog calls so concurrent callers (e.g. Promise.all([...].map(verifyRecord)))
+// can never interleave a loadLog()/setItem() read-modify-write pair — otherwise the second writer's
+// setItem would silently overwrite the first writer's entry with no trace (UC-04/UC-07 violation).
+let writeQueue = Promise.resolve();
+
 /**
  * Write an audit entry. Throws if localStorage is unavailable (UC-05 — caller must handle).
  *
  * @param {{ action: string, targetType?: string, targetId?: string, detail?: string }} params
  */
-export async function writeAuditLog({ action, targetType = null, targetId = null, detail = null }) {
+export function writeAuditLog(params) {
+  const task = writeQueue.then(() => doWriteAuditLog(params));
+  writeQueue = task.then(() => {}, () => {}); // keep the queue alive even if this write rejects
+  return task;
+}
+
+async function doWriteAuditLog({ action, targetType = null, targetId = null, detail = null }) {
   const session = getSession();
   const entry = {
     id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
@@ -56,7 +72,7 @@ export async function writeAuditLog({ action, targetType = null, targetId = null
   entry.prevHash = previous?.hash || GENESIS_HASH;
   // Hash covers the entry's own content plus prevHash (already a field on entry at this point) —
   // any edit, deletion, or reordering of a prior entry changes every hash after it (UC-07).
-  entry.hash = await sha256Hex(new TextEncoder().encode(stableStringify(entry)).buffer);
+  entry.hash = await computeEntryHash(entry);
 
   log.push(entry);
   if (log.length > MAX_ENTRIES) log.splice(0, log.length - MAX_ENTRIES);
@@ -111,15 +127,20 @@ export async function tryWriteAuditLog(params) {
 /**
  * Debug-only: append `count` synthetic entries in one bulk write, respecting the
  * existing MAX_ENTRIES FIFO trim. Bypasses per-entry writeAuditLog() to avoid
- * O(n^2) re-serialization of the growing array on every single call.
+ * O(n^2) re-serialization of the growing array on every single call — but still
+ * participates properly in the hash-chain (each entry's prevHash/hash carried
+ * forward from the previous one, real or seeded) so verifyAuditChain() never
+ * reports a false "tampered" just because debug seeding ran after real entries
+ * already existed (SECURITY_DEBUG-only tooling, used during QA/audit sessions).
  * Throws unless SECURITY_DEBUG is true — structurally cannot run in a production build.
  */
-export function seedDebugAuditEntries(count = 10_000) {
+export async function seedDebugAuditEntries(count = 10_000) {
   if (!SECURITY_DEBUG) throw new Error('seedDebugAuditEntries is only available in debug builds');
   const log = loadLog();
   const now = Date.now();
+  let prevHash = log[log.length - 1]?.hash || GENESIS_HASH;
   for (let i = 0; i < count; i++) {
-    log.push({
+    const entry = {
       id: `debug-${now}-${i}`,
       userId: 'system',
       username: 'system',
@@ -128,7 +149,11 @@ export function seedDebugAuditEntries(count = 10_000) {
       targetId: null,
       detail: 'QA 테스트용 자동 생성 항목 (디버그 빌드 전용)',
       timestamp: new Date(now + i).toISOString(),
-    });
+      prevHash,
+    };
+    entry.hash = await computeEntryHash(entry, { quiet: true });
+    prevHash = entry.hash;
+    log.push(entry);
   }
   const trimmed = log.length > MAX_ENTRIES ? log.slice(log.length - MAX_ENTRIES) : log;
   localStorage.setItem(AUDIT_KEY, JSON.stringify(trimmed));
@@ -191,7 +216,7 @@ export async function verifyAuditChain() {
       return { valid: false, checkedCount, brokenAtIndex: i, brokenAtId: entry.id };
     }
     const { hash, ...rest } = entry;
-    const expected = await sha256Hex(new TextEncoder().encode(stableStringify(rest)).buffer);
+    const expected = await computeEntryHash(rest, { quiet: true });
     if (expected !== hash) {
       return { valid: false, checkedCount, brokenAtIndex: i, brokenAtId: entry.id };
     }
