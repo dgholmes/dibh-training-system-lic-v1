@@ -96,4 +96,23 @@ describe('authStore — encrypted user metadata', () => {
     expect(unlocked.lockedUntil).toBeNull();
     expect(unlocked.failedAttempts).toBe(0);
   });
+
+  it('fails closed: a user record with an undecryptable _enc blob cannot log in with any password', async () => {
+    const { initCrypto } = await import('@/lib/crypto');
+    await initCrypto();
+    const { loginUser } = await import('./authStore.js');
+
+    const corrupted = {
+      id: 'u-corrupted',
+      username: 'broken',
+      displayName: 'broken',
+      passwordHash: 'irrelevant',
+      salt: 'irrelevant',
+      _enc: 'enc:not-valid-hex-data-000000:also-not-valid',
+    };
+    localStorage.setItem('dibh_users', JSON.stringify([corrupted]));
+
+    const result = await loginUser('broken', 'any-password-at-all');
+    expect(result.success).toBe(false);
+  });
 });

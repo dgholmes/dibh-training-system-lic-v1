@@ -33,6 +33,7 @@ setInterval(async () => {
   const decrypted = await Promise.all(users.map(decryptUserMeta));
   let dirty = false;
   for (let i = 0; i < decrypted.length; i++) {
+    if (decrypted[i]._decryptionFailed) continue;
     if (!decrypted[i].lockoutTicksRemaining || decrypted[i].lockoutTicksRemaining <= 0) continue;
     decrypted[i] = { ...decrypted[i], lockoutTicksRemaining: decrypted[i].lockoutTicksRemaining - 1 };
     if (decrypted[i].lockoutTicksRemaining === 0) {
@@ -42,7 +43,9 @@ setInterval(async () => {
     dirty = true;
   }
   if (dirty) {
-    const reEncrypted = await Promise.all(decrypted.map(encryptUserMeta));
+    const reEncrypted = await Promise.all(
+      decrypted.map((u, i) => (u._decryptionFailed ? users[i] : encryptUserMeta(u)))
+    );
     saveUsers(reEncrypted);
   }
 }, HEARTBEAT_MS);
@@ -138,6 +141,11 @@ export async function loginUser(username, password) {
   if (idx === -1) return { success: false, error: GENERIC_ERROR };
 
   const user = await decryptUserMeta(users[idx]);
+
+  // Fail closed: a record we can't decrypt/verify must never be allowed to log
+  // in, regardless of the password entered (avoids the permissive fallback
+  // defaults in decryptUserMeta granting a downgraded-but-valid session).
+  if (user._decryptionFailed) return { success: false, error: GENERIC_ERROR };
 
   // Lockout check (IA-07) — tick counter (primary) + performance.now() (same-session layer)
   const ticks = user.lockoutTicksRemaining ?? 0;
