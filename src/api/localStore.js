@@ -116,7 +116,7 @@ async function verifyRecord(record, targetType) {
   if (!record._hash) return record; // legacy record — unverified, not flagged
   const expected = await computeRecordHash(record);
   if (expected === record._hash) return record;
-  tryWriteAuditLog({
+  await tryWriteAuditLog({
     action: AUDIT_ACTIONS.DATA_INTEGRITY_FAILED,
     targetType,
     targetId: record.id,
