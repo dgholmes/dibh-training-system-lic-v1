@@ -49,4 +49,39 @@ describe('encryptUserMeta / decryptUserMeta', () => {
     expect(result._decryptionFailed).toBe(true);
     expect(result.role).toBe('clinician');
   });
+
+  it('detects an _enc blob copied from another user record (id binding)', async () => {
+    const { initCrypto, encryptUserMeta, decryptUserMeta } = await import('./crypto.js');
+    await initCrypto();
+    const admin = {
+      id: 'u-admin', username: 'boss', passwordHash: 'h1', salt: 's1',
+      role: 'admin', mustChangePassword: false,
+      failedAttempts: 0, lockedUntil: null, lockoutTicksRemaining: 0,
+    };
+    const clinician = {
+      id: 'u-clin', username: 'nurse', passwordHash: 'h2', salt: 's2',
+      role: 'clinician', mustChangePassword: false,
+      failedAttempts: 0, lockedUntil: null, lockoutTicksRemaining: 0,
+    };
+    const encAdmin = await encryptUserMeta(admin);
+    const encClinician = await encryptUserMeta(clinician);
+
+    // Attack: lift the admin's ciphertext onto the clinician's record. Same install
+    // key, valid GCM tag — only the sealed id reveals the swap.
+    const swapped = { ...encClinician, _enc: encAdmin._enc };
+    const result = await decryptUserMeta(swapped);
+
+    expect(result._decryptionFailed).toBe(true);
+    expect(result.role).not.toBe('admin'); // privilege escalation refused
+    expect(result.username).toBe('nurse');
+  });
+
+  it('never persists the derived _decryptionFailed flag', async () => {
+    const { initCrypto, encryptUserMeta } = await import('./crypto.js');
+    await initCrypto();
+    const encrypted = await encryptUserMeta({
+      id: 'u4', username: 'broken', role: 'clinician', _decryptionFailed: true,
+    });
+    expect(encrypted._decryptionFailed).toBeUndefined();
+  });
 });

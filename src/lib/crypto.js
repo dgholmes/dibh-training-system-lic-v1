@@ -274,9 +274,17 @@ const USER_META_FIELDS = ['role', 'mustChangePassword', 'failedAttempts', 'locke
  * separately (PBKDF2-SHA256), so it isn't part of this encrypted blob.
  */
 export async function encryptUserMeta(user) {
-  const meta = {};
+  // `_decryptionFailed` is a derived read-time flag produced by decryptUserMeta()'s
+  // fallback path — never real data. Persisting it would permanently fail-close the
+  // account (loginUser rejects any record carrying it), so strip it before writing.
+  // eslint-disable-next-line no-unused-vars
+  const { _decryptionFailed, ...cleanUser } = user;
+  // The record's `id` is sealed inside the ciphertext so the blob is bound to this
+  // specific user. Copying another user's `_enc` onto this record then fails the
+  // id check in decryptUserMeta() instead of silently granting that user's role.
+  const meta = { id: cleanUser.id };
   const rest = {};
-  for (const [k, v] of Object.entries(user)) {
+  for (const [k, v] of Object.entries(cleanUser)) {
     if (USER_META_FIELDS.includes(k)) meta[k] = v ?? null;
     else rest[k] = v;
   }
@@ -296,9 +304,15 @@ export async function decryptUserMeta(raw) {
   try {
     const metaJson = await decryptValue(raw._enc);
     const meta = JSON.parse(metaJson);
+    // Ciphertext is bound to its record: a blob lifted from another user decrypts
+    // cleanly (same install key, valid GCM tag) but carries the wrong id — treat
+    // that as a decryption failure so the swap can never grant the other's role.
+    if (meta.id !== raw.id) throw new Error('[crypto] user _enc id mismatch — record may have been swapped');
+    // eslint-disable-next-line no-unused-vars
+    const { id: _metaId, ...restMeta } = meta;
     // eslint-disable-next-line no-unused-vars
     const { _enc, ...rest } = raw;
-    return { ...rest, ...meta };
+    return { ...rest, ...restMeta };
   } catch {
     console.warn('[crypto] decryptUserMeta: decryption failed for user', raw.id,
       '— install key may have changed. Clear localStorage to reset.');
