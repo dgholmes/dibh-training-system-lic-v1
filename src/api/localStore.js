@@ -129,6 +129,39 @@ async function verifyRecords(records, targetType) {
   return Promise.all(records.map((r) => verifyRecord(r, targetType)));
 }
 
+/**
+ * One-time, idempotent upgrade for records created before integrity hashing shipped.
+ * Training sessions and calibrations written by an older build carry no `_hash`, and
+ * nothing in the app ever rewrites them, so without this they would stay unverifiable
+ * forever. Records that already have a `_hash` are left untouched (no re-hashing), so
+ * re-running this is a no-op — safe to call on every app start.
+ * Returns the number of records upgraded per entity.
+ */
+export async function migrateLegacyRecordHashes() {
+  const sessions = getStorageItem(STORAGE_KEYS.TRAINING_SESSIONS);
+  const sessionsNeedingHash = sessions.filter((s) => !s._hash);
+  if (sessionsNeedingHash.length > 0) {
+    const migratedSessions = await Promise.all(
+      sessions.map(async (s) => (s._hash ? s : { ...s, _hash: await computeRecordHash(s) }))
+    );
+    setStorageItem(STORAGE_KEYS.TRAINING_SESSIONS, migratedSessions);
+  }
+
+  const calibrations = getStorageItem(STORAGE_KEYS.CALIBRATIONS);
+  const calibrationsNeedingHash = calibrations.filter((c) => !c._hash);
+  if (calibrationsNeedingHash.length > 0) {
+    const migratedCalibrations = await Promise.all(
+      calibrations.map(async (c) => (c._hash ? c : { ...c, _hash: await computeRecordHash(c) }))
+    );
+    setStorageItem(STORAGE_KEYS.CALIBRATIONS, migratedCalibrations);
+  }
+
+  return {
+    trainingSessions: sessionsNeedingHash.length,
+    calibrations: calibrationsNeedingHash.length,
+  };
+}
+
 // TrainingSession entity — SHA-256 integrity-hashed (no encryption required for this data type)
 export const TrainingSession = {
   list: async (sortBy = null) => {

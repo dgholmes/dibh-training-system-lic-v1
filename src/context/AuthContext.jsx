@@ -1,5 +1,7 @@
 import { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
-import { getSession, clearSession, clearSessionForTimeout, loginUser, ensureDefaultAdmin, touchSession } from '@/api/authStore';
+import { getSession, clearSession, clearSessionForTimeout, loginUser, ensureDefaultAdmin, touchSession, migrateLegacyUserMetadata } from '@/api/authStore';
+import { migrateLegacyRecordHashes } from '@/api/localStore';
+import { tryWriteAuditLog, AUDIT_ACTIONS } from '@/api/auditStore';
 import { secDbg } from '@/lib/securityDebug';
 
 const SESSION_TIMEOUT_MS = 30 * 60 * 1000; // 30 minutes inactivity
@@ -69,12 +71,30 @@ export function AuthProvider({ children }) {
   }, [scheduleTimers, doTimeoutLogout]);
 
   useEffect(() => {
-    ensureDefaultAdmin().then(() => {
+    const bootstrap = async () => {
+      await ensureDefaultAdmin();
+      // One-time upgrade of records written by a pre-encryption / pre-hash build.
+      // Both migrations are idempotent no-ops once they have run, and a failure here
+      // must never block login — the data stays readable either way.
+      try {
+        const userResult = await migrateLegacyUserMetadata();
+        const hashResult = await migrateLegacyRecordHashes();
+        if (userResult.migrated > 0 || hashResult.trainingSessions > 0 || hashResult.calibrations > 0) {
+          tryWriteAuditLog({
+            action: AUDIT_ACTIONS.LEGACY_DATA_MIGRATED,
+            targetType: 'system',
+            detail: `계정 ${userResult.migrated}건, 훈련세션 ${hashResult.trainingSessions}건, 캘리브레이션 ${hashResult.calibrations}건 마이그레이션`,
+          });
+        }
+      } catch (err) {
+        console.error('[AuthContext] 레거시 데이터 마이그레이션 실패:', err);
+      }
       const s = getSession();
       setSession(s);
       setInitialised(true);
       if (s) scheduleTimers(doTimeoutLogout);
-    });
+    };
+    void bootstrap();
     return () => {
       clearTimeout(warnTimer.current);
       clearTimeout(logoutTimer.current);

@@ -256,4 +256,5 @@ export const AUDIT_ACTIONS = {
   USAGE_NOTICE_UPDATED: 'USAGE_NOTICE_UPDATED',
   INTEGRITY_CHECK_FAILED: 'INTEGRITY_CHECK_FAILED', // SI-04: app bundle tamper detected at startup, before login
   DATA_INTEGRITY_FAILED: 'DATA_INTEGRITY_FAILED', // stored record hash mismatch detected on read (training session / calibration)
+  LEGACY_DATA_MIGRATED: 'LEGACY_DATA_MIGRATED', // one-time startup upgrade of pre-encryption / pre-hash records
 };
