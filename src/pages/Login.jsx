@@ -11,6 +11,7 @@ import { validatePassword } from '@/lib/passwordUtils';
 import { cn } from '@/lib/utils';
 import logoSrc from '@/assets/logo.png';
 import { getCustomUsageNotice } from '@/api/usageNoticeStore';
+import { PRODUCT_CODE, PRODUCT_CODE_LABEL } from '@/config/product';
 
 function useCapsLock() {
   const [on, setOn] = useState(false);
@@ -315,8 +316,10 @@ export default function Login() {
           </form>
 
           <p className="text-center text-xs text-[#8B949E]">
-          © 2026 THEPICT Inc. &nbsp;·&nbsp; v{__APP_VERSION__}
-        </p>
+            © 2026 THEPICT Inc. &nbsp;·&nbsp; v{__APP_VERSION__}
+            <br />
+            {PRODUCT_CODE_LABEL} {PRODUCT_CODE}
+          </p>
         </div>
       </div>
     </>

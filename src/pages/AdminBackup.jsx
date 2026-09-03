@@ -15,6 +15,7 @@ import { exportDbBinaryBase64, importDbBinaryBase64 } from '@/db/sqliteDb';
 import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 import { Capacitor } from '@capacitor/core';
 import { format } from 'date-fns';
+import { PRODUCT_CODE, PRODUCT_CODE_LABEL } from '@/config/product';
 
 /**
  * Saves export data to the native Documents directory on Android. `@capacitor/filesystem`
@@ -306,7 +307,9 @@ export default function AdminBackup() {
           </div>
         </div>
 
-        <p className="mt-8 text-center text-xs text-[#8B949E]">DIBH - Flow v{__APP_VERSION__}</p>
+        <p className="mt-8 text-center text-xs text-[#8B949E]">
+          DIBH - Flow v{__APP_VERSION__} &nbsp;·&nbsp; {PRODUCT_CODE_LABEL} {PRODUCT_CODE}
+        </p>
       </div>
     </div>
   );

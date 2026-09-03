@@ -14,6 +14,7 @@ import { getCustomUsageNotice, setUsageNotice, resetUsageNotice, validateUsageNo
 import { useAuth } from '@/context/AuthContext';
 import { toast } from '@/components/ui/use-toast';
 import { format } from 'date-fns';
+import { PRODUCT_CODE, PRODUCT_CODE_LABEL } from '@/config/product';
 
 const ROLE_LABELS = { admin: '관리자', clinician: '임상의' };
 const ROLE_COLORS = {
@@ -309,7 +310,9 @@ export default function AdminAccounts() {
           </div>
         </div>
 
-        <p className="mt-8 text-center text-xs text-[#8B949E]">DIBH - Flow v{__APP_VERSION__}</p>
+        <p className="mt-8 text-center text-xs text-[#8B949E]">
+          DIBH - Flow v{__APP_VERSION__} &nbsp;·&nbsp; {PRODUCT_CODE_LABEL} {PRODUCT_CODE}
+        </p>
       </div>
 
       {/* Create account modal */}

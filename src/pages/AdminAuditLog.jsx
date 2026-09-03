@@ -29,6 +29,7 @@ function AdminNav() {
 }
 import { getAuditLogEntries, getAuditLogCapacity, seedDebugAuditEntries, verifyAuditChain } from '@/api/auditStore';
 import { format } from 'date-fns';
+import { PRODUCT_CODE, PRODUCT_CODE_LABEL } from '@/config/product';
 
 function fmtBytes(b) {
   if (b < 1024) return `${b} B`;
@@ -298,7 +299,9 @@ export default function AdminAuditLog() {
           </div>
         )}
 
-        <p className="mt-8 text-center text-xs text-[#8B949E]">DIBH - Flow v{__APP_VERSION__}</p>
+        <p className="mt-8 text-center text-xs text-[#8B949E]">
+          DIBH - Flow v{__APP_VERSION__} &nbsp;·&nbsp; {PRODUCT_CODE_LABEL} {PRODUCT_CODE}
+        </p>
       </div>
     </div>
   );
