@@ -7,6 +7,18 @@ def packageJson = new JsonSlurper().parse(new File(rootDir, '../package.json'))
 def appVersionName = packageJson.version
 def appVersionCode = appVersionName.tokenize('.').collect { it.toInteger() }.inject(0) { code, part -> code * 100 + part }
 
+// Release signing. The keystore and its passwords live OUTSIDE the repo and are
+// referenced from android/keystore.properties (git-ignored). When that file is
+// absent, `assembleRelease` falls back to app-release-unsigned.apk so machines
+// without the key can still build — but such an APK is not installable.
+// See docs/dev-reference/android-build-guide.md ("Signing").
+def keystorePropertiesFile = rootProject.file('keystore.properties')
+def keystoreProperties = new Properties()
+def hasReleaseKeystore = keystorePropertiesFile.exists()
+if (hasReleaseKeystore) {
+    keystorePropertiesFile.withInputStream { keystoreProperties.load(it) }
+}
+
 apply plugin: 'com.android.application'
 
 android {
@@ -25,8 +37,21 @@ android {
             ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+    signingConfigs {
+        release {
+            if (hasReleaseKeystore) {
+                storeFile file(keystoreProperties['storeFile'])
+                storePassword keystoreProperties['storePassword']
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+            }
+        }
+    }
     buildTypes {
         release {
+            if (hasReleaseKeystore) {
+                signingConfig signingConfigs.release
+            }
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }

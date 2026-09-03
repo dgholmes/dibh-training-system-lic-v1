@@ -21,7 +21,7 @@ npm run cap:sync     # Sync dist/ to Android project
 npm run sbom         # Regenerate docs/submission/sbom.cdx.json (cyclonedx-npm)
 ```
 
-Android release builds are currently **unsigned** — `android/app/build.gradle`'s `release` buildType has no `signingConfigs` entry and no keystore exists in the repo. A release APK must be signed manually (or via a `keystore.properties`-based config you add) before it can be installed or treated as an update to a previously-installed version.
+Android release builds are signed by a `keystore.properties`-driven `signingConfigs.release` block in `android/app/build.gradle`. The keystore and `android/keystore.properties` live outside git (both git-ignored; the key sits under `C:/Users/<user>/secure/` on the build workstation). When the properties file is absent, `assembleRelease` falls back to `app-release-unsigned.apk`, which cannot be installed. Debug builds are debug-keystore signed and `debuggable` — never hand one over as a release. Signing setup, verification, and the wrong-key negative-test procedure for the MFDS review are in `docs/dev-reference/android-build-guide.md` (Step 5).
 
 ## Architecture
 
