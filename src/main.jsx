@@ -96,10 +96,51 @@ async function integrityCheck() {
   });
 }
 
+/** Blocking full-screen error shown when the app must refuse to start. */
+function renderBlockingError(heading, message, detail) {
+  document.getElementById('root').innerHTML = `
+      <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0D1117;padding:2rem;">
+        <div style="max-width:480px;border:1px solid #EF4444;border-radius:16px;background:#1C2128;padding:2rem;text-align:center;color:white;">
+          <div style="font-size:2rem;margin-bottom:1rem;">⚠</div>
+          <h2 style="color:#EF4444;margin-bottom:1rem;">${heading}</h2>
+          <p style="color:#C9D1D9;margin-bottom:0.5rem;">${message}</p>
+          <p style="color:#8B949E;font-size:0.85rem;">${detail}</p>
+        </div>
+      </div>`;
+}
+
 Promise.all([
   getSqliteDatabase().catch((e) => console.error('[Init] SQLite init failed:', e)),
-  initCrypto().catch((e) => { console.error('[Init] Crypto init failed:', e); throw e; }),
-]).then(async () => {
+  initCrypto().catch((e) => {
+    console.error('[Init] Crypto init failed:', e);
+    // DC-03 is fail-closed: if the installation key cannot be recovered from the Android
+    // Keystore, mounting with a freshly generated key would leave every stored record
+    // permanently undecryptable while the app looked healthy. Refuse to start instead.
+    tryWriteAuditLog({
+      action: AUDIT_ACTIONS.INTEGRITY_CHECK_FAILED,
+      targetType: 'system',
+      detail: `KEY_INIT_FAILED: ${e.message || String(e)}`,
+    });
+    renderBlockingError(
+      '암호화 키 오류',
+      '저장된 암호화 키를 복구할 수 없습니다. 환자 데이터를 복호화할 수 없으므로 앱을 시작할 수 없습니다. 관리자에게 문의하십시오.',
+      e.message || String(e),
+    );
+    throw e;
+  }),
+]).then(async ([, keyProvenance]) => {
+  // DC-03 — record how the installation key is protected, and note the one-time upgrade
+  // from the pre-1.1.6 plaintext key so the transition is auditable.
+  if (keyProvenance?.migrated) {
+    await tryWriteAuditLog({
+      action: AUDIT_ACTIONS.LEGACY_DATA_MIGRATED,
+      targetType: 'system',
+      detail:
+        `installation key migrated to Android Keystore ` +
+        `(KEK security level: ${keyProvenance.securityLevel}); plaintext copy removed`,
+    });
+  }
+
   if (import.meta.env.PROD) {
     await integrityCheck().catch((e) => {
       console.error('[IntegrityCheck] FAILED:', e);
@@ -110,15 +151,11 @@ Promise.all([
         targetType: 'system',
         detail: e.message || String(e),
       });
-      document.getElementById('root').innerHTML = `
-        <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0D1117;padding:2rem;">
-          <div style="max-width:480px;border:1px solid #EF4444;border-radius:16px;background:#1C2128;padding:2rem;text-align:center;color:white;">
-            <div style="font-size:2rem;margin-bottom:1rem;">⚠</div>
-            <h2 style="color:#EF4444;margin-bottom:1rem;">무결성 검사 실패</h2>
-            <p style="color:#C9D1D9;margin-bottom:0.5rem;">앱 파일의 무결성을 확인할 수 없습니다. 파일이 변조되었을 수 있습니다.</p>
-            <p style="color:#8B949E;font-size:0.85rem;">${e.message}</p>
-          </div>
-        </div>`;
+      renderBlockingError(
+        '무결성 검사 실패',
+        '앱 파일의 무결성을 확인할 수 없습니다. 파일이 변조되었을 수 있습니다.',
+        e.message,
+      );
       throw e;
     });
   }
@@ -126,15 +163,11 @@ Promise.all([
   await securitySelfCheck().catch((e) => {
     console.error('[SecuritySelfCheck] FAILED:', e);
     // Show a blocking alert — app cannot run safely without these subsystems
-    document.getElementById('root').innerHTML = `
-      <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0D1117;padding:2rem;">
-        <div style="max-width:480px;border:1px solid #EF4444;border-radius:16px;background:#1C2128;padding:2rem;text-align:center;color:white;">
-          <div style="font-size:2rem;margin-bottom:1rem;">⚠</div>
-          <h2 style="color:#EF4444;margin-bottom:1rem;">보안 자가진단 실패</h2>
-          <p style="color:#C9D1D9;margin-bottom:0.5rem;">시스템 보안 기능을 초기화할 수 없습니다.</p>
-          <p style="color:#8B949E;font-size:0.85rem;">${e.message}</p>
-        </div>
-      </div>`;
+    renderBlockingError(
+      '보안 자가진단 실패',
+      '시스템 보안 기능을 초기화할 수 없습니다.',
+      e.message,
+    );
     throw e;
   });
   ReactDOM.createRoot(document.getElementById('root')).render(<App />);

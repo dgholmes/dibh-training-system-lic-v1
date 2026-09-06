@@ -1,16 +1,17 @@
 /**
  * AES-256-GCM encryption via Web Crypto API — MFDS DC-01, DC-03
  *
- * Key strategy: random 256-bit installation key stored in localStorage.
- * Different per installation; protects against casual localStorage inspection.
- * Key is imported once at app startup and cached in memory.
+ * Key strategy: a random 256-bit installation key, unique per installation, imported once at
+ * startup and cached in memory as a non-extractable CryptoKey. Where the key itself lives at
+ * rest is secureKey.js's concern: on Android it is sealed by a hardware-backed Android
+ * Keystore key and only the ciphertext reaches localStorage.
  */
 
+import { loadOrCreateInstallKey } from './secureKey.js';
 import { secDbg } from './securityDebug.js';
 
-const INSTALL_KEY_STORAGE = 'dibh_install_key';
-
 let _key = null; // in-memory CryptoKey cache
+let _lastKeyProvenance = null; // { mode, migrated, securityLevel } — for audit logging
 
 function hexEncode(buf) {
   return Array.from(new Uint8Array(buf))
@@ -26,33 +27,43 @@ function hexDecode(hex) {
   return bytes;
 }
 
-/** Called once in main.jsx before React mounts. */
+/**
+ * Called once in main.jsx before React mounts.
+ *
+ * The raw key bytes come from secureKey.js, which on Android keeps them sealed by a
+ * hardware-backed Android Keystore KEK and never writes them to disk in the clear
+ * (MFDS DC-03). They are imported as a non-extractable CryptoKey and the local copy is
+ * zeroed, so the plaintext key exists only transiently in memory.
+ *
+ * Throws if a previously wrapped key cannot be recovered — see secureKey.js for why
+ * re-keying on failure would be worse than failing to start.
+ *
+ * @returns {Promise<{ mode: string, migrated: boolean, securityLevel: string }>} how the
+ *          key was protected, for audit logging by the caller.
+ */
 export async function initCrypto() {
-  if (_key) return;
-  let keyHex = localStorage.getItem(INSTALL_KEY_STORAGE);
-  const isNew = !keyHex;
-  if (isNew) {
-    const raw = new Uint8Array(32);
-    crypto.getRandomValues(raw);
-    keyHex = hexEncode(raw.buffer);
-    localStorage.setItem(INSTALL_KEY_STORAGE, keyHex);
-  }
-  _key = await crypto.subtle.importKey(
-    'raw',
-    hexDecode(keyHex),
-    { name: 'AES-GCM' },
-    false,
-    ['encrypt', 'decrypt']
-  );
+  if (_key) return _lastKeyProvenance;
+
+  const { key: raw, mode, migrated, securityLevel } = await loadOrCreateInstallKey();
+  _key = await crypto.subtle.importKey('raw', raw, { name: 'AES-GCM' }, false, [
+    'encrypt',
+    'decrypt',
+  ]);
+  // The CryptoKey now holds the material; drop our own plaintext copy.
+  raw.fill(0);
+
+  _lastKeyProvenance = { mode, migrated, securityLevel };
   secDbg('DC-01', 'AES-256-GCM 설치 키 로드 — Installation Key Loaded', {
-    설명: '앱 설치 시 생성된 256비트 AES-GCM 키를 로드합니다. 환자 PII 암호화에 사용되며, 키는 메모리에만 유지되고 외부로 추출 불가합니다.',
-    description: 'Loads the 256-bit AES-GCM installation key used to encrypt patient PII. Key stays in memory only — not extractable.',
-    status: isNew ? '신규 키 생성 및 저장 (new key generated)' : 'localStorage에서 기존 키 로드 (existing key loaded)',
+    설명: '256비트 AES-GCM 키를 로드했습니다. 환자 PII 암호화에 사용되며, 키는 메모리에만 유지되고 외부로 추출 불가합니다.',
+    description: 'Loaded the 256-bit AES-GCM installation key used to encrypt patient PII. Key stays in memory only — not extractable.',
     algorithm: 'AES-GCM',
     key_length_bits: 256,
     extractable: false,
-    storage: 'localStorage (dibh_install_key)',
+    key_storage_mode: mode,
+    kek_security_level: securityLevel,
+    legacy_key_migrated: migrated,
   });
+  return _lastKeyProvenance;
 }
 
 /** Encrypt a string. Returns `enc:<ivHex>:<ciphertextHex>`. */

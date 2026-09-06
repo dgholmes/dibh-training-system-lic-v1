@@ -253,6 +253,31 @@ Chrome DevTools attach instructions: [android-debug-guide.md](./android-debug-gu
 ---
 
 
+
+## Verifying encryption-key storage (DC-03)
+
+The installation key must never be readable from the app's data directory. To check a build:
+
+```bash
+# Debug builds only — run-as is refused on a release APK, which is itself part of the control.
+adb install -r app-debug.apk && adb shell am start -n com.thepict.dibhtraining/.MainActivity
+
+# 1. No plaintext key: expect ONLY dibh_install_key_v2, never dibh_install_key
+adb shell "run-as com.thepict.dibhtraining sh -c 'cat app_webview/Default/Local\ Storage/leveldb/*'" \
+  | strings | grep -o "dibh_install_key[a-z0-9_]*" | sort -u
+
+# 2. No 64-char hex key material anywhere on disk (a fresh install yields nothing)
+adb shell "run-as com.thepict.dibhtraining sh -c 'cat app_webview/Default/Local\ Storage/leveldb/*'" \
+  | strings | grep -oE "[0-9a-f]{64}" | sort -u
+```
+
+To read the live values (rather than raw LevelDB bytes), attach to the WebView over the DevTools protocol — `adb forward tcp:9222 localabstract:webview_devtools_remote_<pid>`, then evaluate `Object.keys(localStorage)`. Expect `dibh_install_key_v2` present and `localStorage.getItem('dibh_install_key')` to be `null`.
+
+The wrapped blob is 80 base64 characters (12-byte IV + 32-byte key + 16-byte GCM tag).
+
+⚠️ **The emulator has no TEE**, so the audit entry records `KEK security level: software` there. On real hardware it reports `hardware` or `strongbox` — run the certification evidence on a physical tablet, not the emulator.
+
+---
 ## The offline guarantee — do not break it
 
 This device is certified as offline-only. Three things enforce it, and all three are checked automatically:
