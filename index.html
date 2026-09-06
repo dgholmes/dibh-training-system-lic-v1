@@ -5,16 +5,22 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>DIBH - Flow</title>
-    <!-- Content Security Policy — MFDS UC-02 (frame-ancestors must be set server-side, not in meta) -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com; font-src 'self' https://cdn.jsdelivr.net https://fonts.gstatic.com; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self' blob: https://cdn.jsdelivr.net https://fonts.googleapis.com https://fonts.gstatic.com; worker-src 'self' blob:; object-src 'none'; base-uri 'self';" />
-    <!-- Pretendard (Korean sans-serif) -->
-    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
-    <!-- Space Grotesk (numbers / data) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet" />
-    <!-- Vernier GoDirect Bluetooth Library -->
-    <script src="/godirect.min.umd.js"></script>
+    <!--
+      Content Security Policy — MFDS UC-02 (mobile code control) / SI-01 (no external communication).
+      Every directive is 'self' or narrower: the app ships every asset it needs (fonts included)
+      inside the bundle and must never reach the network. Deliberate exceptions:
+        script-src 'unsafe-inline'  — Capacitor injects its native bridge as an inline <script>
+                                      into <head> at load time (JSInjector.java); the app itself
+                                      adds no inline scripts.
+        script-src 'wasm-unsafe-eval' — sql.js instantiates the SQLite WASM module.
+        style-src  'unsafe-inline'  — Radix UI / Tailwind set element style attributes at runtime.
+      frame-ancestors is only valid in an HTTP header, not in a meta tag — it is set on the dev
+      server in vite.config.js.
+    -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self' blob:; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; frame-src 'none'; child-src 'none'"
+    />
   </head>
   <body>
     <div id="root"></div>

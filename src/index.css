@@ -1,3 +1,8 @@
+/* Pretendard (Korean UI font) — bundled locally, never fetched from a CDN.
+   Single variable woff2 from the OFL-1.1 licensed "pretendard" npm package, so the app
+   renders identically with no network access whatsoever (MFDS SI-01). */
+@import 'pretendard/dist/web/variable/pretendardvariable.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -6,6 +11,9 @@
    so numbers automatically render in Space Grotesk everywhere. */
 @font-face {
   font-family: 'NumFont';
+  /* local() only matches a font already installed on the host OS — it never issues a
+     network request. On Android nothing matches, so digits fall back to Pretendard,
+     which is the appearance already under review. Desktop-only refinement. */
   src: local('Space Grotesk');
   unicode-range: U+0030-0039, /* 0-9 */
                  U+002E,       /* . */

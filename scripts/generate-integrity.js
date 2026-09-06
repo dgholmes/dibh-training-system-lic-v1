@@ -26,7 +26,9 @@ async function main() {
 
   const manifest = {};
   for (const file of files.sort()) {
-    if (!file.endsWith('.js') && !file.endsWith('.css') && !file.endsWith('.wasm')) continue;
+    // .woff2 is included so the manifest covers every asset the bundle loads — the
+    // locally bundled Pretendard font is part of the app payload (MFDS SI-01/SI-04).
+    if (!/\.(js|css|wasm|woff2)$/.test(file)) continue;
     const content = await readFile(join(ASSETS_DIR, file));
     const hash = createHash('sha256').update(content).digest('hex');
     manifest[`/assets/${file}`] = hash;

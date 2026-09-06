@@ -68,9 +68,10 @@ VITE_DEBUG_MODE=false
 
 | Check | Command | Why |
 |---|---|---|
-| Tests pass | `npm test` | 17 files / 79 tests |
+| Tests pass | `npm test` | 18 files / 90 tests |
 | Lint | `npm run lint` | note: the repo has a large pre-existing error backlog — compare, don't expect zero |
 | SBOM current | `npm run sbom` | regenerates `docs/submission/sbom.cdx.json`; required if any dependency changed |
+| Offline (SI-01) | `npm run verify:offline` | runs automatically inside `npm run build`; fails if the bundle references any external origin |
 
 ---
 
@@ -104,6 +105,8 @@ That one command chains three things:
 | `vite build` | production bundle → `dist/` (sets `import.meta.env.PROD`, which is what arms the runtime integrity check) |
 | `node scripts/generate-integrity.js` | SHA-256 of every `dist/assets/*.{js,css,wasm}` → `dist/integrity.json` (SI-04) |
 | `npx cap sync` | copies `dist/` → `android/app/src/main/assets/public/`, regenerates `capacitor.config.json`, updates plugins |
+
+`npm run build` also runs `scripts/verify-offline.js`, which fails the build if `dist/` would load a font, script or stylesheet from outside the bundle (MFDS SI-01). If it trips, the fix is to bundle the asset — never to re-add an external origin to the CSP.
 
 ⚠️ **Never hand-edit anything under `android/app/src/main/assets/public/` after this.** `main.jsx` re-hashes every listed asset against `integrity.json` on startup in production builds; a mismatch logs `INTEGRITY_CHECK_FAILED` and blocks the app from mounting with a 무결성 검사 실패 screen. Rebuild instead — the manifest regenerates with it.
 
@@ -249,6 +252,28 @@ Chrome DevTools attach instructions: [android-debug-guide.md](./android-debug-gu
 
 ---
 
+
+## The offline guarantee — do not break it
+
+This device is certified as offline-only. Three things enforce it, and all three are checked automatically:
+
+| Enforcement | Where | Checked by |
+|---|---|---|
+| No `android.permission.INTERNET` | `android/app/src/main/AndroidManifest.xml` | `src/config/offlineCompliance.test.js` |
+| No external asset in the bundle (fonts included) | `index.html`, `src/index.css` | `scripts/verify-offline.js`, run by `npm run build` |
+| CSP names no external origin | `index.html` + `vite.config.js` | both of the above |
+
+Also set for the same reason: `android:allowBackup="false"` (keeps encrypted PHI out of Google cloud backup) and the two WebView `meta-data` opt-outs for Safe Browsing and metrics, which otherwise produce traffic under the app UID during a `netstats` measurement.
+
+If a KTC/MFDS reviewer measures traffic again, the expected result is zero bytes for this UID. Capturing that evidence:
+
+```bash
+adb shell dumpsys package com.thepict.dibhtraining | grep -A5 "requested permissions"   # INTERNET absent
+UID=$(adb shell dumpsys package com.thepict.dibhtraining | grep userId= | head -1)
+adb shell cat /proc/net/xt_qtaguid/stats | grep "$UID"    # or: adb shell dumpsys netstats detail | grep -A3 "$UID"
+```
+
+---
 ## Gotchas checklist
 
 | ⚠️ | Detail |
@@ -260,4 +285,5 @@ Chrome DevTools attach instructions: [android-debug-guide.md](./android-debug-gu
 | A debug APK looks like a release APK | same package, same version — only `apksigner verify --print-certs` tells them apart. Check before handing anything over |
 | Never edit synced assets | breaks the SI-04 integrity check and blocks app startup |
 | Pre-release version strings | `1.2.0-rc.1` fails the `versionCode` derivation at configure time |
+| Re-adding INTERNET or a CDN asset | breaks the SI-01 certification claim; `npm run build` and `npm test` both fail on it |
 | JDK on PATH is 25 | keep `JAVA_HOME` on the Android Studio JBR (21) for CLI builds |

@@ -9,17 +9,23 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const require = createRequire(import.meta.url)
 const pkg = require('./package.json')
 
+// Keep in sync with the <meta http-equiv="Content-Security-Policy"> tag in index.html.
+// No external origin may appear here: the app bundles every asset it needs and must
+// never reach the network (MFDS SI-01 / UC-02).
 const CSP = [
   "default-src 'self'",
   "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'",
-  "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com",
-  "font-src 'self' https://cdn.jsdelivr.net https://fonts.gstatic.com",
+  "style-src 'self' 'unsafe-inline'",
+  "font-src 'self'",
   "img-src 'self' data: blob:",
   "media-src 'self' blob:",
-  "connect-src 'self' blob: https://cdn.jsdelivr.net https://fonts.googleapis.com https://fonts.gstatic.com",
+  "connect-src 'self' blob:",
   "worker-src 'self' blob:",
   "object-src 'none'",
   "base-uri 'self'",
+  "form-action 'none'",
+  "frame-src 'none'",
+  "child-src 'none'",
   "frame-ancestors 'none'", // valid in HTTP headers (not meta tag)
 ].join('; ')
 
