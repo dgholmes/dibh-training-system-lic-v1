@@ -12,6 +12,8 @@ import { cn } from '@/lib/utils';
 import logoSrc from '@/assets/logo.png';
 import { getCustomUsageNotice } from '@/api/usageNoticeStore';
 import { PRODUCT_CODE, PRODUCT_CODE_LABEL } from '@/config/product';
+import { PASSWORD_MAX_AGE_DAYS } from '@/config/passwordPolicy';
+import { toast } from '@/components/ui/use-toast';
 
 function useCapsLock() {
   const [on, setOn] = useState(false);
@@ -62,7 +64,7 @@ function UsageNoticeBanner({ onAcknowledge }) {
 }
 
 // ── Forced password change modal (IA-04) ──────────────────────────────────────
-function ChangePasswordModal({ userId, onDone }) {
+function ChangePasswordModal({ userId, onDone, reason = 'initial', ageDays }) {
   const [newPw, setNewPw] = useState('');
   const [confirmPw, setConfirmPw] = useState('');
   const [showNew, setShowNew] = useState(false);
@@ -93,10 +95,14 @@ function ChangePasswordModal({ userId, onDone }) {
       <div className="w-full max-w-md rounded-2xl border border-[#30363D] bg-[#1C2128] p-8 shadow-2xl">
         <div className="mb-2 flex items-center gap-2">
           <div className="h-5 w-1 rounded-full bg-gradient-to-b from-[#3B82F6] to-[#8B5CF6]" />
-          <h2 className="text-lg font-bold text-white">초기 비밀번호 변경 필요</h2>
+          <h2 className="text-lg font-bold text-white">
+            {reason === 'expired' ? '비밀번호 변경 주기 도래' : '초기 비밀번호 변경 필요'}
+          </h2>
         </div>
         <p className="mb-6 text-sm text-[#8B949E]">
-          초기 비밀번호를 사용 중입니다. 보안을 위해 새 비밀번호로 변경해주세요.
+          {reason === 'expired'
+            ? `마지막으로 비밀번호를 변경한 지 ${ageDays ?? PASSWORD_MAX_AGE_DAYS}일이 지났습니다. 보안 정책(${PASSWORD_MAX_AGE_DAYS}일 주기)에 따라 새 비밀번호로 변경해 주세요.`
+            : '초기 비밀번호를 사용 중입니다. 보안을 위해 새 비밀번호로 변경해주세요.'}
         </p>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -193,7 +199,7 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const caps = useCapsLock();
   const [errorMsg, setErrorMsg] = useState('');
-  const [forcePwChange, setForcePwChange] = useState(null); // userId
+  const [forcePwChange, setForcePwChange] = useState(null); // { userId, reason, ageDays }
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -210,8 +216,21 @@ export default function Login() {
         return;
       }
       if (result.session.mustChangePassword) {
-        setForcePwChange(result.session.userId);
+        // An admin-issued initial password and an expired one both land here; IA-04 requires
+        // the operator be told which of the two applies.
+        setForcePwChange({
+          userId: result.session.userId,
+          reason: result.session.passwordExpired ? 'expired' : 'initial',
+          ageDays: result.session.passwordAgeDays,
+        });
         return;
+      }
+      // IA-04 — warn ahead of the deadline instead of only enforcing it at the deadline.
+      if (result.session.passwordExpiryWarning) {
+        toast({
+          title: '비밀번호 변경 예정 안내',
+          description: `비밀번호 사용 기간이 ${result.session.passwordExpiresInDays}일 남았습니다. 기간이 지나면 비밀번호를 변경해야 이용할 수 있습니다.`,
+        });
       }
       navigate('/home', { replace: true });
     } finally {
@@ -225,7 +244,9 @@ export default function Login() {
     <>
       {forcePwChange && (
         <ChangePasswordModal
-          userId={forcePwChange}
+          userId={forcePwChange.userId}
+          reason={forcePwChange.reason}
+          ageDays={forcePwChange.ageDays}
           onDone={() => { setForcePwChange(null); navigate('/home', { replace: true }); }}
         />
       )}

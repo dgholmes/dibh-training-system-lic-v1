@@ -1,6 +1,7 @@
 // Authentication store — MFDS cybersecurity guideline IA-01 through IA-07
 import { secDbg } from '@/lib/securityDebug';
 import { encryptUserMeta, decryptUserMeta } from '@/lib/crypto';
+import { passwordAgeStatus } from '@/config/passwordPolicy';
 // Audit logging imported lazily to avoid circular dep (auditStore → authStore → auditStore)
 // Passwords hashed with PBKDF2-SHA256 (100k iterations + random 16-byte salt)
 // Sessions stored in sessionStorage (cleared on tab/browser close)
@@ -143,6 +144,7 @@ export async function ensureDefaultAdmin() {
       mustChangePassword: true,
       failedAttempts: 0,
       lockedUntil: null,
+      passwordChangedAt: new Date().toISOString(),
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     });
@@ -277,13 +279,22 @@ async function doLoginUser(username, password) {
   users[idx] = await encryptUserMeta(merged);
   saveUsers(users);
 
+  // IA-04 — a password past its maximum age must be changed before the operator continues.
+  // Records predating this feature carry no passwordChangedAt, so the account's own creation
+  // date stands in: a password that has never been changed is as old as the account.
+  const pwAge = passwordAgeStatus(user.passwordChangedAt || user.createdAt);
+
   const session = {
     token: randomHex(32),
     userId: user.id,
     username: user.username,
     displayName: user.displayName || user.username,
     role: user.role,
-    mustChangePassword: !!user.mustChangePassword,
+    mustChangePassword: !!user.mustChangePassword || pwAge.expired,
+    passwordExpired: pwAge.expired,
+    passwordAgeDays: pwAge.ageDays,
+    passwordExpiresInDays: pwAge.expiresInDays,
+    passwordExpiryWarning: pwAge.warn,
     loginTime: new Date().toISOString(),
     lastActivity: new Date().toISOString(),
   };
@@ -371,6 +382,7 @@ export const UserStore = {
         mustChangePassword: true,
         failedAttempts: 0,
         lockedUntil: null,
+        passwordChangedAt: new Date().toISOString(),
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
@@ -389,7 +401,15 @@ export const UserStore = {
       const passwordHash = await pbkdf2Hash(newPassword, salt);
       const decrypted = await decryptUserMeta(users[idx]);
       assertDecryptable(decrypted);
-      const merged = { ...decrypted, passwordHash, salt, mustChangePassword: false, updatedAt: new Date().toISOString() };
+      const merged = {
+        ...decrypted,
+        passwordHash,
+        salt,
+        mustChangePassword: false,
+        // IA-04 — restarts the change cycle.
+        passwordChangedAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
       users[idx] = await encryptUserMeta(merged);
       saveUsers(users);
       // Update active session if changing own password
@@ -409,7 +429,15 @@ export const UserStore = {
       const passwordHash = await pbkdf2Hash(newPassword, salt);
       const decrypted = await decryptUserMeta(users[idx]);
       assertDecryptable(decrypted);
-      const merged = { ...decrypted, passwordHash, salt, mustChangePassword: true, updatedAt: new Date().toISOString() };
+      const merged = {
+        ...decrypted,
+        passwordHash,
+        salt,
+        mustChangePassword: true,
+        // IA-04 — an admin reset also restarts the cycle; the user must still pick their own.
+        passwordChangedAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
       users[idx] = await encryptUserMeta(merged);
       saveUsers(users);
     });
