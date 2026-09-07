@@ -1,0 +1,4906 @@
+[
+  {
+    "file": "src/api/auditStore.js",
+    "line": 80,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "감사 로그 항목 기록 — Audit Log Entry Written"
+  },
+  {
+    "file": "src/api/auditStore.js",
+    "line": 81,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "보안 이벤트를 감사 로그에 기록합니다. 사용자 ID·타임스탬프·액션 코드와 해시체인(prevHash/hash)을 포함하여 부인 방지(UC-07) 및 추적성(UC-04)을 보장합니다."
+  },
+  {
+    "file": "src/api/auditStore.js",
+    "line": 100,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "저장소 용량 초과 긴급 조치 — QuotaExceededError Emergency Trim"
+  },
+  {
+    "file": "src/api/auditStore.js",
+    "line": 101,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "localStorage 용량 초과 시 오래된 감사 로그 20%를 삭제하고 쓰기를 재시도합니다. 최신 기록을 보존하기 위한 긴급 조치입니다."
+  },
+  {
+    "file": "src/api/auditStore.js",
+    "line": 150,
+    "kind": "AUDIT",
+    "how": "audit detail",
+    "dynamic": false,
+    "text": "QA 테스트용 자동 생성 항목 (디버그 빌드 전용)"
+  },
+  {
+    "file": "src/api/authStore.js",
+    "line": 97,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "PBKDF2-SHA256 비밀번호 해시 생성 — Password Hash"
+  },
+  {
+    "file": "src/api/authStore.js",
+    "line": 98,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "비밀번호를 PBKDF2-SHA256으로 단방향 해시 처리합니다. 100,000회 반복과 랜덤 솔트로 무차별 대입 공격을 방어합니다."
+  },
+  {
+    "file": "src/api/authStore.js",
+    "line": 105,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "비밀번호 평문은 로그에 포함되지 않음 — Plaintext password not logged"
+  },
+  {
+    "file": "src/api/authStore.js",
+    "line": 140,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "관리자"
+  },
+  {
+    "file": "src/api/authStore.js",
+    "line": 175,
+    "kind": "ERROR",
+    "how": "const GENERIC_ERROR",
+    "dynamic": false,
+    "text": "아이디 또는 비밀번호가 올바르지 않습니다."
+  },
+  {
+    "file": "src/api/authStore.js",
+    "line": 209,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "계정 잠금 상태 확인 — Lockout Active"
+  },
+  {
+    "file": "src/api/authStore.js",
+    "line": 210,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "연속 로그인 실패로 인해 계정이 잠금 상태입니다. OS 시계 조작 내성을 위해 이중 레이어 잠금이 적용되어 있습니다."
+  },
+  {
+    "file": "src/api/authStore.js",
+    "line": 214,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "틱 카운터 (실시간 인터벌, OS 시계 무관, 세션 간 유지)"
+  },
+  {
+    "file": "src/api/authStore.js",
+    "line": 216,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "performance.now() — 동일 세션 내 정밀 측정"
+  },
+  {
+    "file": "src/api/authStore.js",
+    "line": 222,
+    "kind": "ERROR",
+    "how": "error:",
+    "dynamic": true,
+    "text": "계정이 잠금되었습니다. 약 ${…}분 후 다시 시도하거나 관리자에게 문의하세요."
+  },
+  {
+    "file": "src/api/authStore.js",
+    "line": 240,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "계정 잠금 처리 — Account Locked"
+  },
+  {
+    "file": "src/api/authStore.js",
+    "line": 240,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "로그인 실패 — Login Failed"
+  },
+  {
+    "file": "src/api/authStore.js",
+    "line": 242,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": true,
+    "text": "${…}회 연속 실패로 계정이 잠금 처리되었습니다. 15분 후 자동 해제됩니다."
+  },
+  {
+    "file": "src/api/authStore.js",
+    "line": 243,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "비밀번호가 일치하지 않아 로그인이 실패하였습니다."
+  },
+  {
+    "file": "src/api/authStore.js",
+    "line": 253,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "레이어1: 실시간 틱 카운터 (세션 간 유지) | 레이어2: performance.now() (동일 세션)"
+  },
+  {
+    "file": "src/api/authStore.js",
+    "line": 270,
+    "kind": "ERROR",
+    "how": "error:",
+    "dynamic": false,
+    "text": "로그인 시도 횟수를 초과하여 계정이 잠금되었습니다. 관리자에게 문의하여 잠금을 해제해 주세요."
+  },
+  {
+    "file": "src/api/authStore.js",
+    "line": 274,
+    "kind": "ERROR",
+    "how": "error:",
+    "dynamic": true,
+    "text": "${…} (남은 시도: ${…}회)"
+  },
+  {
+    "file": "src/api/authStore.js",
+    "line": 355,
+    "kind": "ERROR",
+    "how": "const CORRUPTED_RECORD_ERROR",
+    "dynamic": false,
+    "text": "이 계정의 데이터가 손상되어 복호화할 수 없습니다. 계정을 삭제한 후 다시 생성해 주세요."
+  },
+  {
+    "file": "src/api/authStore.js",
+    "line": 372,
+    "kind": "ERROR",
+    "how": "throw new Error",
+    "dynamic": false,
+    "text": "이미 존재하는 아이디입니다."
+  },
+  {
+    "file": "src/api/authStore.js",
+    "line": 399,
+    "kind": "ERROR",
+    "how": "throw new Error",
+    "dynamic": false,
+    "text": "사용자를 찾을 수 없습니다."
+  },
+  {
+    "file": "src/api/authStore.js",
+    "line": 427,
+    "kind": "ERROR",
+    "how": "throw new Error",
+    "dynamic": false,
+    "text": "사용자를 찾을 수 없습니다."
+  },
+  {
+    "file": "src/api/authStore.js",
+    "line": 450,
+    "kind": "ERROR",
+    "how": "throw new Error",
+    "dynamic": false,
+    "text": "사용자를 찾을 수 없습니다."
+  },
+  {
+    "file": "src/api/authStore.js",
+    "line": 464,
+    "kind": "ERROR",
+    "how": "throw new Error",
+    "dynamic": false,
+    "text": "사용자를 찾을 수 없습니다."
+  },
+  {
+    "file": "src/api/authStore.js",
+    "line": 478,
+    "kind": "ERROR",
+    "how": "throw new Error",
+    "dynamic": false,
+    "text": "마지막 계정은 삭제할 수 없습니다."
+  },
+  {
+    "file": "src/api/breathingFileRepository.js",
+    "line": 85,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "일반호흡"
+  },
+  {
+    "file": "src/api/breathingFileRepository.js",
+    "line": 87,
+    "kind": "ERROR",
+    "how": "throw new Error",
+    "dynamic": true,
+    "text": "한 환자당 ${…} 데이터는 최대 10개까지만 보관할 수 있습니다. 오래된 데이터를 삭제한 뒤 다시 업로드해 주세요."
+  },
+  {
+    "file": "src/api/breathingFileRepository.js",
+    "line": 231,
+    "kind": "ERROR",
+    "how": "throw new Error",
+    "dynamic": true,
+    "text": "파일 무결성 오류: 저장된 이후 파일이 변경되었습니다. (${…})"
+  },
+  {
+    "file": "src/api/usageNoticeStore.js",
+    "line": 32,
+    "kind": "ERROR",
+    "how": "errors.push",
+    "dynamic": true,
+    "text": "공지 문구는 최대 ${…}자까지 입력할 수 있습니다."
+  },
+  {
+    "file": "src/App.jsx",
+    "line": 16,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "DEBUG BUILD — 프로덕션/제출 빌드에 포함되어서는 안 됨"
+  },
+  {
+    "file": "src/components/breathing/AnalysisPlaybackPanel.jsx",
+    "line": 114,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "일반 호흡 그래프"
+  },
+  {
+    "file": "src/components/breathing/AnalysisPlaybackPanel.jsx",
+    "line": 114,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "DIBH 호흡 그래프"
+  },
+  {
+    "file": "src/components/breathing/AnalysisPlaybackPanel.jsx",
+    "line": 115,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "일반 호흡"
+  },
+  {
+    "file": "src/components/breathing/AnalysisPlaybackPanel.jsx",
+    "line": 120,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "호흡 파형 재생"
+  },
+  {
+    "file": "src/components/breathing/AnalysisPlaybackPanel.jsx",
+    "line": 121,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "파일 기반 분석을 완료하면 일반 호흡·DIBH 구간의 실제 기록과 검출이 이곳에 표시됩니다."
+  },
+  {
+    "file": "src/components/breathing/AnalysisPlaybackPanel.jsx",
+    "line": 163,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "일시정지"
+  },
+  {
+    "file": "src/components/breathing/AnalysisPlaybackPanel.jsx",
+    "line": 163,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "재생"
+  },
+  {
+    "file": "src/components/breathing/AnalysisPlaybackPanel.jsx",
+    "line": 185,
+    "kind": "CHROME",
+    "how": "attr aria-label",
+    "dynamic": false,
+    "text": "재생 위치"
+  },
+  {
+    "file": "src/components/breathing/BreathingTypeComparisonModal.jsx",
+    "line": 15,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "종합 호흡 진단 타입 비교"
+  },
+  {
+    "file": "src/components/breathing/BreathingTypeComparisonModal.jsx",
+    "line": 22,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "종합 호흡 진단 타입 비교"
+  },
+  {
+    "file": "src/components/breathing/BreathingTypeComparisonModal.jsx",
+    "line": 25,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "ASTRO 2020 가이드라인의 정량적 호흡 지표 (주기, 흡·호기 비율, 허용 변동성)를 근거로\n                산출된 환자의 표적 치료 적합성 및 호흡 안정성 평가 결과"
+  },
+  {
+    "file": "src/components/breathing/BreathingTypeComparisonModal.jsx",
+    "line": 37,
+    "kind": "CHROME",
+    "how": "attr aria-label",
+    "dynamic": false,
+    "text": "닫기"
+  },
+  {
+    "file": "src/components/breathing/ComprehensiveBreathingReportCard.jsx",
+    "line": 36,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "종합 호흡 분석 진단리포트"
+  },
+  {
+    "file": "src/components/common/BreathingChart.jsx",
+    "line": 14,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "실시간 호흡 그래프"
+  },
+  {
+    "file": "src/components/common/CalibrationChart.jsx",
+    "line": 37,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "실시간 호흡 그래프"
+  },
+  {
+    "file": "src/components/common/CalibrationChart.jsx",
+    "line": 145,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "데이터 수집 중..."
+  },
+  {
+    "file": "src/components/common/CalibrationChart.jsx",
+    "line": 156,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "● 피크(빨강) ● 골(파랑) ● 상승 시작(초록) ● 하강 시작(보라) | OK 구간: 세로 밴드"
+  },
+  {
+    "file": "src/components/common/CalibrationChart.jsx",
+    "line": 161,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "● 기준선(회색) ● 흡기 시작(초록) ● 피크(빨강)"
+  },
+  {
+    "file": "src/components/common/CalibrationChart.jsx",
+    "line": 166,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "목표선(보라) | 유지 시작/종료(세로선)"
+  },
+  {
+    "file": "src/components/common/EmergencyStopModal.jsx",
+    "line": 27,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "긴급정지"
+  },
+  {
+    "file": "src/components/common/EmergencyStopModal.jsx",
+    "line": 28,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "훈련을 즉시 중단하고 종료하시겠습니까?"
+  },
+  {
+    "file": "src/components/common/EmergencyStopModal.jsx",
+    "line": 35,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "VR 화면이 강제 종료됩니다"
+  },
+  {
+    "file": "src/components/common/EmergencyStopModal.jsx",
+    "line": 39,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "호흡벨트 측정이 종료됩니다"
+  },
+  {
+    "file": "src/components/common/EmergencyStopModal.jsx",
+    "line": 43,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "현재까지의 데이터는 저장됩니다"
+  },
+  {
+    "file": "src/components/common/EmergencyStopModal.jsx",
+    "line": 54,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "취소"
+  },
+  {
+    "file": "src/components/common/EmergencyStopModal.jsx",
+    "line": 60,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "정지"
+  },
+  {
+    "file": "src/components/common/PatientCard.jsx",
+    "line": 33,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "정상"
+  },
+  {
+    "file": "src/components/common/PatientCard.jsx",
+    "line": 34,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "만료 예정"
+  },
+  {
+    "file": "src/components/common/PatientCard.jsx",
+    "line": 35,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "재캘리브레이션 필요"
+  },
+  {
+    "file": "src/components/common/PatientCard.jsx",
+    "line": 36,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "캘리브레이션 필요"
+  },
+  {
+    "file": "src/components/common/PatientCard.jsx",
+    "line": 42,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "마지막 훈련:"
+  },
+  {
+    "file": "src/components/common/StepIndicator.jsx",
+    "line": 6,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "초기진단"
+  },
+  {
+    "file": "src/components/common/StepIndicator.jsx",
+    "line": 7,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "장비착용"
+  },
+  {
+    "file": "src/components/common/StepIndicator.jsx",
+    "line": 8,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "캘리브레이션"
+  },
+  {
+    "file": "src/components/common/StepIndicator.jsx",
+    "line": 9,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "완료"
+  },
+  {
+    "file": "src/config/product.js",
+    "line": 11,
+    "kind": "CHROME",
+    "how": "const PRODUCT_CODE_LABEL",
+    "dynamic": false,
+    "text": "유통표준코드(GTIN-13)"
+  },
+  {
+    "file": "src/context/AuthContext.jsx",
+    "line": 22,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "세션 비활성 타이머 설정 — Session Inactivity Timers Scheduled"
+  },
+  {
+    "file": "src/context/AuthContext.jsx",
+    "line": 23,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "사용자 비활성 상태 감지 타이머를 설정합니다. 마우스/키보드/터치 입력 시 타이머가 초기화됩니다."
+  },
+  {
+    "file": "src/context/AuthContext.jsx",
+    "line": 30,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "세션 비활성 경고 발동 — Session Warning Triggered"
+  },
+  {
+    "file": "src/context/AuthContext.jsx",
+    "line": 31,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "세션 만료 2분 전 경고를 표시합니다. 사용자가 \"계속 사용\" 버튼을 누르면 타이머가 초기화됩니다."
+  },
+  {
+    "file": "src/context/AuthContext.jsx",
+    "line": 38,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "자동 로그아웃 실행 — Auto-Logout: Session Expired"
+  },
+  {
+    "file": "src/context/AuthContext.jsx",
+    "line": 39,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "30분 동안 사용자 입력이 없어 세션이 자동 만료되었습니다. 수동 로그아웃과 구분되는 자동 만료 이벤트입니다."
+  },
+  {
+    "file": "src/context/AuthContext.jsx",
+    "line": 42,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "30분간 사용자 입력 없음 (비활성) | 30 min of user inactivity"
+  },
+  {
+    "file": "src/context/AuthContext.jsx",
+    "line": 86,
+    "kind": "AUDIT",
+    "how": "audit log",
+    "dynamic": true,
+    "text": "계정 ${…}건, 훈련세션 ${…}건, 캘리브레이션 ${…}건 마이그레이션"
+  },
+  {
+    "file": "src/context/AuthContext.jsx",
+    "line": 90,
+    "kind": "DEV",
+    "how": "console",
+    "dynamic": false,
+    "text": "[AuthContext] 레거시 데이터 마이그레이션 실패:"
+  },
+  {
+    "file": "src/lib/breathingAnalysisReportContent.js",
+    "line": 6,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "현재 환자는 'DIBH' 가능 상태입니다."
+  },
+  {
+    "file": "src/lib/breathingAnalysisReportContent.js",
+    "line": 8,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "호흡주기 : 3~6초 사이에서 오차 없이 매우 일정함"
+  },
+  {
+    "file": "src/lib/breathingAnalysisReportContent.js",
+    "line": 9,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "흡기 및 호기 비율 : 1:1.2~1.5 비율을 정확히 준수함"
+  },
+  {
+    "file": "src/lib/breathingAnalysisReportContent.js",
+    "line": 10,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "호흡의 깊이 변동률 : 진폭 오차 ±10% 이내로 완벽히 억제됨"
+  },
+  {
+    "file": "src/lib/breathingAnalysisReportContent.js",
+    "line": 11,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "주기변동 : 오차 ±0.5초 이내로 주기 변동이 거의 없음"
+  },
+  {
+    "file": "src/lib/breathingAnalysisReportContent.js",
+    "line": 19,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "현재 환자는 '정상 호흡' 상태입니다."
+  },
+  {
+    "file": "src/lib/breathingAnalysisReportContent.js",
+    "line": 21,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "호흡주기 : 표준 범위인 3~6초 사이를 안정적으로 유지"
+  },
+  {
+    "file": "src/lib/breathingAnalysisReportContent.js",
+    "line": 22,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "흡기 및 호기 비율 : 1:1.2~1.5 수준"
+  },
+  {
+    "file": "src/lib/breathingAnalysisReportContent.js",
+    "line": 23,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "호흡의 깊이 변동률 : 진폭 ±10% 이내로 안정적"
+  },
+  {
+    "file": "src/lib/breathingAnalysisReportContent.js",
+    "line": 24,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "주기변동 : ±0.5초 이내로 안정적"
+  },
+  {
+    "file": "src/lib/breathingAnalysisReportContent.js",
+    "line": 32,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "현재 환자는 호흡이 다소 빠르고 얕은 '얕은 호흡' 상태입니다."
+  },
+  {
+    "file": "src/lib/breathingAnalysisReportContent.js",
+    "line": 34,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "호흡주기 : 2~4초 사이로 표준 범위(3~6초) 대비 단축됨"
+  },
+  {
+    "file": "src/lib/breathingAnalysisReportContent.js",
+    "line": 35,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "흡기 및 호기 비율 : 호기 시간이 다소 부족하여 불규칙함"
+  },
+  {
+    "file": "src/lib/breathingAnalysisReportContent.js",
+    "line": 36,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "호흡의 깊이 변동률 : 목표 진폭에 도달하지 못해 변동성 발생"
+  },
+  {
+    "file": "src/lib/breathingAnalysisReportContent.js",
+    "line": 37,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "주기변동 : 잦은 호흡 횟수로 인해 주기 오차 발생 가능성 높음"
+  },
+  {
+    "file": "src/lib/breathingAnalysisReportContent.js",
+    "line": 48,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "종합 평가"
+  },
+  {
+    "file": "src/lib/breathingAnalysisReportContent.js",
+    "line": 49,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "DIBH 가능 상태"
+  },
+  {
+    "file": "src/lib/breathingAnalysisReportContent.js",
+    "line": 50,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "정상 호흡 상태"
+  },
+  {
+    "file": "src/lib/breathingAnalysisReportContent.js",
+    "line": 51,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "얕은 호흡 상태"
+  },
+  {
+    "file": "src/lib/breathingAnalysisReportContent.js",
+    "line": 55,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "호흡 주기"
+  },
+  {
+    "file": "src/lib/breathingAnalysisReportContent.js",
+    "line": 56,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "3~6초 사이에서 오차 없이\n매우 일정함"
+  },
+  {
+    "file": "src/lib/breathingAnalysisReportContent.js",
+    "line": 57,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "표준 범위인 3~6초 사이를\n안정적으로 유지"
+  },
+  {
+    "file": "src/lib/breathingAnalysisReportContent.js",
+    "line": 58,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "2~4초 사이로 표준 범위(3~6초)\n대비 단축됨"
+  },
+  {
+    "file": "src/lib/breathingAnalysisReportContent.js",
+    "line": 62,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "흡기 및 호기 비율"
+  },
+  {
+    "file": "src/lib/breathingAnalysisReportContent.js",
+    "line": 63,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "1 : 1.2 ~ 1.5 비율을\n거의 정확하게 준수함"
+  },
+  {
+    "file": "src/lib/breathingAnalysisReportContent.js",
+    "line": 64,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "1 : 1.2 ~ 1.5 수준"
+  },
+  {
+    "file": "src/lib/breathingAnalysisReportContent.js",
+    "line": 65,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "호기 시간이 다소 부족하여\n불규칙함"
+  },
+  {
+    "file": "src/lib/breathingAnalysisReportContent.js",
+    "line": 69,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "호흡 깊이 변동률"
+  },
+  {
+    "file": "src/lib/breathingAnalysisReportContent.js",
+    "line": 70,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "진폭 오차 ±10% 이내로\n완벽히 억제됨"
+  },
+  {
+    "file": "src/lib/breathingAnalysisReportContent.js",
+    "line": 71,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "진폭 ±10% 이내로 안정적"
+  },
+  {
+    "file": "src/lib/breathingAnalysisReportContent.js",
+    "line": 72,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "목표 진폭에 도달하지 못해\n변동성 발생"
+  },
+  {
+    "file": "src/lib/breathingAnalysisReportContent.js",
+    "line": 76,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "주기 변동"
+  },
+  {
+    "file": "src/lib/breathingAnalysisReportContent.js",
+    "line": 77,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "±0.5초 이내로\n주기 변동이 거의 없음"
+  },
+  {
+    "file": "src/lib/breathingAnalysisReportContent.js",
+    "line": 78,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "±0.5초 이내로 안정적"
+  },
+  {
+    "file": "src/lib/breathingAnalysisReportContent.js",
+    "line": 79,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "잦은 호흡 횟수로 인해\n주기 오차 발생 가능성 높음"
+  },
+  {
+    "file": "src/lib/calibration/analyzeFiles.js",
+    "line": 125,
+    "kind": "ERROR",
+    "how": "throw new Error",
+    "dynamic": false,
+    "text": "VXP 파일에서 [Data] 섹션을 찾을 수 없습니다."
+  },
+  {
+    "file": "src/lib/calibration/analyzeFiles.js",
+    "line": 243,
+    "kind": "ERROR",
+    "how": "throw new Error",
+    "dynamic": false,
+    "text": "일반호흡 파일을 찾을 수 없습니다."
+  },
+  {
+    "file": "src/lib/calibration/analyzeFiles.js",
+    "line": 244,
+    "kind": "ERROR",
+    "how": "throw new Error",
+    "dynamic": false,
+    "text": "DIBH 파일을 찾을 수 없습니다."
+  },
+  {
+    "file": "src/lib/calibration/analyzeFiles.js",
+    "line": 251,
+    "kind": "ERROR",
+    "how": "throw new Error",
+    "dynamic": false,
+    "text": "일반호흡 파일에 유효한 데이터가 없습니다."
+  },
+  {
+    "file": "src/lib/calibration/analyzeFiles.js",
+    "line": 254,
+    "kind": "ERROR",
+    "how": "throw new Error",
+    "dynamic": false,
+    "text": "DIBH 파일에 유효한 데이터가 없습니다."
+  },
+  {
+    "file": "src/lib/crypto.js",
+    "line": 56,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "AES-256-GCM 설치 키 로드 — Installation Key Loaded"
+  },
+  {
+    "file": "src/lib/crypto.js",
+    "line": 57,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "256비트 AES-GCM 키를 로드했습니다. 환자 PII 암호화에 사용되며, 키는 메모리에만 유지되고 외부로 추출 불가합니다."
+  },
+  {
+    "file": "src/lib/crypto.js",
+    "line": 78,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "AES-256-GCM 암호화 수행 — Encrypt"
+  },
+  {
+    "file": "src/lib/crypto.js",
+    "line": 79,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "환자 PII(이름·생년월일·담당의사명)를 AES-256-GCM으로 암호화합니다. 매 암호화마다 새로운 랜덤 IV가 생성됩니다."
+  },
+  {
+    "file": "src/lib/crypto.js",
+    "line": 87,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "매 암호화마다 새 랜덤 IV 생성 — 평문·키 미포함 | Fresh random IV per op — plaintext & key not logged"
+  },
+  {
+    "file": "src/lib/crypto.js",
+    "line": 119,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "AES-256-GCM 복호화 수행 — Decrypt"
+  },
+  {
+    "file": "src/lib/crypto.js",
+    "line": 120,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "암호화된 환자 PII를 복호화합니다. GCM 인증 태그 검증으로 데이터 변조 여부를 자동 확인합니다."
+  },
+  {
+    "file": "src/lib/crypto.js",
+    "line": 125,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "성공 — GCM 인증 태그 검증 완료 (변조 없음) | success — GCM auth tag verified (no tampering)"
+  },
+  {
+    "file": "src/lib/crypto.js",
+    "line": 126,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "복호화된 평문 미포함 — Plaintext not logged"
+  },
+  {
+    "file": "src/lib/crypto.js",
+    "line": 145,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "AES-256-GCM 암호화 수행 — Encrypt (파일 BLOB)"
+  },
+  {
+    "file": "src/lib/crypto.js",
+    "line": 146,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "호흡 데이터 파일(CSV/VXP) 원본 바이트를 AES-256-GCM으로 암호화합니다. 매 암호화마다 새로운 랜덤 IV가 생성됩니다."
+  },
+  {
+    "file": "src/lib/crypto.js",
+    "line": 152,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "매 암호화마다 새 랜덤 IV 생성 — 평문·키 미포함 | Fresh random IV per op — plaintext & key not logged"
+  },
+  {
+    "file": "src/lib/crypto.js",
+    "line": 164,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "AES-256-GCM 복호화 수행 — Decrypt (파일 BLOB)"
+  },
+  {
+    "file": "src/lib/crypto.js",
+    "line": 165,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "암호화된 호흡 데이터 파일을 복호화합니다. GCM 인증 태그 검증으로 데이터 변조 여부를 자동 확인합니다."
+  },
+  {
+    "file": "src/lib/crypto.js",
+    "line": 169,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "성공 — GCM 인증 태그 검증 완료 (변조 없음) | success — GCM auth tag verified (no tampering)"
+  },
+  {
+    "file": "src/lib/crypto.js",
+    "line": 170,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "복호화된 평문 미포함 — Plaintext not logged"
+  },
+  {
+    "file": "src/lib/crypto.js",
+    "line": 186,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "SHA-256 무결성 해시 계산 — Integrity Hash"
+  },
+  {
+    "file": "src/lib/crypto.js",
+    "line": 187,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "파일의 SHA-256 해시값을 계산합니다. 호흡 데이터 파일 무결성 검증 및 앱 번들 변조 탐지에 사용됩니다."
+  },
+  {
+    "file": "src/lib/crypto.js",
+    "line": 268,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "[복호화 실패]"
+  },
+  {
+    "file": "src/lib/passwordUtils.js",
+    "line": 5,
+    "kind": "ERROR",
+    "how": "errors.push",
+    "dynamic": false,
+    "text": "8자 이상이어야 합니다"
+  },
+  {
+    "file": "src/lib/passwordUtils.js",
+    "line": 6,
+    "kind": "ERROR",
+    "how": "errors.push",
+    "dynamic": false,
+    "text": "대문자(A-Z)를 포함해야 합니다"
+  },
+  {
+    "file": "src/lib/passwordUtils.js",
+    "line": 7,
+    "kind": "ERROR",
+    "how": "errors.push",
+    "dynamic": false,
+    "text": "소문자(a-z)를 포함해야 합니다"
+  },
+  {
+    "file": "src/lib/passwordUtils.js",
+    "line": 8,
+    "kind": "ERROR",
+    "how": "errors.push",
+    "dynamic": false,
+    "text": "숫자(0-9)를 포함해야 합니다"
+  },
+  {
+    "file": "src/lib/passwordUtils.js",
+    "line": 9,
+    "kind": "ERROR",
+    "how": "errors.push",
+    "dynamic": false,
+    "text": "특수문자(!@#$ 등)를 포함해야 합니다"
+  },
+  {
+    "file": "src/lib/secureKey.js",
+    "line": 106,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "설치 키 로드 (브라우저) — Install Key Loaded (browser)"
+  },
+  {
+    "file": "src/lib/secureKey.js",
+    "line": 107,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "브라우저 환경에는 하드웨어 키 저장소가 없어 기존 방식을 유지합니다. 인증 대상 플랫폼은 Android입니다."
+  },
+  {
+    "file": "src/lib/secureKey.js",
+    "line": 135,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "설치 키 복호화 (Android Keystore) — Install Key Unwrapped"
+  },
+  {
+    "file": "src/lib/secureKey.js",
+    "line": 136,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "Android Keystore의 하드웨어 보호 키로 설치 키를 복호화했습니다. 평문 키는 저장소에 존재하지 않습니다."
+  },
+  {
+    "file": "src/lib/secureKey.js",
+    "line": 166,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "평문 설치 키 마이그레이션 — Legacy Key Migrated"
+  },
+  {
+    "file": "src/lib/secureKey.js",
+    "line": 167,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "기존 평문 설치 키를 Android Keystore 키로 봉인하고 평문 사본을 삭제했습니다. 기존 암호화 데이터는 그대로 복호화됩니다."
+  },
+  {
+    "file": "src/lib/secureKey.js",
+    "line": 180,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "설치 키 신규 생성 — Install Key Created"
+  },
+  {
+    "file": "src/lib/secureKey.js",
+    "line": 181,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "256비트 설치 키를 생성하여 Android Keystore 키로 봉인 후 저장했습니다. 평문 키는 디스크에 기록되지 않습니다."
+  },
+  {
+    "file": "src/main.jsx",
+    "line": 13,
+    "kind": "ERROR",
+    "how": "throw new Error",
+    "dynamic": false,
+    "text": "Web Crypto API 사용 불가"
+  },
+  {
+    "file": "src/main.jsx",
+    "line": 14,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "자가진단 1/4 — Web Crypto API 가용성 확인 | Self-Check 1/4 — Web Crypto API"
+  },
+  {
+    "file": "src/main.jsx",
+    "line": 15,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "window.crypto.subtle API가 존재하는지 확인합니다. 이 API가 없으면 AES-256-GCM 암호화를 사용할 수 없습니다."
+  },
+  {
+    "file": "src/main.jsx",
+    "line": 24,
+    "kind": "ERROR",
+    "how": "throw new Error",
+    "dynamic": false,
+    "text": "암호화 자가진단 실패"
+  },
+  {
+    "file": "src/main.jsx",
+    "line": 25,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "자가진단 2/4 — AES-256-GCM 라운드트립 검증 | Self-Check 2/4 — AES-256-GCM Round-Trip"
+  },
+  {
+    "file": "src/main.jsx",
+    "line": 26,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "테스트 문자열을 AES-256-GCM으로 암호화한 후 복호화하여 원본과 일치하는지 확인합니다."
+  },
+  {
+    "file": "src/main.jsx",
+    "line": 28,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "암호화 → 복호화 후 원본과 비교 | encrypt → decrypt → compare to original"
+  },
+  {
+    "file": "src/main.jsx",
+    "line": 34,
+    "kind": "ERROR",
+    "how": "throw new Error",
+    "dynamic": false,
+    "text": "sessionStorage 사용 불가"
+  },
+  {
+    "file": "src/main.jsx",
+    "line": 36,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "자가진단 3/4 — sessionStorage 가용성 확인 | Self-Check 3/4 — sessionStorage"
+  },
+  {
+    "file": "src/main.jsx",
+    "line": 37,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "세션 토큰 저장에 사용되는 sessionStorage의 읽기/쓰기 가능 여부를 확인합니다. 탭 종료 시 자동 삭제됩니다."
+  },
+  {
+    "file": "src/main.jsx",
+    "line": 39,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "세션 토큰 저장 (탭 닫힘 시 자동 삭제) | session token storage (cleared on tab close)"
+  },
+  {
+    "file": "src/main.jsx",
+    "line": 45,
+    "kind": "ERROR",
+    "how": "throw new Error",
+    "dynamic": false,
+    "text": "localStorage 사용 불가"
+  },
+  {
+    "file": "src/main.jsx",
+    "line": 47,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "자가진단 4/4 — localStorage 가용성 확인 | Self-Check 4/4 — localStorage"
+  },
+  {
+    "file": "src/main.jsx",
+    "line": 48,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "환자 데이터 및 감사 로그 저장에 사용되는 localStorage의 읽기/쓰기 가능 여부를 확인합니다."
+  },
+  {
+    "file": "src/main.jsx",
+    "line": 50,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "암호화된 환자 데이터 및 감사 로그 저장 | encrypted patient data & audit log storage"
+  },
+  {
+    "file": "src/main.jsx",
+    "line": 52,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "시작 보안 자가진단 완료 | Startup Security Self-Check Complete"
+  },
+  {
+    "file": "src/main.jsx",
+    "line": 53,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "앱 마운트 전 4가지 보안 기능 자가진단이 모두 완료되었습니다."
+  },
+  {
+    "file": "src/main.jsx",
+    "line": 55,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "전체 통과 — 앱 마운트 진행 | all passed — mounting app"
+  },
+  {
+    "file": "src/main.jsx",
+    "line": 65,
+    "kind": "ERROR",
+    "how": "throw new Error",
+    "dynamic": false,
+    "text": "무결성 매니페스트를 로드할 수 없습니다 (integrity.json)"
+  },
+  {
+    "file": "src/main.jsx",
+    "line": 68,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "무결성 매니페스트 로드 완료 | Integrity Manifest Loaded"
+  },
+  {
+    "file": "src/main.jsx",
+    "line": 69,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "빌드 시점에 생성된 integrity.json 파일을 로드했습니다. 각 앱 번들 파일의 SHA-256 해시값이 포함되어 있습니다."
+  },
+  {
+    "file": "src/main.jsx",
+    "line": 77,
+    "kind": "ERROR",
+    "how": "throw new Error",
+    "dynamic": true,
+    "text": "무결성 검사 파일 로드 실패: ${…}"
+  },
+  {
+    "file": "src/main.jsx",
+    "line": 81,
+    "kind": "ERROR",
+    "how": "throw new Error",
+    "dynamic": true,
+    "text": "무결성 검사 실패 (파일 변조 감지): ${…}"
+  },
+  {
+    "file": "src/main.jsx",
+    "line": 83,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": true,
+    "text": "파일 무결성 검증 성공 | File Integrity OK: ${…}"
+  },
+  {
+    "file": "src/main.jsx",
+    "line": 84,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "파일의 SHA-256 해시값이 빌드 시점 기록값과 일치합니다. 파일 변조 없음."
+  },
+  {
+    "file": "src/main.jsx",
+    "line": 88,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "일치 (변조 없음) | match (no tampering)"
+  },
+  {
+    "file": "src/main.jsx",
+    "line": 91,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "파일 무결성 검증 전체 완료 | All File Integrity Checks Passed"
+  },
+  {
+    "file": "src/main.jsx",
+    "line": 92,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "모든 앱 번들 파일의 SHA-256 해시값 검증이 완료되었습니다. 파일 변조가 감지되지 않았습니다."
+  },
+  {
+    "file": "src/main.jsx",
+    "line": 95,
+    "kind": "DEV",
+    "how": "secDbg",
+    "dynamic": false,
+    "text": "전체 통과 (변조 없음) | all passed (no tampering)"
+  },
+  {
+    "file": "src/main.jsx",
+    "line": 125,
+    "kind": "ERROR",
+    "how": "blocking screen",
+    "dynamic": false,
+    "text": "암호화 키 오류"
+  },
+  {
+    "file": "src/main.jsx",
+    "line": 126,
+    "kind": "ERROR",
+    "how": "blocking screen",
+    "dynamic": false,
+    "text": "저장된 암호화 키를 복구할 수 없습니다. 환자 데이터를 복호화할 수 없으므로 앱을 시작할 수 없습니다. 관리자에게 문의하십시오."
+  },
+  {
+    "file": "src/main.jsx",
+    "line": 155,
+    "kind": "ERROR",
+    "how": "blocking screen",
+    "dynamic": false,
+    "text": "무결성 검사 실패"
+  },
+  {
+    "file": "src/main.jsx",
+    "line": 156,
+    "kind": "ERROR",
+    "how": "blocking screen",
+    "dynamic": false,
+    "text": "앱 파일의 무결성을 확인할 수 없습니다. 파일이 변조되었을 수 있습니다."
+  },
+  {
+    "file": "src/main.jsx",
+    "line": 167,
+    "kind": "ERROR",
+    "how": "blocking screen",
+    "dynamic": false,
+    "text": "보안 자가진단 실패"
+  },
+  {
+    "file": "src/main.jsx",
+    "line": 168,
+    "kind": "ERROR",
+    "how": "blocking screen",
+    "dynamic": false,
+    "text": "시스템 보안 기능을 초기화할 수 없습니다."
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 19,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "관리자"
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 19,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "임상의"
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 30,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "계정 관리"
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 31,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "감사 로그"
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 32,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "백업/복구"
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 84,
+    "kind": "AUDIT",
+    "how": "audit log",
+    "dynamic": false,
+    "text": "시스템 사용 알림 문구 변경"
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 86,
+    "kind": "INFO",
+    "how": "toast title",
+    "dynamic": false,
+    "text": "저장되었습니다"
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 86,
+    "kind": "INFO",
+    "how": "toast description",
+    "dynamic": false,
+    "text": "로그인 화면에 새 공지 문구가 표시됩니다."
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 96,
+    "kind": "AUDIT",
+    "how": "audit log",
+    "dynamic": false,
+    "text": "기본 문구로 재설정"
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 97,
+    "kind": "INFO",
+    "how": "toast title",
+    "dynamic": false,
+    "text": "기본 문구로 재설정되었습니다"
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 109,
+    "kind": "ERROR",
+    "how": "setFormErrors",
+    "dynamic": false,
+    "text": "아이디를 입력하세요."
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 111,
+    "kind": "ERROR",
+    "how": "setFormErrors",
+    "dynamic": false,
+    "text": "아이디는 영문·숫자·_.- 만 사용 가능하며 2~30자여야 합니다."
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 133,
+    "kind": "ERROR",
+    "how": "alert()",
+    "dynamic": false,
+    "text": "마지막 관리자 계정의 권한은 변경할 수 없습니다."
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 171,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "계정을 삭제하지 못했습니다."
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 188,
+    "kind": "AUDIT",
+    "how": "audit log",
+    "dynamic": true,
+    "text": "username: ${…} — 관리자에 의한 비밀번호 초기화"
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 213,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "계정 관리"
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 214,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "관리자 전용 — 사용자 계정 생성·수정·삭제"
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 220,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "계정 추가"
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 230,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "등록된 계정 ("
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 233,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "계정이 없습니다."
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 248,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "나"
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 254,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "비밀번호 변경 필요"
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 257,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "잠금"
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 260,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "생성:"
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 268,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "잠금해제"
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 274,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "역할 변경"
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 281,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "비밀번호 초기화"
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 288,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "삭제"
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 301,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "시스템 사용 알림 문구"
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 303,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "로그인 화면에 표시되는 사전 접속 안내 문구입니다. 비워두면 기본 문구가 표시됩니다. (최대 1000자)"
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 309,
+    "kind": "CHROME",
+    "how": "attr placeholder",
+    "dynamic": false,
+    "text": "비워두면 기본 문구가 표시됩니다."
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 320,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "기본값으로 재설정"
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 325,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "저장 중…"
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 325,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "저장"
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 338,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "계정 추가"
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 339,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "새 사용자 계정을 생성합니다."
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 342,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "새 계정 추가"
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 350,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "아이디"
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 352,
+    "kind": "CHROME",
+    "how": "attr placeholder",
+    "dynamic": false,
+    "text": "영문/숫자"
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 356,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "실명 (담당의사 표시명)"
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 358,
+    "kind": "CHROME",
+    "how": "attr placeholder",
+    "dynamic": false,
+    "text": "예: 김철수"
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 360,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "환자 차트의 '담당 의사'란에 표시됩니다. 비워두면 아이디로 대체됩니다."
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 363,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "초기 비밀번호"
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 374,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "8자 이상, 대소문자·숫자·특수문자 포함 — 첫 로그인 시 변경 강제"
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 377,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "역할"
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 379,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "임상의"
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 379,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "관리자"
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 396,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "취소"
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 399,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "생성 중…"
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 399,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "계정 생성"
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 409,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "비밀번호 초기화"
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 410,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "관리자가 해당 계정의 비밀번호를 초기화합니다. 대상 사용자는 다음 로그인 시 비밀번호를 변경해야 합니다."
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 413,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "] 비밀번호 초기화"
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 420,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "⚠ 초기화된 비밀번호로 설정됩니다. 해당 사용자는 다음 로그인 시 비밀번호를 반드시 변경해야 합니다."
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 424,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "새 임시 비밀번호"
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 435,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "8자 이상, 대소문자·숫자·특수문자 포함"
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 445,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "취소"
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 448,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "처리 중…"
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 448,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "비밀번호 초기화"
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 458,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "계정 삭제"
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 459,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "선택한 계정을 영구적으로 삭제합니다."
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 462,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "] 계정을 삭제하시겠습니까?"
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 463,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "삭제된 계정은 복구할 수 없습니다."
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 471,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "취소"
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 474,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "삭제 중…"
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 474,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "삭제"
+  },
+  {
+    "file": "src/pages/AdminAuditLog.jsx",
+    "line": 11,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "계정 관리"
+  },
+  {
+    "file": "src/pages/AdminAuditLog.jsx",
+    "line": 12,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "감사 로그"
+  },
+  {
+    "file": "src/pages/AdminAuditLog.jsx",
+    "line": 13,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "백업/복구"
+  },
+  {
+    "file": "src/pages/AdminAuditLog.jsx",
+    "line": 150,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "감사 로그"
+  },
+  {
+    "file": "src/pages/AdminAuditLog.jsx",
+    "line": 151,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "읽기 전용 — 관리자 전용 (TRE-01)"
+  },
+  {
+    "file": "src/pages/AdminAuditLog.jsx",
+    "line": 155,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "읽기 전용"
+  },
+  {
+    "file": "src/pages/AdminAuditLog.jsx",
+    "line": 164,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "디버그: 10,000건 생성"
+  },
+  {
+    "file": "src/pages/AdminAuditLog.jsx",
+    "line": 177,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "체인 무결성: 검증 필요 (UC-07)"
+  },
+  {
+    "file": "src/pages/AdminAuditLog.jsx",
+    "line": 180,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "체인 무결성: 정상 ("
+  },
+  {
+    "file": "src/pages/AdminAuditLog.jsx",
+    "line": 181,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "건 검증)"
+  },
+  {
+    "file": "src/pages/AdminAuditLog.jsx",
+    "line": 185,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "체인 무결성 손상 — 항목 #"
+  },
+  {
+    "file": "src/pages/AdminAuditLog.jsx",
+    "line": 192,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "검증 중…"
+  },
+  {
+    "file": "src/pages/AdminAuditLog.jsx",
+    "line": 192,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "지금 검증"
+  },
+  {
+    "file": "src/pages/AdminAuditLog.jsx",
+    "line": 210,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "감사 로그 저장 공간 부족 (UC-05)"
+  },
+  {
+    "file": "src/pages/AdminAuditLog.jsx",
+    "line": 210,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "감사 로그 저장 공간 경고 (UC-05)"
+  },
+  {
+    "file": "src/pages/AdminAuditLog.jsx",
+    "line": 213,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "로그 항목:"
+  },
+  {
+    "file": "src/pages/AdminAuditLog.jsx",
+    "line": 214,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "건 ("
+  },
+  {
+    "file": "src/pages/AdminAuditLog.jsx",
+    "line": 215,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": " — 오래된 항목이 자동 삭제됩니다."
+  },
+  {
+    "file": "src/pages/AdminAuditLog.jsx",
+    "line": 219,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "기기 저장소:"
+  },
+  {
+    "file": "src/pages/AdminAuditLog.jsx",
+    "line": 220,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "사용 중 (감사 로그"
+  },
+  {
+    "file": "src/pages/AdminAuditLog.jsx",
+    "line": 221,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": " — 저장소 용량이 부족합니다."
+  },
+  {
+    "file": "src/pages/AdminAuditLog.jsx",
+    "line": 224,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "백업 후 데이터를 내보내기하세요."
+  },
+  {
+    "file": "src/pages/AdminAuditLog.jsx",
+    "line": 233,
+    "kind": "CHROME",
+    "how": "attr placeholder",
+    "dynamic": false,
+    "text": "사용자명, 액션, 날짜 검색…"
+  },
+  {
+    "file": "src/pages/AdminAuditLog.jsx",
+    "line": 238,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "총"
+  },
+  {
+    "file": "src/pages/AdminAuditLog.jsx",
+    "line": 239,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "건 · 페이지"
+  },
+  {
+    "file": "src/pages/AdminAuditLog.jsx",
+    "line": 240,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "· 감사 로그"
+  },
+  {
+    "file": "src/pages/AdminAuditLog.jsx",
+    "line": 240,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "· 저장소 전체"
+  },
+  {
+    "file": "src/pages/AdminAuditLog.jsx",
+    "line": 247,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "검색 결과가 없습니다."
+  },
+  {
+    "file": "src/pages/AdminAuditLog.jsx",
+    "line": 247,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "기록된 감사 로그가 없습니다."
+  },
+  {
+    "file": "src/pages/AdminAuditLog.jsx",
+    "line": 254,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "일시"
+  },
+  {
+    "file": "src/pages/AdminAuditLog.jsx",
+    "line": 255,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "사용자"
+  },
+  {
+    "file": "src/pages/AdminAuditLog.jsx",
+    "line": 256,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "액션"
+  },
+  {
+    "file": "src/pages/AdminAuditLog.jsx",
+    "line": 257,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "대상"
+  },
+  {
+    "file": "src/pages/AdminAuditLog.jsx",
+    "line": 258,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "상세"
+  },
+  {
+    "file": "src/pages/AdminAuditLog.jsx",
+    "line": 290,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "이전"
+  },
+  {
+    "file": "src/pages/AdminAuditLog.jsx",
+    "line": 296,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "다음"
+  },
+  {
+    "file": "src/pages/AdminBackup.jsx",
+    "line": 34,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": true,
+    "text": "기기 내 Documents/${…}"
+  },
+  {
+    "file": "src/pages/AdminBackup.jsx",
+    "line": 43,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": true,
+    "text": "다운로드 폴더/${…}"
+  },
+  {
+    "file": "src/pages/AdminBackup.jsx",
+    "line": 49,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "계정 관리"
+  },
+  {
+    "file": "src/pages/AdminBackup.jsx",
+    "line": 50,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "감사 로그"
+  },
+  {
+    "file": "src/pages/AdminBackup.jsx",
+    "line": 51,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "백업/복구"
+  },
+  {
+    "file": "src/pages/AdminBackup.jsx",
+    "line": 86,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "환자ID,환자코드,성별,치료회차,분석유형,DIBH유지시간(s),CV(%)"
+  },
+  {
+    "file": "src/pages/AdminBackup.jsx",
+    "line": 126,
+    "kind": "ERROR",
+    "how": "throw new Error",
+    "dynamic": false,
+    "text": "백업 파일의 무결성 검증에 실패했습니다. 파일이 손상되었거나 변조되었습니다."
+  },
+  {
+    "file": "src/pages/AdminBackup.jsx",
+    "line": 154,
+    "kind": "AUDIT",
+    "how": "audit log",
+    "dynamic": true,
+    "text": "암호화된 백업 생성됨: ${…}"
+  },
+  {
+    "file": "src/pages/AdminBackup.jsx",
+    "line": 155,
+    "kind": "INFO",
+    "how": "status message (success)",
+    "dynamic": true,
+    "text": "백업 파일이 생성되었습니다. (${…})"
+  },
+  {
+    "file": "src/pages/AdminBackup.jsx",
+    "line": 159,
+    "kind": "ERROR",
+    "how": "message: (error)",
+    "dynamic": false,
+    "text": "백업 생성에 실패했습니다."
+  },
+  {
+    "file": "src/pages/AdminBackup.jsx",
+    "line": 176,
+    "kind": "AUDIT",
+    "how": "audit log",
+    "dynamic": true,
+    "text": "${…}명 비식별 내보내기: ${…}"
+  },
+  {
+    "file": "src/pages/AdminBackup.jsx",
+    "line": 177,
+    "kind": "INFO",
+    "how": "status message (success)",
+    "dynamic": true,
+    "text": "비식별 데이터가 내보내졌습니다 (${…}명, ${…}). 이름·생년월일은 포함되지 않습니다."
+  },
+  {
+    "file": "src/pages/AdminBackup.jsx",
+    "line": 181,
+    "kind": "ERROR",
+    "how": "message: (error)",
+    "dynamic": false,
+    "text": "비식별 내보내기에 실패했습니다."
+  },
+  {
+    "file": "src/pages/AdminBackup.jsx",
+    "line": 196,
+    "kind": "AUDIT",
+    "how": "audit log",
+    "dynamic": true,
+    "text": "복구됨: v${…}, ${…}"
+  },
+  {
+    "file": "src/pages/AdminBackup.jsx",
+    "line": 197,
+    "kind": "INFO",
+    "how": "status message (success)",
+    "dynamic": true,
+    "text": "복구 완료 (백업일: ${…}, v${…}). 새로고침하면 변경사항이 반영됩니다."
+  },
+  {
+    "file": "src/pages/AdminBackup.jsx",
+    "line": 197,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "알 수 없음"
+  },
+  {
+    "file": "src/pages/AdminBackup.jsx",
+    "line": 204,
+    "kind": "AUDIT",
+    "how": "audit log",
+    "dynamic": false,
+    "text": "설치 키 불일치(다른 기기에서 생성된 백업)"
+  },
+  {
+    "file": "src/pages/AdminBackup.jsx",
+    "line": 209,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "복호화에 실패했습니다. 이 백업은 현재 설치 키와 다른 키로 암호화되어 있습니다. 백업을 생성한 기기에서만 복구할 수 있습니다."
+  },
+  {
+    "file": "src/pages/AdminBackup.jsx",
+    "line": 210,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "복구에 실패했습니다. 올바른 백업 파일인지 확인해 주세요."
+  },
+  {
+    "file": "src/pages/AdminBackup.jsx",
+    "line": 227,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "백업 및 복구"
+  },
+  {
+    "file": "src/pages/AdminBackup.jsx",
+    "line": 228,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "관리자 전용 — AES-256 암호화 백업 (RA-02, RA-03)"
+  },
+  {
+    "file": "src/pages/AdminBackup.jsx",
+    "line": 249,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "데이터 백업 (내보내기)"
+  },
+  {
+    "file": "src/pages/AdminBackup.jsx",
+    "line": 251,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "모든 환자·캘리브레이션·감사 로그를 AES-256으로 암호화한 파일로 내보냅니다.\n                  백업 중에는 시스템 사용에 영향을 주지 않습니다."
+  },
+  {
+    "file": "src/pages/AdminBackup.jsx",
+    "line": 259,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "생성 중…"
+  },
+  {
+    "file": "src/pages/AdminBackup.jsx",
+    "line": 259,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "백업 파일 생성"
+  },
+  {
+    "file": "src/pages/AdminBackup.jsx",
+    "line": 269,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "비식별 데이터 내보내기 (DC-02)"
+  },
+  {
+    "file": "src/pages/AdminBackup.jsx",
+    "line": 271,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "이름·생년월일을 제외한 캘리브레이션 결과를 CSV로 내보냅니다.\n                  환자 코드·성별·치료회차·분석결과만 포함됩니다."
+  },
+  {
+    "file": "src/pages/AdminBackup.jsx",
+    "line": 279,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "생성 중…"
+  },
+  {
+    "file": "src/pages/AdminBackup.jsx",
+    "line": 279,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "비식별 CSV 내보내기"
+  },
+  {
+    "file": "src/pages/AdminBackup.jsx",
+    "line": 289,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "데이터 복구 (가져오기)"
+  },
+  {
+    "file": "src/pages/AdminBackup.jsx",
+    "line": 291,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "이전에 생성한 백업 파일(.enc)을 불러와 복구합니다.\n                  무결성 검증 후 적용되며, 현재 데이터를 덮어씁니다."
+  },
+  {
+    "file": "src/pages/AdminBackup.jsx",
+    "line": 297,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "⚠ 복구 시 현재 저장된 데이터가 백업 시점으로 대체됩니다."
+  },
+  {
+    "file": "src/pages/AdminBackup.jsx",
+    "line": 302,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "복구 중…"
+  },
+  {
+    "file": "src/pages/AdminBackup.jsx",
+    "line": 302,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "백업 파일 선택"
+  },
+  {
+    "file": "src/pages/AnalysisFileSelect.jsx",
+    "line": 140,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "분석 중 오류가 발생했습니다. 파일을 확인하고 다시 시도해 주세요."
+  },
+  {
+    "file": "src/pages/AnalysisFileSelect.jsx",
+    "line": 173,
+    "kind": "ERROR",
+    "how": "toast title (destructive)",
+    "dynamic": false,
+    "text": "파일 삭제 실패"
+  },
+  {
+    "file": "src/pages/AnalysisFileSelect.jsx",
+    "line": 174,
+    "kind": "ERROR",
+    "how": "toast description (destructive)",
+    "dynamic": false,
+    "text": "파일 삭제 중 오류가 발생했습니다. 다시 시도해 주세요."
+  },
+  {
+    "file": "src/pages/AnalysisFileSelect.jsx",
+    "line": 191,
+    "kind": "CHROME",
+    "how": "attr title",
+    "dynamic": false,
+    "text": "분석할 파일 선택"
+  },
+  {
+    "file": "src/pages/AnalysisFileSelect.jsx",
+    "line": 196,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "이 환자에게 등록된 호흡 데이터 목록입니다."
+  },
+  {
+    "file": "src/pages/AnalysisFileSelect.jsx",
+    "line": 197,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "업로드는 CSV·VXP 모두 가능합니다. 이 화면에서 실행하는 분석은"
+  },
+  {
+    "file": "src/pages/AnalysisFileSelect.jsx",
+    "line": 199,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "일반·DIBH 각각 CSV 파일"
+  },
+  {
+    "file": "src/pages/AnalysisFileSelect.jsx",
+    "line": 199,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "을 선택해야 합니다."
+  },
+  {
+    "file": "src/pages/AnalysisFileSelect.jsx",
+    "line": 206,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "호흡 파일 추가"
+  },
+  {
+    "file": "src/pages/AnalysisFileSelect.jsx",
+    "line": 208,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "화면에서 일반·DIBH 파일을 더 등록할 수 있습니다."
+  },
+  {
+    "file": "src/pages/AnalysisFileSelect.jsx",
+    "line": 215,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "patientId가 없습니다."
+  },
+  {
+    "file": "src/pages/AnalysisFileSelect.jsx",
+    "line": 222,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "일반호흡 업로드 파일"
+  },
+  {
+    "file": "src/pages/AnalysisFileSelect.jsx",
+    "line": 226,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "불러오는 중…"
+  },
+  {
+    "file": "src/pages/AnalysisFileSelect.jsx",
+    "line": 228,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "등록된 일반호흡 파일이 없습니다. 환자 등록 시 업로드가 완료된 뒤 등록 완료를 눌렀는지 확인하거나, 업로드 진행 중에 등록하지 않았는지 확인해 주세요."
+  },
+  {
+    "file": "src/pages/AnalysisFileSelect.jsx",
+    "line": 257,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "업로드"
+  },
+  {
+    "file": "src/pages/AnalysisFileSelect.jsx",
+    "line": 274,
+    "kind": "CHROME",
+    "how": "attr aria-label",
+    "dynamic": false,
+    "text": "파일 삭제"
+  },
+  {
+    "file": "src/pages/AnalysisFileSelect.jsx",
+    "line": 288,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "DIBH 업로드 파일"
+  },
+  {
+    "file": "src/pages/AnalysisFileSelect.jsx",
+    "line": 292,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "불러오는 중…"
+  },
+  {
+    "file": "src/pages/AnalysisFileSelect.jsx",
+    "line": 294,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "등록된 DIBH 파일이 없습니다."
+  },
+  {
+    "file": "src/pages/AnalysisFileSelect.jsx",
+    "line": 319,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "업로드"
+  },
+  {
+    "file": "src/pages/AnalysisFileSelect.jsx",
+    "line": 336,
+    "kind": "CHROME",
+    "how": "attr aria-label",
+    "dynamic": false,
+    "text": "파일 삭제"
+  },
+  {
+    "file": "src/pages/AnalysisFileSelect.jsx",
+    "line": 359,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "처음으로"
+  },
+  {
+    "file": "src/pages/AnalysisFileSelect.jsx",
+    "line": 367,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "분석 시작"
+  },
+  {
+    "file": "src/pages/AnalysisFileSelect.jsx",
+    "line": 379,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "파일 선택 필요"
+  },
+  {
+    "file": "src/pages/AnalysisFileSelect.jsx",
+    "line": 380,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "일반호흡 파일과 DIBH 파일을 각각 선택해야 합니다."
+  },
+  {
+    "file": "src/pages/AnalysisFileSelect.jsx",
+    "line": 388,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "분석할 파일을 모두 선택해 주세요."
+  },
+  {
+    "file": "src/pages/AnalysisFileSelect.jsx",
+    "line": 391,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "일반호흡 파일과 DIBH 파일을 각각 1개씩 선택해야 다음 단계로 이동할 수 있습니다."
+  },
+  {
+    "file": "src/pages/AnalysisFileSelect.jsx",
+    "line": 398,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "확인"
+  },
+  {
+    "file": "src/pages/AnalysisFileSelect.jsx",
+    "line": 410,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "파일 삭제"
+  },
+  {
+    "file": "src/pages/AnalysisFileSelect.jsx",
+    "line": 411,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "선택한 파일을 저장소에서 삭제합니다."
+  },
+  {
+    "file": "src/pages/AnalysisFileSelect.jsx",
+    "line": 419,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "파일을 삭제할까요?"
+  },
+  {
+    "file": "src/pages/AnalysisFileSelect.jsx",
+    "line": 421,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "삭제된 파일은 복구할 수 없습니다."
+  },
+  {
+    "file": "src/pages/AnalysisFileSelect.jsx",
+    "line": 429,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "취소"
+  },
+  {
+    "file": "src/pages/AnalysisFileSelect.jsx",
+    "line": 438,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "삭제 중…"
+  },
+  {
+    "file": "src/pages/AnalysisFileSelect.jsx",
+    "line": 438,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "삭제"
+  },
+  {
+    "file": "src/pages/AnalysisFileSelect.jsx",
+    "line": 453,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "호흡 데이터 분석 중"
+  },
+  {
+    "file": "src/pages/AnalysisFileSelect.jsx",
+    "line": 454,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "업로드된 파일의 패턴을 분석하고 있습니다."
+  },
+  {
+    "file": "src/pages/AnalysisFileSelect.jsx",
+    "line": 464,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "분석에 실패했습니다"
+  },
+  {
+    "file": "src/pages/AnalysisFileSelect.jsx",
+    "line": 473,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "확인"
+  },
+  {
+    "file": "src/pages/AnalysisFileSelect.jsx",
+    "line": 479,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "호흡 데이터를 분석 중입니다"
+  },
+  {
+    "file": "src/pages/AnalysisFileSelect.jsx",
+    "line": 480,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "업로드된 파일의 패턴을 정밀하게 추출하고 있습니다."
+  },
+  {
+    "file": "src/pages/AnalysisFileSelect.jsx",
+    "line": 483,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "잠시만 기다려주세요.(창을 닫지 마세요)"
+  },
+  {
+    "file": "src/pages/AnalysisFileSelect.jsx",
+    "line": 489,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "분석 취소"
+  },
+  {
+    "file": "src/pages/BreathingDataUpload.jsx",
+    "line": 69,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "파일을 선택하세요"
+  },
+  {
+    "file": "src/pages/BreathingDataUpload.jsx",
+    "line": 70,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "CSV, VXP 지원 (다중 선택 가능 · 분석은 CSV만)"
+  },
+  {
+    "file": "src/pages/BreathingDataUpload.jsx",
+    "line": 86,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "등록된 파일 ("
+  },
+  {
+    "file": "src/pages/BreathingDataUpload.jsx",
+    "line": 102,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "· 업로드 완료 ("
+  },
+  {
+    "file": "src/pages/BreathingDataUpload.jsx",
+    "line": 118,
+    "kind": "CHROME",
+    "how": "attr aria-label",
+    "dynamic": false,
+    "text": "파일 삭제"
+  },
+  {
+    "file": "src/pages/BreathingDataUpload.jsx",
+    "line": 140,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "저장 실패"
+  },
+  {
+    "file": "src/pages/BreathingDataUpload.jsx",
+    "line": 142,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": true,
+    "text": "${…} · 저장 중…"
+  },
+  {
+    "file": "src/pages/BreathingDataUpload.jsx",
+    "line": 143,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": true,
+    "text": "${…} · ${…}% 업로드 중…"
+  },
+  {
+    "file": "src/pages/BreathingDataUpload.jsx",
+    "line": 176,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "업로드 취소"
+  },
+  {
+    "file": "src/pages/BreathingDataUpload.jsx",
+    "line": 176,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "항목 제거"
+  },
+  {
+    "file": "src/pages/BreathingDataUpload.jsx",
+    "line": 253,
+    "kind": "ERROR",
+    "how": "throw new Error",
+    "dynamic": false,
+    "text": "patientId 없음"
+  },
+  {
+    "file": "src/pages/BreathingDataUpload.jsx",
+    "line": 259,
+    "kind": "CHROME",
+    "how": "const safeMsg",
+    "dynamic": false,
+    "text": "파일 저장 중 오류가 발생했습니다. 다시 시도해 주세요."
+  },
+  {
+    "file": "src/pages/BreathingDataUpload.jsx",
+    "line": 261,
+    "kind": "ERROR",
+    "how": "toast title (destructive)",
+    "dynamic": false,
+    "text": "파일을 저장할 수 없습니다"
+  },
+  {
+    "file": "src/pages/BreathingDataUpload.jsx",
+    "line": 282,
+    "kind": "ERROR",
+    "how": "toast title (destructive)",
+    "dynamic": false,
+    "text": "일반호흡 데이터는 최대 10개까지 저장됩니다"
+  },
+  {
+    "file": "src/pages/BreathingDataUpload.jsx",
+    "line": 283,
+    "kind": "ERROR",
+    "how": "toast description (destructive)",
+    "dynamic": false,
+    "text": "오래된 일반호흡 데이터를 삭제한 뒤 다시 업로드해 주세요."
+  },
+  {
+    "file": "src/pages/BreathingDataUpload.jsx",
+    "line": 292,
+    "kind": "ERROR",
+    "how": "toast title (destructive)",
+    "dynamic": false,
+    "text": "CSV 또는 VXP만 업로드할 수 있습니다"
+  },
+  {
+    "file": "src/pages/BreathingDataUpload.jsx",
+    "line": 293,
+    "kind": "ERROR",
+    "how": "toast description (destructive)",
+    "dynamic": true,
+    "text": "${…}개 파일은 지원 형식이 아니어서 제외되었습니다."
+  },
+  {
+    "file": "src/pages/BreathingDataUpload.jsx",
+    "line": 319,
+    "kind": "ERROR",
+    "how": "toast title (destructive)",
+    "dynamic": false,
+    "text": "DIBH 데이터는 최대 10개까지 저장됩니다"
+  },
+  {
+    "file": "src/pages/BreathingDataUpload.jsx",
+    "line": 320,
+    "kind": "ERROR",
+    "how": "toast description (destructive)",
+    "dynamic": false,
+    "text": "오래된 DIBH 데이터를 삭제한 뒤 다시 업로드해 주세요."
+  },
+  {
+    "file": "src/pages/BreathingDataUpload.jsx",
+    "line": 329,
+    "kind": "ERROR",
+    "how": "toast title (destructive)",
+    "dynamic": false,
+    "text": "CSV 또는 VXP만 업로드할 수 있습니다"
+  },
+  {
+    "file": "src/pages/BreathingDataUpload.jsx",
+    "line": 330,
+    "kind": "ERROR",
+    "how": "toast description (destructive)",
+    "dynamic": true,
+    "text": "${…}개 파일은 지원 형식이 아니어서 제외되었습니다."
+  },
+  {
+    "file": "src/pages/BreathingDataUpload.jsx",
+    "line": 358,
+    "kind": "ERROR",
+    "how": "toast title (destructive)",
+    "dynamic": false,
+    "text": "업로드 진행 중입니다"
+  },
+  {
+    "file": "src/pages/BreathingDataUpload.jsx",
+    "line": 359,
+    "kind": "ERROR",
+    "how": "toast description (destructive)",
+    "dynamic": false,
+    "text": "모든 파일 저장이 끝난 뒤 등록 완료를 눌러 주세요."
+  },
+  {
+    "file": "src/pages/BreathingDataUpload.jsx",
+    "line": 377,
+    "kind": "ERROR",
+    "how": "toast title (destructive)",
+    "dynamic": false,
+    "text": "삭제 실패"
+  },
+  {
+    "file": "src/pages/BreathingDataUpload.jsx",
+    "line": 378,
+    "kind": "ERROR",
+    "how": "toast description (destructive)",
+    "dynamic": false,
+    "text": "파일 삭제 중 오류가 발생했습니다. 다시 시도해 주세요."
+  },
+  {
+    "file": "src/pages/BreathingDataUpload.jsx",
+    "line": 391,
+    "kind": "ERROR",
+    "how": "toast title (destructive)",
+    "dynamic": false,
+    "text": "환자를 찾을 수 없습니다"
+  },
+  {
+    "file": "src/pages/BreathingDataUpload.jsx",
+    "line": 392,
+    "kind": "ERROR",
+    "how": "toast description (destructive)",
+    "dynamic": false,
+    "text": "목록에서 다시 선택해 주세요."
+  },
+  {
+    "file": "src/pages/BreathingDataUpload.jsx",
+    "line": 409,
+    "kind": "CHROME",
+    "how": "attr title",
+    "dynamic": false,
+    "text": "호흡 데이터 추가"
+  },
+  {
+    "file": "src/pages/BreathingDataUpload.jsx",
+    "line": 413,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "일반호흡·DIBH 파일을 추가하면 \"분석할 파일 선택\" 화면 목록에 바로 반영됩니다."
+  },
+  {
+    "file": "src/pages/BreathingDataUpload.jsx",
+    "line": 417,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "patientId가 없습니다."
+  },
+  {
+    "file": "src/pages/BreathingDataUpload.jsx",
+    "line": 422,
+    "kind": "CHROME",
+    "how": "attr title",
+    "dynamic": false,
+    "text": "일반호흡 업로드 (필수)"
+  },
+  {
+    "file": "src/pages/BreathingDataUpload.jsx",
+    "line": 432,
+    "kind": "CHROME",
+    "how": "attr title",
+    "dynamic": false,
+    "text": "DIBH 호흡 업로드 (필수)"
+  },
+  {
+    "file": "src/pages/BreathingDataUpload.jsx",
+    "line": 445,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "파일 목록을 불러오는 중…"
+  },
+  {
+    "file": "src/pages/BreathingDataUpload.jsx",
+    "line": 456,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "등록 완료"
+  },
+  {
+    "file": "src/pages/BreathingDataUpload.jsx",
+    "line": 460,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "파일이 저장될 때까지 잠시만 기다려 주세요."
+  },
+  {
+    "file": "src/pages/BreathingDataUpload.jsx",
+    "line": 470,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "파일 삭제"
+  },
+  {
+    "file": "src/pages/BreathingDataUpload.jsx",
+    "line": 471,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "선택한 호흡 데이터 파일을 저장소에서 제거합니다."
+  },
+  {
+    "file": "src/pages/BreathingDataUpload.jsx",
+    "line": 481,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "파일을 삭제할까요?"
+  },
+  {
+    "file": "src/pages/BreathingDataUpload.jsx",
+    "line": 483,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "삭제 후 복구할 수 없습니다. 분석 화면에서도 제거됩니다."
+  },
+  {
+    "file": "src/pages/BreathingDataUpload.jsx",
+    "line": 491,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "취소"
+  },
+  {
+    "file": "src/pages/BreathingDataUpload.jsx",
+    "line": 500,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "삭제 중…"
+  },
+  {
+    "file": "src/pages/BreathingDataUpload.jsx",
+    "line": 500,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "삭제"
+  },
+  {
+    "file": "src/pages/DebugErrorGallery.jsx",
+    "line": 47,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "암호화 키 오류"
+  },
+  {
+    "file": "src/pages/DebugErrorGallery.jsx",
+    "line": 48,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "저장된 암호화 키를 복구할 수 없습니다. 환자 데이터를 복호화할 수 없으므로 앱을 시작할 수 없습니다. 관리자에게 문의하십시오."
+  },
+  {
+    "file": "src/pages/DebugErrorGallery.jsx",
+    "line": 51,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "무결성 검사 실패"
+  },
+  {
+    "file": "src/pages/DebugErrorGallery.jsx",
+    "line": 52,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "앱 파일의 무결성을 확인할 수 없습니다. 파일이 변조되었을 수 있습니다."
+  },
+  {
+    "file": "src/pages/DebugErrorGallery.jsx",
+    "line": 53,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "무결성 검사 실패 (파일 변조 감지): /assets/index-a1b2c3d4.js"
+  },
+  {
+    "file": "src/pages/DebugErrorGallery.jsx",
+    "line": 55,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "보안 자가진단 실패"
+  },
+  {
+    "file": "src/pages/DebugErrorGallery.jsx",
+    "line": 55,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "시스템 보안 기능을 초기화할 수 없습니다."
+  },
+  {
+    "file": "src/pages/DebugErrorGallery.jsx",
+    "line": 55,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "암호화 자가진단 실패"
+  },
+  {
+    "file": "src/pages/DebugErrorGallery.jsx",
+    "line": 102,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "오류 메시지"
+  },
+  {
+    "file": "src/pages/Home.jsx",
+    "line": 50,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "환자 정보 선택"
+  },
+  {
+    "file": "src/pages/Home.jsx",
+    "line": 57,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "관리자"
+  },
+  {
+    "file": "src/pages/Home.jsx",
+    "line": 62,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "로그아웃"
+  },
+  {
+    "file": "src/pages/Home.jsx",
+    "line": 75,
+    "kind": "CHROME",
+    "how": "attr placeholder",
+    "dynamic": false,
+    "text": "환자명 또는 코드로 검색"
+  },
+  {
+    "file": "src/pages/Home.jsx",
+    "line": 83,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "신규 환자 등록"
+  },
+  {
+    "file": "src/pages/Home.jsx",
+    "line": 93,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "최근 치료 환자"
+  },
+  {
+    "file": "src/pages/Home.jsx",
+    "line": 110,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "최근 치료 환자"
+  },
+  {
+    "file": "src/pages/Home.jsx",
+    "line": 123,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "등록된 환자가 없습니다"
+  },
+  {
+    "file": "src/pages/Login.jsx",
+    "line": 41,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "시스템 사용 알림"
+  },
+  {
+    "file": "src/pages/Login.jsx",
+    "line": 48,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "본 시스템은"
+  },
+  {
+    "file": "src/pages/Login.jsx",
+    "line": 48,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "인가된 의료진 및 관리자"
+  },
+  {
+    "file": "src/pages/Login.jsx",
+    "line": 48,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "만 사용할 수 있습니다."
+  },
+  {
+    "file": "src/pages/Login.jsx",
+    "line": 49,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "시스템에 접속하고 수행되는 모든 활동은"
+  },
+  {
+    "file": "src/pages/Login.jsx",
+    "line": 49,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "모니터링, 기록 및 감사의 대상"
+  },
+  {
+    "file": "src/pages/Login.jsx",
+    "line": 49,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "이 됩니다."
+  },
+  {
+    "file": "src/pages/Login.jsx",
+    "line": 50,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "인가되지 않은 시스템 접근 및 사용은 금지"
+  },
+  {
+    "file": "src/pages/Login.jsx",
+    "line": 50,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "되며, 관련 법령에 따라 민·형사상 처벌을 받을 수 있습니다."
+  },
+  {
+    "file": "src/pages/Login.jsx",
+    "line": 51,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "시스템 접속은 위 내용에 동의함을 의미합니다."
+  },
+  {
+    "file": "src/pages/Login.jsx",
+    "line": 58,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "확인하고 계속하기"
+  },
+  {
+    "file": "src/pages/Login.jsx",
+    "line": 80,
+    "kind": "ERROR",
+    "how": "setErrors",
+    "dynamic": false,
+    "text": "비밀번호가 일치하지 않습니다."
+  },
+  {
+    "file": "src/pages/Login.jsx",
+    "line": 84,
+    "kind": "AUDIT",
+    "how": "audit log",
+    "dynamic": false,
+    "text": "본인 비밀번호 변경"
+  },
+  {
+    "file": "src/pages/Login.jsx",
+    "line": 99,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "비밀번호 변경 주기 도래"
+  },
+  {
+    "file": "src/pages/Login.jsx",
+    "line": 99,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "초기 비밀번호 변경 필요"
+  },
+  {
+    "file": "src/pages/Login.jsx",
+    "line": 104,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": true,
+    "text": "마지막으로 비밀번호를 변경한 지 ${…}일이 지났습니다. 보안 정책(${…}일 주기)에 따라 새 비밀번호로 변경해 주세요."
+  },
+  {
+    "file": "src/pages/Login.jsx",
+    "line": 105,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "초기 비밀번호를 사용 중입니다. 보안을 위해 새 비밀번호로 변경해주세요."
+  },
+  {
+    "file": "src/pages/Login.jsx",
+    "line": 109,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "새 비밀번호"
+  },
+  {
+    "file": "src/pages/Login.jsx",
+    "line": 127,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "새 비밀번호 확인"
+  },
+  {
+    "file": "src/pages/Login.jsx",
+    "line": 146,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "Caps Lock 켜짐"
+  },
+  {
+    "file": "src/pages/Login.jsx",
+    "line": 150,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "8자 이상"
+  },
+  {
+    "file": "src/pages/Login.jsx",
+    "line": 150,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "대문자 포함"
+  },
+  {
+    "file": "src/pages/Login.jsx",
+    "line": 150,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "소문자 포함"
+  },
+  {
+    "file": "src/pages/Login.jsx",
+    "line": 150,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "숫자 포함"
+  },
+  {
+    "file": "src/pages/Login.jsx",
+    "line": 150,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "특수문자 포함"
+  },
+  {
+    "file": "src/pages/Login.jsx",
+    "line": 164,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "변경 중…"
+  },
+  {
+    "file": "src/pages/Login.jsx",
+    "line": 164,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "비밀번호 변경"
+  },
+  {
+    "file": "src/pages/Login.jsx",
+    "line": 178,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "2분 후 자동 로그아웃됩니다."
+  },
+  {
+    "file": "src/pages/Login.jsx",
+    "line": 185,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "계속 사용"
+  },
+  {
+    "file": "src/pages/Login.jsx",
+    "line": 231,
+    "kind": "INFO",
+    "how": "toast title",
+    "dynamic": false,
+    "text": "비밀번호 변경 예정 안내"
+  },
+  {
+    "file": "src/pages/Login.jsx",
+    "line": 232,
+    "kind": "INFO",
+    "how": "toast description",
+    "dynamic": true,
+    "text": "비밀번호 사용 기간이 ${…}일 남았습니다. 기간이 지나면 비밀번호를 변경해야 이용할 수 있습니다."
+  },
+  {
+    "file": "src/pages/Login.jsx",
+    "line": 267,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "원주세브란스기독병원"
+  },
+  {
+    "file": "src/pages/Login.jsx",
+    "line": 278,
+    "kind": "CHROME",
+    "how": "attr placeholder",
+    "dynamic": false,
+    "text": "아이디를 입력하세요"
+  },
+  {
+    "file": "src/pages/Login.jsx",
+    "line": 291,
+    "kind": "CHROME",
+    "how": "attr placeholder",
+    "dynamic": false,
+    "text": "비밀번호를 입력하세요"
+  },
+  {
+    "file": "src/pages/Login.jsx",
+    "line": 304,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "비밀번호 숨기기"
+  },
+  {
+    "file": "src/pages/Login.jsx",
+    "line": 304,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "비밀번호 표시"
+  },
+  {
+    "file": "src/pages/Login.jsx",
+    "line": 311,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "Caps Lock 켜짐"
+  },
+  {
+    "file": "src/pages/Login.jsx",
+    "line": 331,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "시작하기"
+  },
+  {
+    "file": "src/pages/NewPatient.jsx",
+    "line": 62,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "파일을 선택하세요"
+  },
+  {
+    "file": "src/pages/NewPatient.jsx",
+    "line": 63,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "CSV, VXP 지원 (다중 선택 가능 · 분석은 CSV만)"
+  },
+  {
+    "file": "src/pages/NewPatient.jsx",
+    "line": 79,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "업로드 파일 ("
+  },
+  {
+    "file": "src/pages/NewPatient.jsx",
+    "line": 96,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": true,
+    "text": "${…} · ${…}% 업로드 중..."
+  },
+  {
+    "file": "src/pages/NewPatient.jsx",
+    "line": 97,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": true,
+    "text": "${…} · 업로드 완료"
+  },
+  {
+    "file": "src/pages/NewPatient.jsx",
+    "line": 131,
+    "kind": "CHROME",
+    "how": "attr aria-label",
+    "dynamic": false,
+    "text": "파일 제거"
+  },
+  {
+    "file": "src/pages/NewPatient.jsx",
+    "line": 205,
+    "kind": "ERROR",
+    "how": "toast title (destructive)",
+    "dynamic": false,
+    "text": "CSV 또는 VXP만 업로드할 수 있습니다"
+  },
+  {
+    "file": "src/pages/NewPatient.jsx",
+    "line": 206,
+    "kind": "ERROR",
+    "how": "toast description (destructive)",
+    "dynamic": true,
+    "text": "${…}개 파일은 지원 형식이 아니어서 제외되었습니다."
+  },
+  {
+    "file": "src/pages/NewPatient.jsx",
+    "line": 253,
+    "kind": "ERROR",
+    "how": "toast title (destructive)",
+    "dynamic": false,
+    "text": "업로드 진행 중입니다"
+  },
+  {
+    "file": "src/pages/NewPatient.jsx",
+    "line": 254,
+    "kind": "ERROR",
+    "how": "toast description (destructive)",
+    "dynamic": false,
+    "text": "모든 파일의 업로드가 완료된 뒤 등록 완료를 눌러 주세요. 진행 중에는 파일이 DB에 저장되지 않습니다."
+  },
+  {
+    "file": "src/pages/NewPatient.jsx",
+    "line": 309,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "등록은 완료되었습니다. 분석을 진행하려면 나중에 환자 대시보드에서 일반호흡·DIBH 데이터를 각각 1개 이상 채워 주세요."
+  },
+  {
+    "file": "src/pages/NewPatient.jsx",
+    "line": 310,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "등록은 완료되었습니다. 호흡 데이터는 나중에 환자 대시보드에서 추가할 수 있습니다."
+  },
+  {
+    "file": "src/pages/NewPatient.jsx",
+    "line": 317,
+    "kind": "ERROR",
+    "how": "toast title (destructive)",
+    "dynamic": false,
+    "text": "저장에 실패했습니다"
+  },
+  {
+    "file": "src/pages/NewPatient.jsx",
+    "line": 318,
+    "kind": "ERROR",
+    "how": "toast description (destructive)",
+    "dynamic": false,
+    "text": "환자 정보를 저장하는 중 오류가 발생했습니다. 다시 시도해 주세요."
+  },
+  {
+    "file": "src/pages/NewPatient.jsx",
+    "line": 327,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "남성"
+  },
+  {
+    "file": "src/pages/NewPatient.jsx",
+    "line": 328,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "여성"
+  },
+  {
+    "file": "src/pages/NewPatient.jsx",
+    "line": 329,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "선택안함"
+  },
+  {
+    "file": "src/pages/NewPatient.jsx",
+    "line": 337,
+    "kind": "CHROME",
+    "how": "attr title",
+    "dynamic": false,
+    "text": "신규 환자 등록"
+  },
+  {
+    "file": "src/pages/NewPatient.jsx",
+    "line": 345,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "기본 정보(필수)"
+  },
+  {
+    "file": "src/pages/NewPatient.jsx",
+    "line": 351,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "환자 이름"
+  },
+  {
+    "file": "src/pages/NewPatient.jsx",
+    "line": 356,
+    "kind": "CHROME",
+    "how": "attr placeholder",
+    "dynamic": false,
+    "text": "환자 이름을 입력하세요"
+  },
+  {
+    "file": "src/pages/NewPatient.jsx",
+    "line": 373,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "담당 의사"
+  },
+  {
+    "file": "src/pages/NewPatient.jsx",
+    "line": 378,
+    "kind": "CHROME",
+    "how": "attr placeholder",
+    "dynamic": false,
+    "text": "담당 의사 이름을 입력하세요"
+  },
+  {
+    "file": "src/pages/NewPatient.jsx",
+    "line": 386,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "생년월일"
+  },
+  {
+    "file": "src/pages/NewPatient.jsx",
+    "line": 448,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "성별"
+  },
+  {
+    "file": "src/pages/NewPatient.jsx",
+    "line": 477,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "치료회차"
+  },
+  {
+    "file": "src/pages/NewPatient.jsx",
+    "line": 532,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "직접입력"
+  },
+  {
+    "file": "src/pages/NewPatient.jsx",
+    "line": 539,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "환자 코드"
+  },
+  {
+    "file": "src/pages/NewPatient.jsx",
+    "line": 553,
+    "kind": "CHROME",
+    "how": "attr title",
+    "dynamic": false,
+    "text": "일반호흡 데이터 업로드(선택)"
+  },
+  {
+    "file": "src/pages/NewPatient.jsx",
+    "line": 561,
+    "kind": "CHROME",
+    "how": "attr title",
+    "dynamic": false,
+    "text": "DIBH 데이터 업로드(선택)"
+  },
+  {
+    "file": "src/pages/NewPatient.jsx",
+    "line": 570,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "파일 업로드가 끝날 때까지 기다린 뒤 등록 완료를 눌러 주세요."
+  },
+  {
+    "file": "src/pages/NewPatient.jsx",
+    "line": 575,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "지금은 호흡 데이터를 생략해도 됩니다. 다만 분석 단계에서는 일반호흡·DIBH 파일이 각각 1개 이상 필요합니다."
+  },
+  {
+    "file": "src/pages/NewPatient.jsx",
+    "line": 587,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "등록 완료"
+  },
+  {
+    "file": "src/pages/NewPatient.jsx",
+    "line": 605,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "기본정보(필수입력)를 모두 입력하세요."
+  },
+  {
+    "file": "src/pages/NewPatient.jsx",
+    "line": 610,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": true,
+    "text": "누락된 항목: ${…}"
+  },
+  {
+    "file": "src/pages/NewPatient.jsx",
+    "line": 611,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "환자 이름"
+  },
+  {
+    "file": "src/pages/NewPatient.jsx",
+    "line": 612,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "생년월일"
+  },
+  {
+    "file": "src/pages/NewPatient.jsx",
+    "line": 616,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "누락된 항목을 확인해 주세요."
+  },
+  {
+    "file": "src/pages/NewPatient.jsx",
+    "line": 622,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "확인"
+  },
+  {
+    "file": "src/pages/NewPatient.jsx",
+    "line": 648,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "환자 프로필이 저장되었습니다."
+  },
+  {
+    "file": "src/pages/NewPatient.jsx",
+    "line": 667,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "환자 대시보드로 이동"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 29,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "남성"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 30,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "여성"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 31,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "선택안함"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 35,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "우수 호흡"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 36,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "보통"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 37,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "얕은 호흡"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 140,
+    "kind": "ERROR",
+    "how": "errors.push",
+    "dynamic": false,
+    "text": "일반 호흡"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 192,
+    "kind": "ERROR",
+    "how": "toast title (destructive)",
+    "dynamic": false,
+    "text": "삭제 실패"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 193,
+    "kind": "ERROR",
+    "how": "toast description (destructive)",
+    "dynamic": false,
+    "text": "환자 삭제에 실패했습니다. 다시 시도해 주세요."
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 223,
+    "kind": "ERROR",
+    "how": "toast title (destructive)",
+    "dynamic": false,
+    "text": "저장 실패"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 224,
+    "kind": "ERROR",
+    "how": "toast description (destructive)",
+    "dynamic": false,
+    "text": "환자 정보 저장에 실패했습니다. 다시 시도해 주세요."
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 257,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "환자 차트 (대시보드)"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 265,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "로그아웃"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 270,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "patientId가 없습니다."
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 295,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "정보 수정"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 304,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "삭제"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 312,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "생년월일(성별)"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 320,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "담당 의사"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 326,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "치료 회차"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 329,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "회차"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 333,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "방문일"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 335,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "이력 없음"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 347,
+    "kind": "CHROME",
+    "how": "attr aria-label",
+    "dynamic": false,
+    "text": "호흡 분석 결과 상세 보기"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 351,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "호흡 분석 결과"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 355,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "최근 분석 상태"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 357,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "없음"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 370,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "현재 환자는"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 374,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "DIBH 비권장 상태"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 375,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "DIBH 가능 상태"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 376,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "입니다."
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 381,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "DIBH 유지 시간"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 384,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": true,
+    "text": "${…}초"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 389,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "호흡 안정성 (CV)"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 412,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "호흡 분석 결과"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 416,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "최근 분석 상태"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 418,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "없음"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 424,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "아직 호흡 분석 결과가 없습니다."
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 425,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "상단의"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 426,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "[데이터 추가]"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 426,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "로 일반·DIBH\n                    데이터(CSV 또는 VXP)를 업로드한 뒤,"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 428,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "[호흡 분석]"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 428,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "에서 파일을 선택해\n                    분석을 실행해 주세요."
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 447,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "데이터 추가"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 457,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "다시 분석"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 457,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "호흡 분석"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 465,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "캘리브레이션 히스토리"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 470,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "캘리브레이션 이력이 없습니다."
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 471,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "상단의 [데이터 추가] 버튼을 눌러 첫 분석을 시작해 주세요."
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 480,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "일자"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 481,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "사용 파일"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 482,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "결과"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 483,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "리포트"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 516,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "결과지"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 540,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "환자 정보 수정"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 541,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "환자의 기본 정보를 수정합니다."
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 544,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "환자 정보 수정"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 549,
+    "kind": "CHROME",
+    "how": "attr aria-label",
+    "dynamic": false,
+    "text": "닫기"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 557,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "기본 정보(필수)"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 562,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "환자 이름"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 567,
+    "kind": "CHROME",
+    "how": "attr placeholder",
+    "dynamic": false,
+    "text": "환자 이름을 입력하세요"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 576,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "담당 의사"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 581,
+    "kind": "CHROME",
+    "how": "attr placeholder",
+    "dynamic": false,
+    "text": "담당 의사 이름을 입력하세요"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 589,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "생년월일"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 640,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "성별"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 669,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "치료회차"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 724,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "직접입력"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 731,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "환자 코드"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 747,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "다시 생성하기"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 760,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "취소"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 768,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "저장 중…"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 768,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "저장"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 781,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "환자 삭제"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 782,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "환자 정보를 영구 삭제합니다."
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 791,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "환자 정보를 정말 삭제하시겠습니까?"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 792,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "등록된 환자의 개인정보 및 호흡 데이터, 시뮬레이션 결과가 모두 시스템에서 영구적으로 삭제됩니다."
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 795,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "삭제된 데이터는 복구할 수 없습니다."
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 804,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "아니오, 취소합니다"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 811,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "예, 삭제합니다"
+  },
+  {
+    "file": "src/pages/TrainingHistory.jsx",
+    "line": 57,
+    "kind": "CHROME",
+    "how": "attr title",
+    "dynamic": false,
+    "text": "교정 이력 조회"
+  },
+  {
+    "file": "src/pages/TrainingHistory.jsx",
+    "line": 66,
+    "kind": "CHROME",
+    "how": "attr placeholder",
+    "dynamic": false,
+    "text": "날짜로 검색 (예: 2025-03)..."
+  },
+  {
+    "file": "src/pages/TrainingHistory.jsx",
+    "line": 87,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "호흡 분석"
+  },
+  {
+    "file": "src/pages/TrainingHistory.jsx",
+    "line": 92,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "yyyy년 MM월 dd일"
+  },
+  {
+    "file": "src/pages/TrainingHistory.jsx",
+    "line": 94,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "yyyy년 MM월 dd일"
+  },
+  {
+    "file": "src/pages/TrainingHistory.jsx",
+    "line": 106,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "DIBH 유지 시간"
+  },
+  {
+    "file": "src/pages/TrainingHistory.jsx",
+    "line": 108,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": true,
+    "text": "${…}초"
+  },
+  {
+    "file": "src/pages/TrainingHistory.jsx",
+    "line": 112,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "호흡 안정성 (CV)"
+  },
+  {
+    "file": "src/pages/TrainingHistory.jsx",
+    "line": 120,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "파일:"
+  },
+  {
+    "file": "src/pages/TrainingHistory.jsx",
+    "line": 131,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "검색 결과가 없습니다"
+  },
+  {
+    "file": "src/pages/TrainingHistory.jsx",
+    "line": 131,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "교정 이력이 없습니다"
+  },
+  {
+    "file": "src/pages/TrainingHistory.jsx",
+    "line": 135,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "다른 검색어를 시도해보세요"
+  },
+  {
+    "file": "src/pages/TrainingHistory.jsx",
+    "line": 136,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "호흡 분석을 완료하면 이력이 표시됩니다"
+  },
+  {
+    "file": "src/pages/TrainingReport.jsx",
+    "line": 75,
+    "kind": "CHROME",
+    "how": "attr title",
+    "dynamic": false,
+    "text": "호흡 분석 결과"
+  },
+  {
+    "file": "src/pages/TrainingReport.jsx",
+    "line": 88,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "DIBH 유지 시간"
+  },
+  {
+    "file": "src/pages/TrainingReport.jsx",
+    "line": 89,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "초"
+  },
+  {
+    "file": "src/pages/TrainingReport.jsx",
+    "line": 92,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "호흡 안정성 (CV)"
+  },
+  {
+    "file": "src/pages/TrainingReport.jsx",
+    "line": 107,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "환자 대시보드로 이동"
+  },
+  {
+    "file": "src/pages/TypeDecision.jsx",
+    "line": 47,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "불러오는 중…"
+  },
+  {
+    "file": "src/pages/TypeDecision.jsx",
+    "line": 78,
+    "kind": "CHROME",
+    "how": "attr title",
+    "dynamic": false,
+    "text": "호흡 분석 결과"
+  },
+  {
+    "file": "src/pages/TypeDecision.jsx",
+    "line": 82,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "저장된 분석 결과가 없습니다"
+  },
+  {
+    "file": "src/pages/TypeDecision.jsx",
+    "line": 83,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "호흡 데이터를 업로드한 뒤 파일을 선택하여 분석을 실행해 주세요."
+  },
+  {
+    "file": "src/pages/TypeDecision.jsx",
+    "line": 90,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "호흡 분석 하기"
+  },
+  {
+    "file": "src/pages/TypeDecision.jsx",
+    "line": 103,
+    "kind": "CHROME",
+    "how": "attr title",
+    "dynamic": false,
+    "text": "호흡 분석 결과"
+  },
+  {
+    "file": "src/pages/TypeDecision.jsx",
+    "line": 116,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "DIBH 유지 시간"
+  },
+  {
+    "file": "src/pages/TypeDecision.jsx",
+    "line": 118,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": true,
+    "text": "${…}초"
+  },
+  {
+    "file": "src/pages/TypeDecision.jsx",
+    "line": 122,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "호흡 안정성 (CV)"
+  },
+  {
+    "file": "src/pages/TypeDecision.jsx",
+    "line": 137,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "환자 대시보드로 이동"
+  },
+  {
+    "file": "src/utils/recalibration.js",
+    "line": 91,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "환자 정보가 없습니다"
+  },
+  {
+    "file": "src/utils/recalibration.js",
+    "line": 95,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "캘리브레이션이 필요합니다"
+  },
+  {
+    "file": "src/utils/recalibration.js",
+    "line": 104,
+    "kind": "ERROR",
+    "how": "errors.push",
+    "dynamic": true,
+    "text": "${…}일 경과 (${…}일 기준)"
+  },
+  {
+    "file": "src/utils/recalibration.js",
+    "line": 108,
+    "kind": "ERROR",
+    "how": "errors.push",
+    "dynamic": true,
+    "text": "${…}회차 훈련 완료 (${…}회차 기준)"
+  }
+]
