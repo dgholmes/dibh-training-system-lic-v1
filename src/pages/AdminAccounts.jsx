@@ -47,12 +47,18 @@ function AdminNav() {
   );
 }
 
+/** Blank create-account form. Shared by the initial state and the post-submit reset so
+ *  the two cannot drift — dropping displayName here previously made the next create throw. */
+const EMPTY_FORM = { username: '', displayName: '', password: '', role: 'clinician' };
+
 export default function AdminAccounts() {
   const { session } = useAuth();
   const navigate = useNavigate();
   const [users, setUsers] = useState([]);
   const [showCreate, setShowCreate] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState('');
   const [resetTarget, setResetTarget] = useState(null);
   const [resetPw, setResetPw] = useState('');
   const [showResetPw, setShowResetPw] = useState(false);
@@ -92,7 +98,7 @@ export default function AdminAccounts() {
   };
 
   // ── Create user form ────────────────────────────────────────────────────────
-  const [form, setForm] = useState({ username: '', displayName: '', password: '', role: 'clinician' });
+  const [form, setForm] = useState(EMPTY_FORM);
   const [showPw, setShowPw] = useState(false);
   const [formErrors, setFormErrors] = useState([]);
   const [saving, setSaving] = useState(false);
@@ -109,7 +115,7 @@ export default function AdminAccounts() {
     try {
       const created = await UserStore.create({ username: form.username.trim(), displayName: form.displayName.trim(), password: form.password, role: form.role });
       tryWriteAuditLog({ action: AUDIT_ACTIONS.USER_CREATED, targetType: 'user', targetId: created.id, detail: `username: ${created.username}, role: ${created.role}` });
-      setForm({ username: '', password: '', role: 'clinician' });
+      setForm(EMPTY_FORM);
       setShowCreate(false);
       setFormErrors([]);
       await reload();
@@ -147,13 +153,24 @@ export default function AdminAccounts() {
   };
 
   const handleDelete = async () => {
+    // The dialog stays mounted while the delete is in flight, so a second tap used to
+    // re-enter this after setDeleteTarget(null) and dereference null. Take the target
+    // once and refuse re-entry.
+    const target = deleteTarget;
+    if (!target || deleting) return;
+    setDeleting(true);
+    setDeleteError('');
     try {
-      await UserStore.delete(deleteTarget.id);
-      tryWriteAuditLog({ action: AUDIT_ACTIONS.USER_DELETED, targetType: 'user', targetId: deleteTarget.id, detail: `username: ${deleteTarget.username}` });
+      await UserStore.delete(target.id);
+      tryWriteAuditLog({ action: AUDIT_ACTIONS.USER_DELETED, targetType: 'user', targetId: target.id, detail: `username: ${target.username}` });
       setDeleteTarget(null);
       await reload();
     } catch (err) {
-      alert(err.message);
+      // Shown inside the dialog — a native alert() would surface an untranslated
+      // JavaScript message to a clinical user.
+      setDeleteError(err.message || '계정을 삭제하지 못했습니다.');
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -436,7 +453,7 @@ export default function AdminAccounts() {
       </Dialog>
 
       {/* Delete confirmation */}
-      <Dialog open={!!deleteTarget} onOpenChange={(o) => !o && setDeleteTarget(null)}>
+      <Dialog open={!!deleteTarget} onOpenChange={(o) => { if (!o) { setDeleteTarget(null); setDeleteError(''); } }}>
         <DialogContent hideClose className="max-w-sm border border-[#30363D] bg-[#1C2128] p-0 shadow-2xl sm:rounded-2xl">
           <DialogTitle className="sr-only">계정 삭제</DialogTitle>
           <DialogDescription className="sr-only">선택한 계정을 영구적으로 삭제합니다.</DialogDescription>
@@ -444,11 +461,18 @@ export default function AdminAccounts() {
           <div className="px-6 pb-6 pt-8 text-center">
             <p className="text-base font-bold text-white">[{deleteTarget?.username}] 계정을 삭제하시겠습니까?</p>
             <p className="mt-3 text-sm text-[#8B949E]">삭제된 계정은 복구할 수 없습니다.</p>
+            {deleteError && (
+              <p className="mt-4 rounded-lg border border-[#EF4444]/40 bg-[#EF4444]/10 px-3 py-2 text-sm text-[#F85149]">
+                {deleteError}
+              </p>
+            )}
             <div className="mt-6 grid grid-cols-2 gap-3">
-              <Button variant="outline" onClick={() => setDeleteTarget(null)}
+              <Button variant="outline" disabled={deleting} onClick={() => { setDeleteTarget(null); setDeleteError(''); }}
                 className="h-12 rounded-xl border-[#30363D] bg-[#252A32] text-white hover:bg-[#30363D]">취소</Button>
-              <Button onClick={handleDelete}
-                className="h-12 rounded-xl bg-[#EF4444] font-semibold text-white hover:bg-[#DC2626]">삭제</Button>
+              <Button onClick={handleDelete} disabled={deleting}
+                className="h-12 rounded-xl bg-[#EF4444] font-semibold text-white hover:bg-[#DC2626] disabled:opacity-60">
+                {deleting ? '삭제 중…' : '삭제'}
+              </Button>
             </div>
           </div>
         </DialogContent>
