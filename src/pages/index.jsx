@@ -12,9 +12,12 @@ import LegacyFlowRedirect from "./LegacyFlowRedirect.jsx";
 import AdminAccounts from "./AdminAccounts.jsx";
 import AdminAuditLog from "./AdminAuditLog.jsx";
 import AdminBackup from "./AdminBackup.jsx";
+// SI-07 evidence harness — registered only in debug builds (see below).
+import DebugErrorGallery from "./DebugErrorGallery.jsx";
 
 import { BrowserRouter as Router, Route, Routes, useLocation, Navigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
+import { SECURITY_DEBUG } from '@/lib/securityDebug';
 
 const PAGES = {
     Login: Login,
@@ -89,6 +92,10 @@ function PagesContent() {
                 <Route path="/admin/accounts" element={<AdminRoute><AdminAccounts /></AdminRoute>} />
                 <Route path="/admin/auditlog" element={<AdminRoute><AdminAuditLog /></AdminRoute>} />
                 <Route path="/admin/backup" element={<AdminRoute><AdminBackup /></AdminRoute>} />
+
+                {/* SI-07 message-capture harness. SECURITY_DEBUG is a build-time literal,
+                    so this route does not exist in a production build. */}
+                {SECURITY_DEBUG && <Route path="/debug/errors" element={<DebugErrorGallery />} />}
 
                 {/* Deferred live belt / VR flows — deep links redirect to dashboard */}
                 <Route path="/Calibration" element={<ProtectedRoute><LegacyFlowRedirect /></ProtectedRoute>} />
