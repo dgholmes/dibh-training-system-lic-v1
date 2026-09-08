@@ -9,6 +9,7 @@ import ComprehensiveBreathingReportCard from '@/components/breathing/Comprehensi
 import BreathingTypeComparisonModal from '@/components/breathing/BreathingTypeComparisonModal';
 import AnalysisPlaybackPanel from '@/components/breathing/AnalysisPlaybackPanel';
 import { getLatestCalibration } from '@/lib/calibration/sortCalibrations';
+import { RECOMMENDED_ACTIONS, CLINICAL_DISCLAIMER } from '@/lib/breathingAnalysisReportContent';
 
 export default function TypeDecision() {
   const navigate = useNavigate();
@@ -123,6 +124,33 @@ export default function TypeDecision() {
               <p className="text-2xl font-bold text-white">{cv != null ? `${Number(cv).toFixed(1)}%` : '—'}</p>
             </div>
           </div>
+        </div>
+
+        {/*
+          What to do next. The screen named the Type but not its implication
+          (formative eval #5). Worded as a suggestion with a standing
+          disclaimer — RM-DBF-007 / RM-DBF-014 are the risks directive
+          phrasing would aggravate. Copy is DRAFT pending clinical sign-off.
+        */}
+        <div className="rounded-2xl border border-[#30363D] bg-[#1C2128] px-5 py-6 sm:px-6">
+          <div className="mb-4 flex items-center gap-2">
+            <span className="h-5 w-1 rounded-full bg-gradient-to-b from-[#3B82F6] to-[#8B5CF6]" />
+            <h3 className="text-base font-bold text-white sm:text-lg">권장 조치</h3>
+          </div>
+          <p className="mb-4 text-sm font-semibold text-white">
+            {RECOMMENDED_ACTIONS[displayType].headline}
+          </p>
+          <ul className="space-y-2.5">
+            {RECOMMENDED_ACTIONS[displayType].steps.map((line, i) => (
+              <li key={i} className="flex gap-2.5 text-sm leading-snug text-[#C9D1D9]">
+                <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#8B949E]" aria-hidden />
+                <span>{line}</span>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-5 border-t border-[#30363D] pt-4 text-xs leading-relaxed text-[#8B949E]">
+            {CLINICAL_DISCLAIMER}
+          </p>
         </div>
 
         <AnalysisPlaybackPanel playback={playback} />
