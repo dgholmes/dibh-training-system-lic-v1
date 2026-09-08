@@ -244,11 +244,17 @@ export default function PatientDashboard() {
       <div className="mx-auto max-w-3xl">
         {/* Top bar */}
         <div className="sticky top-0 z-20 mb-6 flex items-center gap-3 bg-[#0D1117] py-1">
-          <Link to={createPageUrl('Home')}>
-            <Button variant="ghost" size="icon" className="text-[#8B949E] hover:bg-[#1C2128] hover:text-white">
-              <ArrowLeft className="h-6 w-6" />
-            </Button>
-          </Link>
+          {/* Labelled and bordered to match the patient-flow header (#8) */}
+          <Button
+            asChild
+            variant="outline"
+            className="h-11 shrink-0 gap-1.5 rounded-xl border-[#30363D] bg-[#252A32] px-3 text-[#C9D1D9] hover:bg-[#30363D] hover:text-white"
+          >
+            <Link to={createPageUrl('Home')} aria-label="홈으로 이동">
+              <ArrowLeft className="h-5 w-5" />
+              <span className="text-sm font-semibold">홈</span>
+            </Link>
+          </Button>
           <h1 className="flex-1 text-xl font-bold text-white sm:text-2xl">환자 차트 (대시보드)</h1>
           <Button
             type="button"
