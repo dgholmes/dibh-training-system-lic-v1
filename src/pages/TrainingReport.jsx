@@ -77,37 +77,29 @@ export default function TrainingReport() {
         patient={patient}
       />
 
-      {/*
-        Single 672px column in portrait (the tablet's normal orientation,
-        an 800x1280 CSS viewport); two columns only from lg up, i.e. when
-        rotated to landscape. See TypeDecision.
-      */}
-      <div className="mx-auto mt-2 max-w-2xl lg:max-w-6xl">
-        <div className="grid gap-4 lg:grid-cols-2 lg:items-start">
-          <div className="space-y-4">
-            <ComprehensiveBreathingReportCard
-              trainingType={trainingType}
-              onOpenInfo={() => setComparisonOpen(true)}
-            />
-            {/*
-              `type` is gated on a real calibration: trainingType falls back to
-              'A' when there is none, and 'A' advice ('DIBH 치료 계획 수립을
-              고려할 수 있습니다') must never be shown for a patient who has not
-              been analysed (RM-DBF-014). The measured values still render.
-            */}
-            <AnalysisResultCard
-              dibhDuration={dibhDuration}
-              cv={cv}
-              type={calibration ? trainingType : null}
-            />
-          </div>
+      <div className="mx-auto mt-2 max-w-2xl space-y-4">
+        <ComprehensiveBreathingReportCard
+          trainingType={trainingType}
+          onOpenInfo={() => setComparisonOpen(true)}
+        />
 
-          <AnalysisPlaybackPanel playback={playback} />
-        </div>
+        {/*
+          `type` is gated on a real calibration: trainingType falls back to 'A'
+          when there is none, and 'A' advice ('DIBH 치료 계획 수립을 고려할 수
+          있습니다') must never be shown for a patient who has not been analysed
+          (RM-DBF-014). The measured values still render either way.
+        */}
+        <AnalysisResultCard
+          dibhDuration={dibhDuration}
+          cv={cv}
+          type={calibration ? trainingType : null}
+        />
+
+        <AnalysisPlaybackPanel playback={playback} />
       </div>
 
       <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-[#30363D] bg-[#0D1117]/95 p-3 backdrop-blur">
-        <div className="mx-auto max-w-2xl lg:max-w-6xl">
+        <div className="mx-auto max-w-2xl">
           <Button
             type="button"
             onClick={handleDashboard}
