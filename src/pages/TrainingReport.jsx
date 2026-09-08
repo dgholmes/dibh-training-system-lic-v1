@@ -78,11 +78,11 @@ export default function TrainingReport() {
       />
 
       {/*
-        Two columns from lg up — see TypeDecision: the tablet's CSS viewport is
-        about 1280x800, so a single 672px column wasted the width and pushed
-        the waveform off screen.
+        Single 672px column in portrait (the tablet's normal orientation,
+        an 800x1280 CSS viewport); two columns only from lg up, i.e. when
+        rotated to landscape. See TypeDecision.
       */}
-      <div className="mx-auto mt-2 max-w-6xl">
+      <div className="mx-auto mt-2 max-w-2xl lg:max-w-6xl">
         <div className="grid gap-4 lg:grid-cols-2 lg:items-start">
           <div className="space-y-4">
             <ComprehensiveBreathingReportCard
@@ -107,7 +107,7 @@ export default function TrainingReport() {
       </div>
 
       <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-[#30363D] bg-[#0D1117]/95 p-3 backdrop-blur">
-        <div className="mx-auto max-w-6xl">
+        <div className="mx-auto max-w-2xl lg:max-w-6xl">
           <Button
             type="button"
             onClick={handleDashboard}

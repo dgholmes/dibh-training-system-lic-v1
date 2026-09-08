@@ -106,12 +106,12 @@ export default function TypeDecision() {
       />
 
       {/*
-        Two columns from lg up. The tablet this runs on reports roughly a
-        1280x800 CSS viewport, so a 672px centred column left ~600px of width
-        unused while pushing the waveform below the fold. Verdict and figures
-        read down the left, the waveform sits beside them.
+        The tablet is used in portrait: a 2560x1600 panel at DPR 2 is an
+        800x1280 CSS viewport, so this stays a single 672px column matching
+        every other screen. The two-column arrangement only applies from lg
+        (1024px) up — i.e. if the tablet is rotated to landscape.
       */}
-      <div className="mx-auto mt-2 max-w-6xl">
+      <div className="mx-auto mt-2 max-w-2xl lg:max-w-6xl">
         <div className="grid gap-4 lg:grid-cols-2 lg:items-start">
           <div className="space-y-4">
             <ComprehensiveBreathingReportCard
@@ -126,7 +126,7 @@ export default function TypeDecision() {
       </div>
 
       <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-[#30363D] bg-[#0D1117]/95 p-3 backdrop-blur">
-        <div className="mx-auto max-w-6xl">
+        <div className="mx-auto max-w-2xl lg:max-w-6xl">
           <Button
             type="button"
             onClick={handleDashboard}
