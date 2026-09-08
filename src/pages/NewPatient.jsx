@@ -285,7 +285,7 @@ export default function NewPatient() {
 
           <div className="mt-6 flex flex-col items-center justify-center gap-2">
             <p className="text-center text-sm text-[#8B949E]">
-              호흡 데이터는 등록 후 환자 대시보드의 [호흡 데이터 · 분석]에서 추가합니다.
+              호흡 데이터는 등록 후 환자 대시보드의 [데이터 추가]에서 등록합니다.
             </p>
             <Button
               type="submit"

@@ -1,12 +1,11 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { PatientFlowPageHeader } from '@/components/common/PatientFlowPageHeader';
 import { createPageUrl, getPatientIdFromSearchParams } from '@/utils';
 import {
   Patient,
   CalibrationSession,
-  createBreathingFile,
   listBreathingFilesByPatient,
   deleteBreathingFile,
 } from '@/api/entities';
@@ -14,10 +13,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { toast } from '@/components/ui/use-toast';
 import { analyzeFiles } from '@/lib/calibration/analyzeFiles';
-import { isAllowedBreathingUploadFile } from '@/lib/breathingFileFormat';
 import BreathingCategorySection from '@/components/breathing/BreathingCategorySection';
-import UploadConfirmDialog from '@/components/breathing/UploadConfirmDialog';
-import { buildUploadConfirmItems } from '@/lib/breathingFileCategory';
 export default function AnalysisFileSelect() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -31,10 +27,6 @@ export default function AnalysisFileSelect() {
   const [analysisError, setAnalysisError] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [isDeletingFile, setIsDeletingFile] = useState(false);
-  const [pending, setPending] = useState({ general: [], dibh: [] });
-  const [confirmState, setConfirmState] = useState(null);
-  const generalInputRef = useRef(null);
-  const dibhInputRef = useRef(null);
   const abortRef = useRef(null);
 
   // Abort analysis on unmount
@@ -70,70 +62,6 @@ export default function AnalysisFileSelect() {
   });
 
   const loading = loadingG || loadingD;
-
-  /**
-   * Writes the picked files straight to storage. There is no simulated
-   * progress here: the previous screens animated 0.8-1.7s of fake progress
-   * before touching the database, which made a local SQLite write look slow
-   * and, on the registration screen, showed "done" for files that had not
-   * been saved at all.
-   */
-  const persistFiles = useCallback(
-    async (files, category) => {
-      for (const file of files) {
-        const id = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
-        setPending((p) => ({
-          ...p,
-          [category]: [...p[category], { id, name: file.name, status: 'saving' }],
-        }));
-        try {
-          await createBreathingFile({ patientId, category, file });
-          setPending((p) => ({ ...p, [category]: p[category].filter((f) => f.id !== id) }));
-        } catch (err) {
-          console.error('[AnalysisFileSelect] createBreathingFile failed:', err);
-          setPending((p) => ({
-            ...p,
-            [category]: p[category].map((f) =>
-              f.id === id
-                ? {
-                    ...f,
-                    status: 'failed',
-                    error: '파일 저장 중 오류가 발생했습니다. 다시 시도해 주세요.',
-                  }
-                : f
-            ),
-          }));
-        }
-      }
-      await queryClient.invalidateQueries({ queryKey: ['breathingFiles'] });
-    },
-    [patientId, queryClient]
-  );
-
-  /**
-   * Nothing is written here. Files are staged and the operator confirms the
-   * destination category first — putting a DIBH recording in the general slot
-   * changes the resulting Type, so this is a safety gate (RM-DBF-010), not a
-   * courtesy prompt.
-   */
-  const handleAddFiles = useCallback((fileList, category) => {
-    const incoming = Array.from(fileList).filter(isAllowedBreathingUploadFile);
-    const skipped = Array.from(fileList).length - incoming.length;
-    if (skipped > 0) {
-      toast({
-        title: 'CSV 또는 VXP만 업로드할 수 있습니다',
-        description: `${skipped}개 파일은 지원 형식이 아니어서 제외되었습니다.`,
-        variant: 'destructive',
-      });
-    }
-    if (!incoming.length) return;
-
-    setConfirmState({
-      category,
-      files: incoming,
-      items: buildUploadConfirmItems(incoming, category),
-    });
-  }, []);
 
   const handleStartAnalysis = async () => {
     if (!patientId) return;
@@ -249,16 +177,28 @@ export default function AnalysisFileSelect() {
               ? `${createPageUrl('PatientDashboard')}?patientId=${encodeURIComponent(patientId)}`
               : createPageUrl('Home')
           }
-          title="호흡 데이터 · 분석"
+          title="분석할 파일 선택"
           patient={patient}
         />
 
         <div className="mb-6 space-y-2 text-sm text-[#8B949E]">
-          <p>파일을 추가하고, 분석할 일반호흡·DIBH 파일을 하나씩 선택해 주세요.</p>
+          <p>이 환자에게 등록된 호흡 데이터 목록입니다. 분석할 파일을 각 1개씩 선택해 주세요.</p>
           <p className="text-xs leading-relaxed text-[#6E7681]">
-            업로드는 CSV·VXP 모두 가능합니다. 이 화면에서 실행하는 분석은{' '}
-            <span className="font-medium text-[#8B949E]">일반·DIBH 각각 CSV 파일</span>을 선택해야 합니다.
+            분석은{' '}
+            <span className="font-medium text-[#8B949E]">일반·DIBH 각각 CSV 파일</span>을 선택해야
+            실행할 수 있습니다.
           </p>
+          {patientId ? (
+            <p>
+              <Link
+                to={`${createPageUrl('BreathingDataUpload')}?patientId=${encodeURIComponent(patientId)}`}
+                className="font-medium text-[#79B8FF] underline-offset-2 hover:underline"
+              >
+                호흡 데이터 추가
+              </Link>{' '}
+              화면에서 일반·DIBH 파일을 더 등록할 수 있습니다.
+            </p>
+          ) : null}
         </div>
 
         {!patientId && (
@@ -271,25 +211,21 @@ export default function AnalysisFileSelect() {
               category="general"
               patient={patient}
               savedFiles={generalFiles}
-              pendingFiles={pending.general}
               selectedId={selectedGeneral}
               loading={loading}
+              selectable
               onSelect={setSelectedGeneral}
-              onAddFiles={(list) => handleAddFiles(list, 'general')}
               onRequestDeleteSaved={setDeleteTarget}
-              inputRef={generalInputRef}
             />
             <BreathingCategorySection
               category="dibh"
               patient={patient}
               savedFiles={dibhFiles}
-              pendingFiles={pending.dibh}
               selectedId={selectedDibh}
               loading={loading}
+              selectable
               onSelect={setSelectedDibh}
-              onAddFiles={(list) => handleAddFiles(list, 'dibh')}
               onRequestDeleteSaved={setDeleteTarget}
-              inputRef={dibhInputRef}
             />
           </div>
         )}
@@ -316,17 +252,6 @@ export default function AnalysisFileSelect() {
           </Button>
         </div>
       </div>
-
-      <UploadConfirmDialog
-        open={!!confirmState}
-        items={confirmState?.items ?? []}
-        onCancel={() => setConfirmState(null)}
-        onConfirm={() => {
-          const { files, category } = confirmState;
-          setConfirmState(null);
-          void persistFiles(files, category);
-        }}
-      />
 
       {/* Validation modal */}
       <Dialog open={showValidationModal} onOpenChange={setShowValidationModal}>

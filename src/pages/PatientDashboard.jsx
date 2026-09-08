@@ -167,9 +167,8 @@ export default function PatientDashboard() {
     navigate('/login', { replace: true });
   };
 
-  // Both entry points lead to the merged upload + analysis screen.
   const handleAddData = () => {
-    navigate(createPageUrl('AnalysisFileSelect') + `?patientId=${encodeURIComponent(patientId)}`);
+    navigate(createPageUrl('BreathingDataUpload') + `?patientId=${encodeURIComponent(patientId)}`);
   };
 
   const handleRecalibrate = () => {
@@ -439,11 +438,8 @@ export default function PatientDashboard() {
             )}
 
             {/*
-              Both buttons open the same merged screen (upload and analysis are
-              one screen since #9). They are kept separate deliberately: a
-              single button labelled 다시 분석 hid the upload path for any
-              patient that already had a calibration, which is most of them.
-              Each label names a job the operator recognises from v1.1.6.
+              Two jobs, two screens: [데이터 추가] saves files, [분석] picks which
+              of them to analyse.
             */}
             <div className="flex flex-col gap-2 sm:flex-row">
               <Button
@@ -466,7 +462,7 @@ export default function PatientDashboard() {
                   className="h-12 flex-1 bg-gradient-to-r from-[#3B82F6] to-[#8B5CF6] font-semibold text-white hover:from-[#2563EB] hover:to-[#7C3AED]"
                 >
                   <RefreshCw className="mr-2 h-4 w-4" />
-                  다시 분석
+                  분석
                 </Button>
               )}
             </div>

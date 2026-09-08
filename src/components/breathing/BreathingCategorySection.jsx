@@ -15,12 +15,16 @@ function formatImportedAt(iso) {
 }
 
 /**
- * One breathing-data category: its own drop zone, then its own file list.
+ * One breathing-data category, used by both breathing screens:
+ *
+ *   호흡 데이터 추가   showUpload  — drop zone above the stored file list
+ *   분석할 파일 선택   selectable  — stored files with a selection control
  *
  * The two categories are deliberately hard to confuse — distinct accent, an
  * explicit GEN/DIBH badge and a per-category instruction line. Dropping a file
  * into the wrong one changes the resulting DIBH type (RM-DBF-010), so the
- * visual separation is a safety control, not decoration.
+ * visual separation is a safety control, not decoration, and both screens get
+ * it from here.
  */
 const CATEGORY_STYLE = {
   general: {
@@ -45,13 +49,15 @@ export default function BreathingCategorySection({
   category,
   patient,
   savedFiles,
-  pendingFiles,
+  pendingFiles = [],
   selectedId,
   loading,
   onSelect,
   onAddFiles,
   onRequestDeleteSaved,
   inputRef,
+  showUpload = false,
+  selectable = false,
 }) {
   const style = CATEGORY_STYLE[category];
 
@@ -67,53 +73,53 @@ export default function BreathingCategorySection({
         <span className={cn('h-5 w-1 rounded-full bg-gradient-to-b', style.accent)} />
         {style.title}
         <span
-          className={cn('rounded-sm border px-1.5 py-0.5 text-[10px] font-bold tracking-wide', style.badge)}
+          className={cn('rounded-sm border px-2 py-1 text-[10px] font-bold leading-none tracking-wide', style.badge)}
         >
           {style.tag}
         </span>
       </h2>
       <p className="mb-5 pl-3 text-xs text-[#8B949E]">{style.hint}</p>
 
-      <div
-        role="button"
-        tabIndex={0}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            inputRef.current?.click();
-          }
-        }}
-        onDragOver={(e) => e.preventDefault()}
-        onDrop={onDrop}
-        onClick={() => inputRef.current?.click()}
-        className={cn(
-          'mb-5 flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-[#30363D] bg-[#0D1117]/50 px-4 py-8 text-center transition-colors hover:bg-[#0D1117]',
-          style.ring
-        )}
-      >
-        <CloudUpload className="mb-2 h-9 w-9 text-[#8B949E]" />
-        <p className="text-sm font-medium text-white">
-          {style.title} 파일을 선택하세요
-        </p>
-        <p className="mt-1 text-xs text-[#8B949E]">CSV, VXP 지원 (다중 선택 가능 · 분석은 CSV만)</p>
-        <input
-          ref={inputRef}
-          type="file"
-          multiple
-          accept=".csv,.vxp,text/csv,application/octet-stream"
-          className="hidden"
-          onChange={(e) => {
-            if (e.target.files?.length) onAddFiles(e.target.files);
-            e.target.value = '';
+      {showUpload && (
+        <div
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              inputRef.current?.click();
+            }
           }}
-        />
-      </div>
+          onDragOver={(e) => e.preventDefault()}
+          onDrop={onDrop}
+          onClick={() => inputRef.current?.click()}
+          className={cn(
+            'mb-5 flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-[#30363D] bg-[#0D1117]/50 px-4 py-8 text-center transition-colors hover:bg-[#0D1117]',
+            style.ring
+          )}
+        >
+          <CloudUpload className="mb-2 h-9 w-9 text-[#8B949E]" />
+          <p className="text-sm font-medium text-white">{style.title} 파일을 선택하세요</p>
+          <p className="mt-1 text-xs text-[#8B949E]">CSV, VXP 지원 (다중 선택 가능 · 분석은 CSV만)</p>
+          <input
+            ref={inputRef}
+            type="file"
+            multiple
+            accept=".csv,.vxp,text/csv,application/octet-stream"
+            className="hidden"
+            onChange={(e) => {
+              if (e.target.files?.length) onAddFiles(e.target.files);
+              e.target.value = '';
+            }}
+          />
+        </div>
+      )}
 
       {loading ? (
         <p className="text-sm text-[#8B949E]">불러오는 중…</p>
       ) : savedFiles.length === 0 && pendingFiles.length === 0 ? (
         <p className="rounded-xl border border-dashed border-[#30363D] px-4 py-6 text-center text-sm text-[#8B949E]">
-          등록된 파일이 없습니다
+          {showUpload ? '등록된 파일이 없습니다' : '등록된 파일이 없습니다. [데이터 추가]에서 먼저 업로드해 주세요.'}
         </p>
       ) : (
         <ul className="space-y-3">
@@ -124,12 +130,15 @@ export default function BreathingCategorySection({
               <li key={f.id} className="flex gap-2">
                 <button
                   type="button"
-                  onClick={() => onSelect(f.id)}
+                  onClick={selectable ? () => onSelect(f.id) : undefined}
+                  disabled={!selectable}
                   className={cn(
                     'flex min-w-0 flex-1 items-center gap-3 rounded-2xl border px-4 py-3 text-left transition-colors',
-                    active
+                    selectable && active
                       ? 'border-[#3B82F6] bg-[#1C2128] ring-1 ring-[#3B82F6]/40'
-                      : 'border-[#30363D]/80 bg-[#252A32] hover:border-[#8B949E]/40'
+                      : 'border-[#30363D]/80 bg-[#252A32]',
+                    selectable && !active && 'hover:border-[#8B949E]/40',
+                    !selectable && 'cursor-default'
                   )}
                 >
                   <span
@@ -144,15 +153,17 @@ export default function BreathingCategorySection({
                       {formatFileSize(f.size_bytes)} · {formatImportedAt(f.imported_at)} 업로드
                     </span>
                   </span>
-                  <span
-                    className={cn(
-                      'flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2',
-                      active ? 'border-[#3B82F6] bg-[#3B82F6]' : 'border-[#8B949E] bg-transparent'
-                    )}
-                    aria-hidden
-                  >
-                    {active && <Check className="h-3 w-3 text-white" strokeWidth={3} />}
-                  </span>
+                  {selectable && (
+                    <span
+                      className={cn(
+                        'flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2',
+                        active ? 'border-[#3B82F6] bg-[#3B82F6]' : 'border-[#8B949E] bg-transparent'
+                      )}
+                      aria-hidden
+                    >
+                      {active && <Check className="h-3 w-3 text-white" strokeWidth={3} />}
+                    </span>
+                  )}
                 </button>
                 <Button
                   type="button"
