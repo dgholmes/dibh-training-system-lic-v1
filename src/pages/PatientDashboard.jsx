@@ -251,8 +251,8 @@ export default function PatientDashboard() {
           {/* Labelled and bordered to match the patient-flow header (#8) */}
           <Button
             asChild
-            variant="outline"
-            className="h-11 shrink-0 gap-1.5 rounded-xl border-[#30363D] bg-[#252A32] px-3 text-[#C9D1D9] hover:bg-[#30363D] hover:text-white"
+            variant="ghost"
+            className="h-11 shrink-0 gap-1.5 rounded-xl px-2 text-[#C9D1D9] hover:bg-[#1C2128] hover:text-white"
           >
             <Link to={createPageUrl('Home')} aria-label="홈으로 이동">
               <ArrowLeft className="h-5 w-5" />

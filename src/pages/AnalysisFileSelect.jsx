@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { PatientFlowPageHeader } from '@/components/common/PatientFlowPageHeader';
@@ -10,10 +11,13 @@ import {
   deleteBreathingFile,
 } from '@/api/entities';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { format } from 'date-fns';
+import { cn } from '@/lib/utils';
+import { formatFileSize, fileTypeBadge } from '@/lib/files';
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { toast } from '@/components/ui/use-toast';
 import { analyzeFiles } from '@/lib/calibration/analyzeFiles';
-import BreathingCategorySection from '@/components/breathing/BreathingCategorySection';
+import { breathingFileDisplayName } from '@/lib/breathingFileDisplayName';
 export default function AnalysisFileSelect() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -104,6 +108,8 @@ export default function AnalysisFileSelect() {
 
       const genRow = generalFiles.find((f) => f.id === selectedGeneral);
       const dibhRow = dibhFiles.find((f) => f.id === selectedDibh);
+      // Stored name, never the display name: this goes into the Calibration
+      // record, which is hash-verified but not encrypted (RM-DBF-003).
       const source_files = [genRow?.original_name, dibhRow?.original_name].filter(Boolean);
 
       await CalibrationSession.complete(session.id, {
@@ -147,6 +153,14 @@ export default function AnalysisFileSelect() {
     navigate(createPageUrl('Home'));
   };
 
+  const formatUploadedAt = (iso) => {
+    try {
+      return format(new Date(iso), 'yyyy.MM.dd HH:mm');
+    } catch {
+      return iso;
+    }
+  };
+
   const handleConfirmDeleteFile = async () => {
     if (!deleteTarget) return;
     setIsDeletingFile(true);
@@ -182,11 +196,10 @@ export default function AnalysisFileSelect() {
         />
 
         <div className="mb-6 space-y-2 text-sm text-[#8B949E]">
-          <p>이 환자에게 등록된 호흡 데이터 목록입니다. 분석할 파일을 각 1개씩 선택해 주세요.</p>
+          <p>이 환자에게 등록된 호흡 데이터 목록입니다.</p>
           <p className="text-xs leading-relaxed text-[#6E7681]">
-            분석은{' '}
-            <span className="font-medium text-[#8B949E]">일반·DIBH 각각 CSV 파일</span>을 선택해야
-            실행할 수 있습니다.
+            업로드는 CSV·VXP 모두 가능합니다. 이 화면에서 실행하는 분석은{' '}
+            <span className="font-medium text-[#8B949E]">일반·DIBH 각각 CSV 파일</span>을 선택해야 합니다.
           </p>
           {patientId ? (
             <p>
@@ -194,8 +207,8 @@ export default function AnalysisFileSelect() {
                 to={`${createPageUrl('BreathingDataUpload')}?patientId=${encodeURIComponent(patientId)}`}
                 className="font-medium text-[#79B8FF] underline-offset-2 hover:underline"
               >
-                호흡 데이터 추가
-              </Link>{' '}
+                호흡 파일 추가
+              </Link>
               화면에서 일반·DIBH 파일을 더 등록할 수 있습니다.
             </p>
           ) : null}
@@ -206,28 +219,149 @@ export default function AnalysisFileSelect() {
         )}
 
         {patientId && (
-          <div className="space-y-6">
-            <BreathingCategorySection
-              category="general"
-              patient={patient}
-              savedFiles={generalFiles}
-              selectedId={selectedGeneral}
-              loading={loading}
-              selectable
-              onSelect={setSelectedGeneral}
-              onRequestDeleteSaved={setDeleteTarget}
-            />
-            <BreathingCategorySection
-              category="dibh"
-              patient={patient}
-              savedFiles={dibhFiles}
-              selectedId={selectedDibh}
-              loading={loading}
-              selectable
-              onSelect={setSelectedDibh}
-              onRequestDeleteSaved={setDeleteTarget}
-            />
-          </div>
+          <>
+            <section className="mb-8">
+              <h2 className="mb-4 flex items-center gap-2 text-lg font-bold text-white">
+                <span className="h-5 w-1 rounded-full bg-gradient-to-b from-[#3B82F6] to-[#8B5CF6]" />
+                일반호흡 업로드 파일
+              </h2>
+              {loading ? (
+                <p className="text-sm text-[#8B949E]">불러오는 중…</p>
+              ) : generalFiles.length === 0 ? (
+                <p className="rounded-xl border border-[#30363D] bg-[#1C2128] p-4 text-sm text-[#8B949E]">
+                  등록된 일반호흡 파일이 없습니다. 환자 등록 시 업로드가 완료된 뒤 등록 완료를 눌렀는지 확인하거나, 업로드 진행 중에 등록하지 않았는지 확인해 주세요.
+                </p>
+              ) : (
+                <ul className="space-y-3">
+                  {generalFiles.map((f) => {
+                    const active = selectedGeneral === f.id;
+                    return (
+                      <li key={f.id} className="flex gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setSelectedGeneral(f.id)}
+                          className={cn(
+                            'flex min-w-0 flex-1 items-center gap-3 rounded-2xl border px-4 py-3 text-left transition-colors',
+                            active
+                              ? 'border-[#3B82F6] bg-[#1C2128] ring-1 ring-[#3B82F6]/40'
+                              : 'border-[#30363D]/80 bg-[#252A32] hover:border-[#8B949E]/40'
+                          )}
+                        >
+                          <div
+                            className={cn(
+                              'flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-[#30363D] bg-[#1C2128] text-[10px] font-bold uppercase tracking-wide text-[#C9D1D9]'
+                            )}
+                          >
+                            {fileTypeBadge(f.original_name)}
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <p className="truncate text-sm font-semibold text-white">
+                              {breathingFileDisplayName(f.original_name, patient)}
+                            </p>
+                            <p className="mt-0.5 text-xs text-[#9BA1A6]">
+                              {formatFileSize(f.size_bytes)} · {formatUploadedAt(f.imported_at)} 업로드
+                            </p>
+                          </div>
+                          <div
+                            className={cn(
+                              'flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2',
+                              active ? 'border-[#3B82F6] bg-[#3B82F6]' : 'border-[#8B949E] bg-transparent'
+                            )}
+                          >
+                            {active && <span className="h-2 w-2 rounded-full bg-white" />}
+                          </div>
+                        </button>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          className="h-[52px] w-11 shrink-0 rounded-2xl text-[#8B949E] hover:bg-[#30363D] hover:text-white"
+                          aria-label="파일 삭제"
+                          onClick={() =>
+                            setDeleteTarget({
+                              id: f.id,
+                              name: breathingFileDisplayName(f.original_name, patient),
+                            })
+                          }
+                        >
+                          <X className="h-5 w-5" />
+                        </Button>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+            </section>
+
+            <section className="mb-8">
+              <h2 className="mb-4 flex items-center gap-2 text-lg font-bold text-white">
+                <span className="h-5 w-1 rounded-full bg-gradient-to-b from-[#8B5CF6] to-[#3B82F6]" />
+                DIBH 업로드 파일
+              </h2>
+              {loading ? (
+                <p className="text-sm text-[#8B949E]">불러오는 중…</p>
+              ) : dibhFiles.length === 0 ? (
+                <p className="rounded-xl border border-[#30363D] bg-[#1C2128] p-4 text-sm text-[#8B949E]">
+                  등록된 DIBH 파일이 없습니다.
+                </p>
+              ) : (
+                <ul className="space-y-3">
+                  {dibhFiles.map((f) => {
+                    const active = selectedDibh === f.id;
+                    return (
+                      <li key={f.id} className="flex gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setSelectedDibh(f.id)}
+                          className={cn(
+                            'flex min-w-0 flex-1 items-center gap-3 rounded-2xl border px-4 py-3 text-left transition-colors',
+                            active
+                              ? 'border-[#3B82F6] bg-[#1C2128] ring-1 ring-[#3B82F6]/40'
+                              : 'border-[#30363D]/80 bg-[#252A32] hover:border-[#8B949E]/40'
+                          )}
+                        >
+                          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-[#30363D] bg-[#1C2128] text-[10px] font-bold uppercase tracking-wide text-[#C9D1D9]">
+                            {fileTypeBadge(f.original_name)}
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <p className="truncate text-sm font-semibold text-white">
+                              {breathingFileDisplayName(f.original_name, patient)}
+                            </p>
+                            <p className="mt-0.5 text-xs text-[#9BA1A6]">
+                              {formatFileSize(f.size_bytes)} · {formatUploadedAt(f.imported_at)} 업로드
+                            </p>
+                          </div>
+                          <div
+                            className={cn(
+                              'flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2',
+                              active ? 'border-[#3B82F6] bg-[#3B82F6]' : 'border-[#8B949E] bg-transparent'
+                            )}
+                          >
+                            {active && <span className="h-2 w-2 rounded-full bg-white" />}
+                          </div>
+                        </button>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          className="h-[52px] w-11 shrink-0 rounded-2xl text-[#8B949E] hover:bg-[#30363D] hover:text-white"
+                          aria-label="파일 삭제"
+                          onClick={() =>
+                            setDeleteTarget({
+                              id: f.id,
+                              name: breathingFileDisplayName(f.original_name, patient),
+                            })
+                          }
+                        >
+                          <X className="h-5 w-5" />
+                        </Button>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+            </section>
+          </>
         )}
       </div>
 

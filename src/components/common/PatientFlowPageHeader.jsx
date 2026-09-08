@@ -10,14 +10,16 @@ import { cn } from '@/lib/utils';
  *
  * The back control used to be an unlabelled ghost icon at #8B949E on #0D1117,
  * and there was no home control anywhere in the patient flow — both were
- * raised in the formative evaluation (#8). Back is now labelled and bordered,
- * home is always present, and each is a 44px touch target.
+ * raised in the formative evaluation (#8). Back is now labelled, home is
+ * always present, and each is a 44px touch target.
  *
  * Fixing it here means every patient screen inherits it; no call site changes.
  */
 export function PatientFlowPageHeader({ backHref, title, patient, trailing = null, className }) {
+  // Labelled and high-contrast, but no filled chip — the label is what makes
+  // these findable, not a background (formative eval #8).
   const navButton =
-    'h-11 shrink-0 gap-1.5 rounded-xl border-[#30363D] bg-[#252A32] px-3 text-[#C9D1D9] hover:bg-[#30363D] hover:text-white';
+    'h-11 shrink-0 gap-1.5 rounded-xl px-2 text-[#C9D1D9] hover:bg-[#1C2128] hover:text-white';
 
   return (
     <div
@@ -27,7 +29,7 @@ export function PatientFlowPageHeader({ backHref, title, patient, trailing = nul
       )}
     >
       <div className="flex min-w-0 items-center gap-3">
-        <Button asChild variant="outline" className={navButton}>
+        <Button asChild variant="ghost" className={navButton}>
           <Link to={backHref} aria-label="뒤로 가기">
             <ArrowLeft className="h-5 w-5" />
             <span className="text-sm font-semibold">뒤로</span>
@@ -45,7 +47,7 @@ export function PatientFlowPageHeader({ backHref, title, patient, trailing = nul
 
       <div className="flex shrink-0 items-center gap-2">
         {trailing}
-        <Button asChild variant="outline" className={navButton}>
+        <Button asChild variant="ghost" className={navButton}>
           <Link to={createPageUrl('Home')} aria-label="홈으로 이동">
             <Home className="h-5 w-5" />
             <span className="text-sm font-semibold">홈</span>

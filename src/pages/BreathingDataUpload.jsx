@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
+import { CloudUpload, X, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { PatientFlowPageHeader } from '@/components/common/PatientFlowPageHeader';
@@ -11,39 +12,193 @@ import {
 } from '@/api/entities';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from '@/components/ui/use-toast';
+import { formatFileSize, fileTypeBadge } from '@/lib/files';
+import { cn } from '@/lib/utils';
 import { isAllowedBreathingUploadFile } from '@/lib/breathingFileFormat';
+import { breathingFileDisplayName } from '@/lib/breathingFileDisplayName';
 import { buildUploadConfirmItems } from '@/lib/breathingFileCategory';
-import BreathingCategorySection from '@/components/breathing/BreathingCategorySection';
 import UploadConfirmDialog from '@/components/breathing/UploadConfirmDialog';
+import { format } from 'date-fns';
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 
-/** Per patient, per category (RM-DBF-012). */
-const MAX_FILES_PER_CATEGORY = 10;
+function formatImportedAt(iso) {
+  try {
+    return format(new Date(iso), 'yyyy.MM.dd HH:mm');
+  } catch {
+    return iso;
+  }
+}
 
-const CATEGORY_LABEL = { general: '일반호흡', dibh: 'DIBH' };
+function PatientBreathingUploadSection({
+  title,
+  accentClass,
+  patient,
+  savedFiles,
+  pendingFiles,
+  onAddFiles,
+  onRemovePending,
+  onRequestDeleteSaved,
+  inputRef,
+}) {
+  const onDrop = (e) => {
+    e.preventDefault();
+    const list = e.dataTransfer?.files;
+    if (list?.length) onAddFiles(list);
+  };
 
-/**
- * 호흡 데이터 추가 — saves breathing files for a patient. Selecting which files
- * to analyse is a separate screen (분석할 파일 선택 / AnalysisFileSelect).
- *
- * Uploading a file into the wrong category changes the resulting DIBH type, so
- * every add passes through the RM-DBF-010 confirmation gate before anything is
- * written: the filename's category is detected, a mismatch with the chosen
- * section is flagged in red, and storage is only touched once the operator
- * confirms.
- */
+  const totalCount = savedFiles.length + pendingFiles.length;
+
+  return (
+    <div className="rounded-xl border border-[#30363D] bg-[#1C2128] p-6">
+      <h2 className="mb-6 flex items-center gap-2 text-lg font-bold text-white">
+        <span className={cn('h-5 w-1 rounded-full bg-gradient-to-b', accentClass)} />
+        {title}
+      </h2>
+
+      <div
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            inputRef.current?.click();
+          }
+        }}
+        onDragOver={(e) => e.preventDefault()}
+        onDrop={onDrop}
+        onClick={() => inputRef.current?.click()}
+        className="mb-5 flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-[#30363D] bg-[#0D1117]/50 px-4 py-10 text-center transition-colors hover:border-[#8B5CF6]/55 hover:bg-[#0D1117]"
+      >
+        <CloudUpload className="mb-3 h-10 w-10 text-[#8B949E]" />
+        <p className="text-sm font-medium text-white">파일을 선택하세요</p>
+        <p className="mt-1 text-xs text-[#8B949E]">CSV, VXP 지원 (다중 선택 가능 · 분석은 CSV만)</p>
+        <input
+          ref={inputRef}
+          type="file"
+          multiple
+          accept=".csv,.vxp,text/csv,application/octet-stream"
+          className="hidden"
+          onChange={(e) => {
+            if (e.target.files?.length) onAddFiles(e.target.files);
+            e.target.value = '';
+          }}
+        />
+      </div>
+
+      {totalCount > 0 && (
+        <div className="space-y-3">
+          <p className="text-sm font-medium text-[#8B949E]">등록된 파일 ({totalCount})</p>
+          <ul className="space-y-3">
+            {savedFiles.map((f) => (
+              <li
+                key={f.id}
+                className="flex items-center gap-3 rounded-2xl border border-[#30363D]/80 bg-[#252A32] px-4 py-3"
+              >
+                <div
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-[#30363D] bg-[#1C2128] text-[10px] font-bold uppercase leading-none tracking-wide text-[#C9D1D9]"
+                  aria-hidden
+                >
+                  {fileTypeBadge(f.original_name)}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-semibold text-white">
+                    {breathingFileDisplayName(f.original_name, patient)}
+                  </p>
+                  <p className="mt-0.5 text-xs text-[#9BA1A6]">
+                    {formatFileSize(f.size_bytes)} · 업로드 완료 ({formatImportedAt(f.imported_at)})
+                  </p>
+                </div>
+                <div className="flex shrink-0 items-center gap-3">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center" aria-hidden>
+                    <Check className="h-4 w-4 text-[#A78BFA]" strokeWidth={2} />
+                  </div>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="h-9 w-9 shrink-0 text-[#8B949E] hover:bg-[#30363D] hover:text-white"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onRequestDeleteSaved({
+                        id: f.id,
+                        name: breathingFileDisplayName(f.original_name, patient),
+                      });
+                    }}
+                    aria-label="파일 삭제"
+                  >
+                    <X className="h-4 w-4" strokeWidth={2} />
+                  </Button>
+                </div>
+              </li>
+            ))}
+            {pendingFiles.map((f) => (
+              <li
+                key={f.id}
+                className="flex items-center gap-3 rounded-2xl border border-[#30363D]/80 bg-[#252A32] px-4 py-3"
+              >
+                <div
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-[#30363D] bg-[#1C2128] text-[10px] font-bold uppercase leading-none tracking-wide text-[#C9D1D9]"
+                  aria-hidden
+                >
+                  {fileTypeBadge(f.name)}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-semibold text-white">{f.name}</p>
+                  <p className="mt-0.5 text-xs text-[#9BA1A6]">
+                    {f.status === 'error'
+                      ? f.error || '저장 실패'
+                      : `${formatFileSize(f.size)} · 저장 중…`}
+                  </p>
+                </div>
+                <div className="flex shrink-0 items-center gap-3">
+                  {/*
+                    Indeterminate on purpose: a local SQLite write has no
+                    meaningful percentage, and the old determinate bar was
+                    animating an invented one.
+                  */}
+                  {f.status === 'persisting' ? (
+                    <div className="h-2 w-[88px] overflow-hidden rounded-full bg-[#0D1117]">
+                      <div className="h-full w-full animate-pulse rounded-full bg-[#8B5CF6]/60" />
+                    </div>
+                  ) : null}
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="h-9 w-9 shrink-0 text-[#8B949E] hover:bg-[#30363D] hover:text-white"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onRemovePending(f.id);
+                    }}
+                    aria-label="항목 제거"
+                  >
+                    <X className="h-4 w-4" strokeWidth={2} />
+                  </Button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function BreathingDataUpload() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [searchParams] = useSearchParams();
   const patientId = getPatientIdFromSearchParams(searchParams);
 
-  const [pending, setPending] = useState({ general: [], dibh: [] });
-  const [confirmState, setConfirmState] = useState(null);
-  const [deleteTarget, setDeleteTarget] = useState(null);
-  const [isDeleting, setIsDeleting] = useState(false);
   const generalInputRef = useRef(null);
   const dibhInputRef = useRef(null);
+
+  const [generalPending, setGeneralPending] = useState([]);
+  const [dibhPending, setDibhPending] = useState([]);
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  // Files wait here until the operator confirms their category (RM-DBF-010).
+  const [confirmState, setConfirmState] = useState(null);
 
   const { data: patient } = useQuery({
     queryKey: ['patient', patientId],
@@ -59,8 +214,6 @@ export default function BreathingDataUpload() {
     queryFn: () => listBreathingFilesByPatient(patientId, 'general'),
     enabled: !!patientId,
     staleTime: 0,
-    gcTime: 0,
-    refetchOnMount: 'always',
   });
 
   const { data: dibhSaved = [], isLoading: loadingD } = useQuery({
@@ -68,11 +221,172 @@ export default function BreathingDataUpload() {
     queryFn: () => listBreathingFilesByPatient(patientId, 'dibh'),
     enabled: !!patientId,
     staleTime: 0,
-    gcTime: 0,
-    refetchOnMount: 'always',
   });
 
   const loading = loadingG || loadingD;
+
+  const invalidateBreathing = useCallback(() => {
+    queryClient.invalidateQueries({ queryKey: ['breathingFiles'] });
+  }, [queryClient]);
+
+  /**
+   * Saves each file and reports what actually happened.
+   *
+   * This used to animate 0.8-1.7s of invented progress before touching the
+   * database, so a local SQLite write looked slow and a file could read as
+   * finished before anything had been stored. Status now comes from the write
+   * itself: `persisting` while it runs, gone on success, `error` on failure.
+   */
+  const persistFiles = useCallback(
+    async (items, category, setList) => {
+      for (const { id, file } of items) {
+        setList((prev) =>
+          prev.map((f) => (f.id === id ? { ...f, status: 'persisting' } : f))
+        );
+        try {
+          if (!patientId) throw new Error('patientId 없음');
+          await createBreathingFile({ patientId, category, file });
+          invalidateBreathing();
+          setList((prev) => prev.filter((f) => f.id !== id));
+        } catch (err) {
+          console.error('[BreathingDataUpload] createBreathingFile failed:', err);
+          const safeMsg = '파일 저장 중 오류가 발생했습니다. 다시 시도해 주세요.';
+          toast({
+            title: '파일을 저장할 수 없습니다',
+            description: safeMsg,
+            variant: 'destructive',
+          });
+          setList((prev) =>
+            prev.map((f) => (f.id === id ? { ...f, status: 'error', error: safeMsg } : f))
+          );
+        }
+      }
+    },
+    [patientId, invalidateBreathing]
+  );
+
+  const handleAddGeneral = useCallback(
+    (fileList) => {
+      const existingCount = generalSaved.length + generalPending.length;
+      if (existingCount >= 10) {
+        toast({
+          title: '일반호흡 데이터는 최대 10개까지 저장됩니다',
+          description: '오래된 일반호흡 데이터를 삭제한 뒤 다시 업로드해 주세요.',
+          variant: 'destructive',
+        });
+        return;
+      }
+      const incoming = Array.from(fileList).filter(isAllowedBreathingUploadFile);
+      const skipped = Array.from(fileList).length - incoming.length;
+      if (skipped > 0) {
+        toast({
+          title: 'CSV 또는 VXP만 업로드할 수 있습니다',
+          description: `${skipped}개 파일은 지원 형식이 아니어서 제외되었습니다.`,
+          variant: 'destructive',
+        });
+      }
+      const room = Math.max(0, 10 - existingCount);
+      const limited = incoming.slice(0, room);
+      const newItems = limited.map((file) => ({
+        id: `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
+        file,
+        name: file.name,
+        size: file.size,
+        status: 'persisting',
+      }));
+      if (newItems.length === 0) return;
+      setConfirmState({
+        category: 'general',
+        queued: newItems,
+        items: buildUploadConfirmItems(newItems, 'general'),
+      });
+    },
+    [generalSaved.length, generalPending.length]
+  );
+
+  const handleAddDibh = useCallback(
+    (fileList) => {
+      const existingCount = dibhSaved.length + dibhPending.length;
+      if (existingCount >= 10) {
+        toast({
+          title: 'DIBH 데이터는 최대 10개까지 저장됩니다',
+          description: '오래된 DIBH 데이터를 삭제한 뒤 다시 업로드해 주세요.',
+          variant: 'destructive',
+        });
+        return;
+      }
+      const incoming = Array.from(fileList).filter(isAllowedBreathingUploadFile);
+      const skipped = Array.from(fileList).length - incoming.length;
+      if (skipped > 0) {
+        toast({
+          title: 'CSV 또는 VXP만 업로드할 수 있습니다',
+          description: `${skipped}개 파일은 지원 형식이 아니어서 제외되었습니다.`,
+          variant: 'destructive',
+        });
+      }
+      const room = Math.max(0, 10 - existingCount);
+      const limited = incoming.slice(0, room);
+      const newItems = limited.map((file) => ({
+        id: `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
+        file,
+        name: file.name,
+        size: file.size,
+        status: 'persisting',
+      }));
+      if (newItems.length === 0) return;
+      setConfirmState({
+        category: 'dibh',
+        queued: newItems,
+        items: buildUploadConfirmItems(newItems, 'dibh'),
+      });
+    },
+    [dibhSaved.length, dibhPending.length]
+  );
+
+  /** Only reached once the operator has confirmed the destination category. */
+  const commitConfirmed = useCallback(() => {
+    if (!confirmState) return;
+    const { category, queued } = confirmState;
+    setConfirmState(null);
+    const setList = category === 'general' ? setGeneralPending : setDibhPending;
+    setList((prev) => [...prev, ...queued]);
+    void persistFiles(queued, category, setList);
+  }, [confirmState, persistFiles]);
+
+  const busyGeneral = generalPending.some((f) => f.status === 'persisting');
+  const busyDibh = dibhPending.some((f) => f.status === 'persisting');
+  const hasBusy = busyGeneral || busyDibh;
+
+  const handleDone = () => {
+    if (hasBusy) {
+      toast({
+        title: '업로드 진행 중입니다',
+        description: '모든 파일 저장이 끝난 뒤 등록 완료를 눌러 주세요.',
+        variant: 'destructive',
+      });
+      return;
+    }
+    navigate(`${createPageUrl('AnalysisFileSelect')}?patientId=${encodeURIComponent(patientId)}`);
+  };
+
+  const confirmDeleteSaved = async () => {
+    if (!deleteTarget) return;
+    setIsDeleting(true);
+    try {
+      await deleteBreathingFile(deleteTarget.id);
+      invalidateBreathing();
+      setDeleteTarget(null);
+    } catch (err) {
+      console.error('[BreathingDataUpload] delete failed:', err);
+      toast({
+        title: '삭제 실패',
+        description: '파일 삭제 중 오류가 발생했습니다. 다시 시도해 주세요.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   useEffect(() => {
     if (!patientId) return;
@@ -87,113 +401,6 @@ export default function BreathingDataUpload() {
       }
     });
   }, [patientId, navigate]);
-
-  /**
-   * Writes straight to storage. There is no simulated progress: the previous
-   * version animated 0.8-1.7s of fake progress before touching the database,
-   * which made a local SQLite write look slow for no reason.
-   */
-  const persistFiles = useCallback(
-    async (files, category) => {
-      for (const file of files) {
-        const id = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
-        setPending((p) => ({
-          ...p,
-          [category]: [...p[category], { id, name: file.name, status: 'saving' }],
-        }));
-        try {
-          await createBreathingFile({ patientId, category, file });
-          setPending((p) => ({ ...p, [category]: p[category].filter((f) => f.id !== id) }));
-        } catch (err) {
-          console.error('[BreathingDataUpload] createBreathingFile failed:', err);
-          setPending((p) => ({
-            ...p,
-            [category]: p[category].map((f) =>
-              f.id === id
-                ? {
-                    ...f,
-                    status: 'failed',
-                    error: '파일 저장 중 오류가 발생했습니다. 다시 시도해 주세요.',
-                  }
-                : f
-            ),
-          }));
-        }
-      }
-      await queryClient.invalidateQueries({ queryKey: ['breathingFiles'] });
-    },
-    [patientId, queryClient]
-  );
-
-  const handleAddFiles = useCallback(
-    (fileList, category) => {
-      const savedCount = category === 'general' ? generalSaved.length : dibhSaved.length;
-      const existingCount = savedCount + pending[category].length;
-      if (existingCount >= MAX_FILES_PER_CATEGORY) {
-        toast({
-          title: `${CATEGORY_LABEL[category]} 데이터는 최대 ${MAX_FILES_PER_CATEGORY}개까지 저장됩니다`,
-          description: `오래된 ${CATEGORY_LABEL[category]} 데이터를 삭제한 뒤 다시 업로드해 주세요.`,
-          variant: 'destructive',
-        });
-        return;
-      }
-
-      const incoming = Array.from(fileList).filter(isAllowedBreathingUploadFile);
-      const skipped = Array.from(fileList).length - incoming.length;
-      if (skipped > 0) {
-        toast({
-          title: 'CSV 또는 VXP만 업로드할 수 있습니다',
-          description: `${skipped}개 파일은 지원 형식이 아니어서 제외되었습니다.`,
-          variant: 'destructive',
-        });
-      }
-
-      const room = Math.max(0, MAX_FILES_PER_CATEGORY - existingCount);
-      const limited = incoming.slice(0, room);
-      if (!limited.length) return;
-
-      setConfirmState({
-        category,
-        files: limited,
-        items: buildUploadConfirmItems(limited, category),
-      });
-    },
-    [generalSaved.length, dibhSaved.length, pending]
-  );
-
-  const hasBusy = pending.general.some((f) => f.status === 'saving') ||
-    pending.dibh.some((f) => f.status === 'saving');
-
-  const handleDone = () => {
-    if (hasBusy) {
-      toast({
-        title: '저장 진행 중입니다',
-        description: '모든 파일 저장이 끝난 뒤 등록 완료를 눌러 주세요.',
-        variant: 'destructive',
-      });
-      return;
-    }
-    navigate(`${createPageUrl('AnalysisFileSelect')}?patientId=${encodeURIComponent(patientId)}`);
-  };
-
-  const confirmDeleteSaved = async () => {
-    if (!deleteTarget) return;
-    setIsDeleting(true);
-    try {
-      await deleteBreathingFile(deleteTarget.id);
-      await queryClient.invalidateQueries({ queryKey: ['breathingFiles'] });
-      setDeleteTarget(null);
-    } catch (err) {
-      console.error('[BreathingDataUpload] delete failed:', err);
-      toast({
-        title: '파일 삭제 실패',
-        description: '파일 삭제 중 오류가 발생했습니다. 다시 시도해 주세요.',
-        variant: 'destructive',
-      });
-    } finally {
-      setIsDeleting(false);
-    }
-  };
 
   return (
     <div className="min-h-screen bg-[#0D1117] p-6 pb-28">
@@ -214,31 +421,35 @@ export default function BreathingDataUpload() {
 
         {!patientId && <p className="text-sm text-[#EF4444]">patientId가 없습니다.</p>}
 
-        {patientId && (
+        {patientId && !loading && (
           <div className="space-y-6">
-            <BreathingCategorySection
-              category="general"
+            <PatientBreathingUploadSection
+              title="일반호흡 업로드 (필수)"
+              accentClass="from-[#8B5CF6] to-[#6366F1]"
               patient={patient}
               savedFiles={generalSaved}
-              pendingFiles={pending.general}
-              loading={loading}
-              showUpload
-              onAddFiles={(list) => handleAddFiles(list, 'general')}
+              pendingFiles={generalPending}
+              onAddFiles={handleAddGeneral}
+              onRemovePending={(id) => setGeneralPending((prev) => prev.filter((f) => f.id !== id))}
               onRequestDeleteSaved={setDeleteTarget}
               inputRef={generalInputRef}
             />
-            <BreathingCategorySection
-              category="dibh"
+            <PatientBreathingUploadSection
+              title="DIBH 호흡 업로드 (필수)"
+              accentClass="from-[#6366F1] to-[#8B5CF6]"
               patient={patient}
               savedFiles={dibhSaved}
-              pendingFiles={pending.dibh}
-              loading={loading}
-              showUpload
-              onAddFiles={(list) => handleAddFiles(list, 'dibh')}
+              pendingFiles={dibhPending}
+              onAddFiles={handleAddDibh}
+              onRemovePending={(id) => setDibhPending((prev) => prev.filter((f) => f.id !== id))}
               onRequestDeleteSaved={setDeleteTarget}
               inputRef={dibhInputRef}
             />
           </div>
+        )}
+
+        {patientId && loading && (
+          <p className="text-sm text-[#8B949E]">파일 목록을 불러오는 중…</p>
         )}
       </div>
 
@@ -253,9 +464,7 @@ export default function BreathingDataUpload() {
             등록 완료
           </Button>
           {hasBusy && (
-            <p className="mt-2 text-center text-xs text-[#EAB308]">
-              파일이 저장될 때까지 잠시만 기다려 주세요.
-            </p>
+            <p className="mt-2 text-center text-xs text-[#EAB308]">파일이 저장될 때까지 잠시만 기다려 주세요.</p>
           )}
         </div>
       </div>
@@ -264,11 +473,7 @@ export default function BreathingDataUpload() {
         open={!!confirmState}
         items={confirmState?.items ?? []}
         onCancel={() => setConfirmState(null)}
-        onConfirm={() => {
-          const { files, category } = confirmState;
-          setConfirmState(null);
-          void persistFiles(files, category);
-        }}
+        onConfirm={commitConfirmed}
       />
 
       <Dialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
@@ -287,13 +492,9 @@ export default function BreathingDataUpload() {
             >
               <span className="text-3xl font-bold leading-none text-[#EF4444]">!</span>
             </div>
-            <p className="text-base font-bold leading-snug text-white sm:text-lg">
-              파일을 삭제할까요?
-            </p>
+            <p className="text-base font-bold leading-snug text-white sm:text-lg">파일을 삭제할까요?</p>
             <p className="mt-2 break-all text-sm text-[#8B949E]">{deleteTarget?.name}</p>
-            <p className="mt-2 text-sm text-[#8B949E]">
-              삭제 후 복구할 수 없습니다. 분석 화면에서도 제거됩니다.
-            </p>
+            <p className="mt-2 text-sm text-[#8B949E]">삭제 후 복구할 수 없습니다. 분석 화면에서도 제거됩니다.</p>
             <div className="mt-6 flex w-full gap-3">
               <Button
                 type="button"
