@@ -7,7 +7,7 @@ import TrainingHistory from "./TrainingHistory";
 import TrainingReport from "./TrainingReport";
 import TypeDecision from "./TypeDecision";
 import AnalysisFileSelect from "./AnalysisFileSelect";
-import BreathingDataUpload from "./BreathingDataUpload";
+import BreathingUploadRedirect from "./BreathingUploadRedirect.jsx";
 import LegacyFlowRedirect from "./LegacyFlowRedirect.jsx";
 import AdminAccounts from "./AdminAccounts.jsx";
 import AdminAuditLog from "./AdminAuditLog.jsx";
@@ -28,7 +28,6 @@ const PAGES = {
     CalibrationReport: TrainingReport,
     TypeDecision: TypeDecision,
     AnalysisFileSelect: AnalysisFileSelect,
-    BreathingDataUpload: BreathingDataUpload,
 }
 
 function _getCurrentPage(url) {
@@ -85,8 +84,9 @@ function PagesContent() {
                 <Route path="/typedecision" element={<ProtectedRoute><TypeDecision /></ProtectedRoute>} />
                 <Route path="/AnalysisFileSelect" element={<ProtectedRoute><AnalysisFileSelect /></ProtectedRoute>} />
                 <Route path="/analysisfileselect" element={<ProtectedRoute><AnalysisFileSelect /></ProtectedRoute>} />
-                <Route path="/BreathingDataUpload" element={<ProtectedRoute><BreathingDataUpload /></ProtectedRoute>} />
-                <Route path="/breathingdataupload" element={<ProtectedRoute><BreathingDataUpload /></ProtectedRoute>} />
+                {/* Upload merged into the analysis screen — keep deep links alive */}
+                <Route path="/BreathingDataUpload" element={<ProtectedRoute><BreathingUploadRedirect /></ProtectedRoute>} />
+                <Route path="/breathingdataupload" element={<ProtectedRoute><BreathingUploadRedirect /></ProtectedRoute>} />
 
                 {/* Admin-only routes */}
                 <Route path="/admin/accounts" element={<AdminRoute><AdminAccounts /></AdminRoute>} />

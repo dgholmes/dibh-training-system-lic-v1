@@ -124,7 +124,6 @@ export default function PatientDashboard() {
     return format(max, 'yyyy.MM.dd');
   }, [calibrations, breathingFiles]);
 
-  const hasBreathingData = breathingFiles.length > 0;
   const historyRows = useMemo(() => {
     const rows = [];
     sortCalibrationsDesc(calibrations).forEach((c) => {
@@ -167,10 +166,6 @@ export default function PatientDashboard() {
   const handleLogout = () => {
     logout();
     navigate('/login', { replace: true });
-  };
-
-  const handleAddData = () => {
-    navigate(createPageUrl('BreathingDataUpload') + `?patientId=${encodeURIComponent(patientId)}`);
   };
 
   const handleRecalibrate = () => {
@@ -432,31 +427,20 @@ export default function PatientDashboard() {
               </div>
             )}
 
-            {/* Data / calibration shortcuts */}
+            {/* Upload and analysis are one screen now (formative evaluation #9) */}
             <div className="flex flex-col gap-2 sm:flex-row">
               <Button
                 type="button"
-                onClick={handleAddData}
-                className={cn(
-                  'h-12 flex-1 font-semibold text-white',
-                  hasBreathingData
-                    ? 'border border-[#30363D] bg-[#1C2128] hover:bg-[#30363D]'
-                    : 'bg-gradient-to-r from-[#3B82F6] to-[#8B5CF6] hover:from-[#2563EB] hover:to-[#7C3AED]'
-                )}
+                onClick={handleRecalibrate}
+                className="h-12 flex-1 bg-gradient-to-r from-[#3B82F6] to-[#8B5CF6] font-semibold text-white hover:from-[#2563EB] hover:to-[#7C3AED]"
               >
-                <Plus className="mr-2 h-4 w-4" />
-                데이터 추가
-              </Button>
-              {hasBreathingData && (
-                <Button
-                  type="button"
-                  onClick={handleRecalibrate}
-                  className="h-12 flex-1 bg-gradient-to-r from-[#3B82F6] to-[#8B5CF6] font-semibold text-white hover:from-[#2563EB] hover:to-[#7C3AED]"
-                >
+                {latestCalibration ? (
                   <RefreshCw className="mr-2 h-4 w-4" />
-                  {latestCalibration ? '다시 분석' : '호흡 분석'}
-                </Button>
-              )}
+                ) : (
+                  <Plus className="mr-2 h-4 w-4" />
+                )}
+                {latestCalibration ? '다시 분석' : '호흡 데이터 · 분석'}
+              </Button>
             </div>
 
             {/* Calibration history table */}

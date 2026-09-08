@@ -1,22 +1,21 @@
-import { useState, useRef, useEffect } from 'react';
-import { X } from 'lucide-react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { PatientFlowPageHeader } from '@/components/common/PatientFlowPageHeader';
 import { createPageUrl, getPatientIdFromSearchParams } from '@/utils';
 import {
   Patient,
   CalibrationSession,
+  createBreathingFile,
   listBreathingFilesByPatient,
   deleteBreathingFile,
 } from '@/api/entities';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { format } from 'date-fns';
-import { cn } from '@/lib/utils';
-import { formatFileSize, fileTypeBadge } from '@/lib/files';
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { toast } from '@/components/ui/use-toast';
 import { analyzeFiles } from '@/lib/calibration/analyzeFiles';
+import { isAllowedBreathingUploadFile } from '@/lib/breathingFileFormat';
+import BreathingCategorySection from '@/components/breathing/BreathingCategorySection';
 export default function AnalysisFileSelect() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -30,6 +29,9 @@ export default function AnalysisFileSelect() {
   const [analysisError, setAnalysisError] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [isDeletingFile, setIsDeletingFile] = useState(false);
+  const [pending, setPending] = useState({ general: [], dibh: [] });
+  const generalInputRef = useRef(null);
+  const dibhInputRef = useRef(null);
   const abortRef = useRef(null);
 
   // Abort analysis on unmount
@@ -65,6 +67,61 @@ export default function AnalysisFileSelect() {
   });
 
   const loading = loadingG || loadingD;
+
+  /**
+   * Writes the picked files straight to storage. There is no simulated
+   * progress here: the previous screens animated 0.8-1.7s of fake progress
+   * before touching the database, which made a local SQLite write look slow
+   * and, on the registration screen, showed "done" for files that had not
+   * been saved at all.
+   */
+  const persistFiles = useCallback(
+    async (files, category) => {
+      for (const file of files) {
+        const id = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+        setPending((p) => ({
+          ...p,
+          [category]: [...p[category], { id, name: file.name, status: 'saving' }],
+        }));
+        try {
+          await createBreathingFile({ patientId, category, file });
+          setPending((p) => ({ ...p, [category]: p[category].filter((f) => f.id !== id) }));
+        } catch (err) {
+          console.error('[AnalysisFileSelect] createBreathingFile failed:', err);
+          setPending((p) => ({
+            ...p,
+            [category]: p[category].map((f) =>
+              f.id === id
+                ? {
+                    ...f,
+                    status: 'failed',
+                    error: '파일 저장 중 오류가 발생했습니다. 다시 시도해 주세요.',
+                  }
+                : f
+            ),
+          }));
+        }
+      }
+      await queryClient.invalidateQueries({ queryKey: ['breathingFiles'] });
+    },
+    [patientId, queryClient]
+  );
+
+  const handleAddFiles = useCallback(
+    (fileList, category) => {
+      const incoming = Array.from(fileList).filter(isAllowedBreathingUploadFile);
+      const skipped = Array.from(fileList).length - incoming.length;
+      if (skipped > 0) {
+        toast({
+          title: 'CSV 또는 VXP만 업로드할 수 있습니다',
+          description: `${skipped}개 파일은 지원 형식이 아니어서 제외되었습니다.`,
+          variant: 'destructive',
+        });
+      }
+      if (incoming.length) void persistFiles(incoming, category);
+    },
+    [persistFiles]
+  );
 
   const handleStartAnalysis = async () => {
     if (!patientId) return;
@@ -150,14 +207,6 @@ export default function AnalysisFileSelect() {
     navigate(createPageUrl('Home'));
   };
 
-  const formatUploadedAt = (iso) => {
-    try {
-      return format(new Date(iso), 'yyyy.MM.dd HH:mm');
-    } catch {
-      return iso;
-    }
-  };
-
   const handleConfirmDeleteFile = async () => {
     if (!deleteTarget) return;
     setIsDeletingFile(true);
@@ -188,27 +237,16 @@ export default function AnalysisFileSelect() {
               ? `${createPageUrl('PatientDashboard')}?patientId=${encodeURIComponent(patientId)}`
               : createPageUrl('Home')
           }
-          title="분석할 파일 선택"
+          title="호흡 데이터 · 분석"
           patient={patient}
         />
 
         <div className="mb-6 space-y-2 text-sm text-[#8B949E]">
-          <p>이 환자에게 등록된 호흡 데이터 목록입니다.</p>
+          <p>파일을 추가하고, 분석할 일반호흡·DIBH 파일을 하나씩 선택해 주세요.</p>
           <p className="text-xs leading-relaxed text-[#6E7681]">
             업로드는 CSV·VXP 모두 가능합니다. 이 화면에서 실행하는 분석은{' '}
             <span className="font-medium text-[#8B949E]">일반·DIBH 각각 CSV 파일</span>을 선택해야 합니다.
           </p>
-          {patientId ? (
-            <p>
-              <Link
-                to={`${createPageUrl('BreathingDataUpload')}?patientId=${encodeURIComponent(patientId)}`}
-                className="font-medium text-[#79B8FF] underline-offset-2 hover:underline"
-              >
-                호흡 파일 추가
-              </Link>
-              화면에서 일반·DIBH 파일을 더 등록할 수 있습니다.
-            </p>
-          ) : null}
         </div>
 
         {!patientId && (
@@ -216,135 +254,32 @@ export default function AnalysisFileSelect() {
         )}
 
         {patientId && (
-          <>
-            <section className="mb-8">
-              <h2 className="mb-4 flex items-center gap-2 text-lg font-bold text-white">
-                <span className="h-5 w-1 rounded-full bg-gradient-to-b from-[#3B82F6] to-[#8B5CF6]" />
-                일반호흡 업로드 파일
-              </h2>
-              {loading ? (
-                <p className="text-sm text-[#8B949E]">불러오는 중…</p>
-              ) : generalFiles.length === 0 ? (
-                <p className="rounded-xl border border-[#30363D] bg-[#1C2128] p-4 text-sm text-[#8B949E]">
-                  등록된 일반호흡 파일이 없습니다. 환자 등록 시 업로드가 완료된 뒤 등록 완료를 눌렀는지 확인하거나, 업로드 진행 중에 등록하지 않았는지 확인해 주세요.
-                </p>
-              ) : (
-                <ul className="space-y-3">
-                  {generalFiles.map((f) => {
-                    const active = selectedGeneral === f.id;
-                    return (
-                      <li key={f.id} className="flex gap-2">
-                        <button
-                          type="button"
-                          onClick={() => setSelectedGeneral(f.id)}
-                          className={cn(
-                            'flex min-w-0 flex-1 items-center gap-3 rounded-2xl border px-4 py-3 text-left transition-colors',
-                            active
-                              ? 'border-[#3B82F6] bg-[#1C2128] ring-1 ring-[#3B82F6]/40'
-                              : 'border-[#30363D]/80 bg-[#252A32] hover:border-[#8B949E]/40'
-                          )}
-                        >
-                          <div
-                            className={cn(
-                              'flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-[#30363D] bg-[#1C2128] text-[10px] font-bold uppercase tracking-wide text-[#C9D1D9]'
-                            )}
-                          >
-                            {fileTypeBadge(f.original_name)}
-                          </div>
-                          <div className="min-w-0 flex-1">
-                            <p className="truncate text-sm font-semibold text-white">{f.original_name}</p>
-                            <p className="mt-0.5 text-xs text-[#9BA1A6]">
-                              {formatFileSize(f.size_bytes)} · {formatUploadedAt(f.imported_at)} 업로드
-                            </p>
-                          </div>
-                          <div
-                            className={cn(
-                              'flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2',
-                              active ? 'border-[#3B82F6] bg-[#3B82F6]' : 'border-[#8B949E] bg-transparent'
-                            )}
-                          >
-                            {active && <span className="h-2 w-2 rounded-full bg-white" />}
-                          </div>
-                        </button>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          className="h-[52px] w-11 shrink-0 rounded-2xl text-[#8B949E] hover:bg-[#30363D] hover:text-white"
-                          aria-label="파일 삭제"
-                          onClick={() => setDeleteTarget({ id: f.id, name: f.original_name })}
-                        >
-                          <X className="h-5 w-5" />
-                        </Button>
-                      </li>
-                    );
-                  })}
-                </ul>
-              )}
-            </section>
-
-            <section className="mb-8">
-              <h2 className="mb-4 flex items-center gap-2 text-lg font-bold text-white">
-                <span className="h-5 w-1 rounded-full bg-gradient-to-b from-[#8B5CF6] to-[#3B82F6]" />
-                DIBH 업로드 파일
-              </h2>
-              {loading ? (
-                <p className="text-sm text-[#8B949E]">불러오는 중…</p>
-              ) : dibhFiles.length === 0 ? (
-                <p className="rounded-xl border border-[#30363D] bg-[#1C2128] p-4 text-sm text-[#8B949E]">
-                  등록된 DIBH 파일이 없습니다.
-                </p>
-              ) : (
-                <ul className="space-y-3">
-                  {dibhFiles.map((f) => {
-                    const active = selectedDibh === f.id;
-                    return (
-                      <li key={f.id} className="flex gap-2">
-                        <button
-                          type="button"
-                          onClick={() => setSelectedDibh(f.id)}
-                          className={cn(
-                            'flex min-w-0 flex-1 items-center gap-3 rounded-2xl border px-4 py-3 text-left transition-colors',
-                            active
-                              ? 'border-[#3B82F6] bg-[#1C2128] ring-1 ring-[#3B82F6]/40'
-                              : 'border-[#30363D]/80 bg-[#252A32] hover:border-[#8B949E]/40'
-                          )}
-                        >
-                          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-[#30363D] bg-[#1C2128] text-[10px] font-bold uppercase tracking-wide text-[#C9D1D9]">
-                            {fileTypeBadge(f.original_name)}
-                          </div>
-                          <div className="min-w-0 flex-1">
-                            <p className="truncate text-sm font-semibold text-white">{f.original_name}</p>
-                            <p className="mt-0.5 text-xs text-[#9BA1A6]">
-                              {formatFileSize(f.size_bytes)} · {formatUploadedAt(f.imported_at)} 업로드
-                            </p>
-                          </div>
-                          <div
-                            className={cn(
-                              'flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2',
-                              active ? 'border-[#3B82F6] bg-[#3B82F6]' : 'border-[#8B949E] bg-transparent'
-                            )}
-                          >
-                            {active && <span className="h-2 w-2 rounded-full bg-white" />}
-                          </div>
-                        </button>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          className="h-[52px] w-11 shrink-0 rounded-2xl text-[#8B949E] hover:bg-[#30363D] hover:text-white"
-                          aria-label="파일 삭제"
-                          onClick={() => setDeleteTarget({ id: f.id, name: f.original_name })}
-                        >
-                          <X className="h-5 w-5" />
-                        </Button>
-                      </li>
-                    );
-                  })}
-                </ul>
-              )}
-            </section>
-          </>
+          <div className="space-y-6">
+            <BreathingCategorySection
+              category="general"
+              patient={patient}
+              savedFiles={generalFiles}
+              pendingFiles={pending.general}
+              selectedId={selectedGeneral}
+              loading={loading}
+              onSelect={setSelectedGeneral}
+              onAddFiles={(list) => handleAddFiles(list, 'general')}
+              onRequestDeleteSaved={setDeleteTarget}
+              inputRef={generalInputRef}
+            />
+            <BreathingCategorySection
+              category="dibh"
+              patient={patient}
+              savedFiles={dibhFiles}
+              pendingFiles={pending.dibh}
+              selectedId={selectedDibh}
+              loading={loading}
+              onSelect={setSelectedDibh}
+              onAddFiles={(list) => handleAddFiles(list, 'dibh')}
+              onRequestDeleteSaved={setDeleteTarget}
+              inputRef={dibhInputRef}
+            />
+          </div>
         )}
       </div>
 
