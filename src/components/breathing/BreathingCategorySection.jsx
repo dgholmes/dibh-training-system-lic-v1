@@ -67,7 +67,7 @@ export default function BreathingCategorySection({
         <span className={cn('h-5 w-1 rounded-full bg-gradient-to-b', style.accent)} />
         {style.title}
         <span
-          className={cn('rounded-full border px-2 py-0.5 text-[11px] font-semibold', style.badge)}
+          className={cn('rounded-sm border px-1.5 py-0.5 text-[10px] font-bold tracking-wide', style.badge)}
         >
           {style.tag}
         </span>
