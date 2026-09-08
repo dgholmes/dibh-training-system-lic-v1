@@ -24,11 +24,15 @@
 
 ---
 
-### Task 0: Capture the "before" screenshots
+### Task 0: Capture the "before" screenshots — OWNED BY THE USER
 
-Must run **before any code change**. The main checkout at
-`C:/Users/user_/Documents/dev/2026/medical/dibh/dibh-training-system-lic-v1`
-stays on `master`; this worktree holds the changes.
+**The user captures these on a tablet running the released 1.1.6 APK.** Do not
+attempt them and do not block on them; on-device shots from the shipped build
+are stronger evidence than a browser capture and match the operating
+environment recorded in `KTC-보완요청-대응-2026-09.md` 10장.
+
+The table in Step 3 below is the shot list handed to the user. Steps 1-2 (dev
+server, browser viewport) do not apply to the on-device route.
 
 **Files:**
 - Create: `docs/submission/evidence/formative-eval-2026-09/before/*.png`
@@ -2214,7 +2218,11 @@ visible on the login and admin screens."
 
 ---
 
-### Task 15: Capture the "after" screenshots
+### Task 15: Capture the "after" screenshots — OWNED BY THE USER
+
+**The user captures these on a tablet, from a 1.1.7 APK built off this
+branch.** Build and hand over the APK when Task 14 is done; the shot list below
+is what the user works from.
 
 **Files:**
 - Create: `docs/submission/evidence/formative-eval-2026-09/after/*.png`
