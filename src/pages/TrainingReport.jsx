@@ -8,7 +8,7 @@ import { useQuery } from '@tanstack/react-query';
 import ComprehensiveBreathingReportCard from '@/components/breathing/ComprehensiveBreathingReportCard';
 import BreathingTypeComparisonModal from '@/components/breathing/BreathingTypeComparisonModal';
 import AnalysisPlaybackPanel from '@/components/breathing/AnalysisPlaybackPanel';
-import RecommendedActionsCard from '@/components/breathing/RecommendedActionsCard';
+import AnalysisResultCard from '@/components/breathing/AnalysisResultCard';
 import { getLatestCalibration } from '@/lib/calibration/sortCalibrations';
 
 /**
@@ -83,26 +83,17 @@ export default function TrainingReport() {
           onOpenInfo={() => setComparisonOpen(true)}
         />
 
-        <div className="rounded-2xl border border-[#30363D] bg-[#1C2128] px-5 py-6 sm:px-6">
-          <div className="grid grid-cols-2 gap-4 text-center">
-            <div>
-              <p className="mb-1 text-sm text-[#8B949E]">DIBH 유지 시간</p>
-              <p className="text-2xl font-bold text-white">{Number(dibhDuration)}초</p>
-            </div>
-            <div>
-              <p className="mb-1 text-sm text-[#8B949E]">호흡 안정성 (CV)</p>
-              <p className="text-2xl font-bold text-white">{Number(cv).toFixed(1)}%</p>
-            </div>
-          </div>
-        </div>
-
         {/*
-          Only with a real calibration behind it. trainingType falls back to
-          'A' when there is none, and 'A' advice ('DIBH 치료 계획 수립을 고려할
-          수 있습니다') must never be shown for a patient who has not been
-          analysed — RM-DBF-014.
+          `type` is gated on a real calibration: trainingType falls back to 'A'
+          when there is none, and 'A' advice ('DIBH 치료 계획 수립을 고려할 수
+          있습니다') must never be shown for a patient who has not been analysed
+          (RM-DBF-014). The measured values still render either way.
         */}
-        {calibration && <RecommendedActionsCard type={trainingType} />}
+        <AnalysisResultCard
+          dibhDuration={dibhDuration}
+          cv={cv}
+          type={calibration ? trainingType : null}
+        />
 
         <AnalysisPlaybackPanel playback={playback} />
       </div>
