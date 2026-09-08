@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Calendar as CalendarIcon, Minus, Plus, Check } from 'lucide-react';
+import { Minus, Plus, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -7,16 +7,13 @@ import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { useAuth } from '@/context/AuthContext';
 import { PatientFlowPageHeader } from '@/components/common/PatientFlowPageHeader';
+import BirthDateField from '@/components/common/BirthDateField';
 import { Patient } from '@/api/entities';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from '@/components/ui/use-toast';
 import { nextPatientCode } from '@/lib/patientCode';
-import { darkPopoverCalendarClassNames } from '@/lib/darkPopoverCalendar';
 import { cn } from '@/lib/utils';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Calendar } from '@/components/ui/calendar';
-import { format, parseISO, isValid } from 'date-fns';
 
 export default function NewPatient() {
   const navigate = useNavigate();
@@ -37,7 +34,6 @@ export default function NewPatient() {
   const [sessionManualMode, setSessionManualMode] = useState(false);
   const [showValidationModal, setShowValidationModal] = useState(false);
   const [fieldErrors, setFieldErrors] = useState({ name: false, birth_date: false });
-  const [birthDatePopoverOpen, setBirthDatePopoverOpen] = useState(false);
   const [postRegistrationModal, setPostRegistrationModal] = useState({
     open: false,
     patientId: null,
@@ -164,62 +160,17 @@ export default function NewPatient() {
                 <Label htmlFor="new-birth-date-trigger" className="text-[#8B949E] mb-2 block font-medium">
                   생년월일
                 </Label>
-                <Popover open={birthDatePopoverOpen} onOpenChange={setBirthDatePopoverOpen}>
-                  <PopoverTrigger asChild>
-                    <button
-                      id="new-birth-date-trigger"
-                      type="button"
-                      aria-invalid={fieldErrors.birth_date}
-                      className={cn(
-                        'flex h-12 w-full items-center gap-3 rounded-xl border bg-[#0D1117] px-4 text-left text-sm transition-colors',
-                        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]/50',
-                        fieldErrors.birth_date
-                          ? 'border-red-500 ring-1 ring-red-500/35'
-                          : 'border-[#30363D] hover:border-[#8B949E]/50'
-                      )}
-                    >
-                      <CalendarIcon className="h-5 w-5 shrink-0 text-[#8B949E]" aria-hidden />
-                      <span
-                        className={
-                          formData.birth_date && isValid(parseISO(formData.birth_date))
-                            ? 'text-white'
-                            : 'text-[#6E7681]'
-                        }
-                      >
-                        {formData.birth_date && isValid(parseISO(formData.birth_date))
-                          ? format(parseISO(formData.birth_date), 'MM/dd/yyyy')
-                          : 'mm/dd/yyyy'}
-                      </span>
-                    </button>
-                  </PopoverTrigger>
-                  <PopoverContent
-                    className="w-auto border border-[#30363D] bg-[#1C2128] p-0 text-white"
-                    align="start"
-                    sideOffset={8}
-                  >
-                    <Calendar
-                      mode="single"
-                      selected={
-                        formData.birth_date && isValid(parseISO(formData.birth_date))
-                          ? parseISO(formData.birth_date)
-                          : undefined
-                      }
-                      onSelect={(date) => {
-                        setFormData({ ...formData, birth_date: date ? format(date, 'yyyy-MM-dd') : '' });
-                        if (fieldErrors.birth_date) setFieldErrors((prev) => ({ ...prev, birth_date: false }));
-                        setBirthDatePopoverOpen(false);
-                      }}
-                      defaultMonth={
-                        formData.birth_date && isValid(parseISO(formData.birth_date))
-                          ? parseISO(formData.birth_date)
-                          : new Date()
-                      }
-                      initialFocus
-                      className="rounded-md border-0 bg-transparent text-white"
-                      classNames={darkPopoverCalendarClassNames}
-                    />
-                  </PopoverContent>
-                </Popover>
+                <BirthDateField
+                  id="new-birth-date"
+                  value={formData.birth_date}
+                  invalid={fieldErrors.birth_date}
+                  onChange={(iso) => {
+                    setFormData({ ...formData, birth_date: iso });
+                    if (fieldErrors.birth_date) {
+                      setFieldErrors((prev) => ({ ...prev, birth_date: false }));
+                    }
+                  }}
+                />
               </div>
 
               <div>

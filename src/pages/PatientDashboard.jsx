@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '@/context/AuthContext';
-import { ArrowLeft, LogOut, Plus, Edit, Trash2, Folder, RefreshCw, Calendar as CalendarIcon, Minus } from 'lucide-react';
+import { ArrowLeft, LogOut, Plus, Edit, Trash2, Folder, RefreshCw, Minus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -17,13 +17,11 @@ import { getCalibrationStatus, getRecalibrationReason } from '@/utils/recalibrat
 import { getLatestCalibration, sortCalibrationsDesc } from '@/lib/calibration/sortCalibrations';
 import { format, parseISO, isValid } from 'date-fns';
 import { cn } from '@/lib/utils';
-import { darkPopoverCalendarClassNames } from '@/lib/darkPopoverCalendar';
 import { nextPatientCode } from '@/lib/patientCode';
 import { BreathingTypeBadge } from '@/components/breathing/BreathingTypeBadge';
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Calendar } from '@/components/ui/calendar';
 import { toast } from '@/components/ui/use-toast';
+import BirthDateField from '@/components/common/BirthDateField';
 
 const genderOptions = [
   { value: 'male', label: '남성' },
@@ -60,7 +58,6 @@ export default function PatientDashboard() {
     assigned_doctor_name: '',
   });
   const [editSessionManualMode, setEditSessionManualMode] = useState(false);
-  const [editBirthPopoverOpen, setEditBirthPopoverOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
   const { data: patient } = useQuery({
@@ -227,7 +224,6 @@ export default function PatientDashboard() {
   useEffect(() => {
     if (showEditModal && patient) {
       setEditSessionManualMode(false);
-      setEditBirthPopoverOpen(false);
       setEditFormData({
         name: patient.name || '',
         birth_date: patient.birth_date || '',
@@ -571,53 +567,11 @@ export default function PatientDashboard() {
 
               <div>
                 <Label className="mb-2 block font-medium text-[#8B949E]">생년월일</Label>
-                <Popover open={editBirthPopoverOpen} onOpenChange={setEditBirthPopoverOpen}>
-                  <PopoverTrigger asChild>
-                    <button
-                      type="button"
-                      className={cn(
-                        'flex h-12 w-full items-center gap-3 rounded-xl border bg-[#0D1117] px-4 text-left text-sm transition-colors',
-                        'border-[#30363D] hover:border-[#8B949E]/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]/50'
-                      )}
-                    >
-                      <CalendarIcon className="h-5 w-5 shrink-0 text-[#8B949E]" aria-hidden />
-                      <span className={editFormData.birth_date ? 'text-white' : 'text-[#6E7681]'}>
-                        {editFormData.birth_date && isValid(parseISO(editFormData.birth_date))
-                          ? format(parseISO(editFormData.birth_date), 'MM/dd/yyyy')
-                          : 'mm/dd/yyyy'}
-                      </span>
-                    </button>
-                  </PopoverTrigger>
-                  <PopoverContent
-                    className="w-auto border border-[#30363D] bg-[#1C2128] p-0 text-white"
-                    align="start"
-                    sideOffset={8}
-                  >
-                    <Calendar
-                      mode="single"
-                      selected={
-                        editFormData.birth_date && isValid(parseISO(editFormData.birth_date))
-                          ? parseISO(editFormData.birth_date)
-                          : undefined
-                      }
-                      onSelect={(date) => {
-                        setEditFormData({
-                          ...editFormData,
-                          birth_date: date ? format(date, 'yyyy-MM-dd') : '',
-                        });
-                        setEditBirthPopoverOpen(false);
-                      }}
-                      defaultMonth={
-                        editFormData.birth_date && isValid(parseISO(editFormData.birth_date))
-                          ? parseISO(editFormData.birth_date)
-                          : new Date()
-                      }
-                      initialFocus
-                      className="rounded-md border-0 bg-transparent text-white"
-                      classNames={darkPopoverCalendarClassNames}
-                    />
-                  </PopoverContent>
-                </Popover>
+                <BirthDateField
+                  id="edit-birth-date"
+                  value={editFormData.birth_date}
+                  onChange={(iso) => setEditFormData({ ...editFormData, birth_date: iso })}
+                />
               </div>
 
               <div>
