@@ -15,8 +15,8 @@ import { RECOMMENDED_ACTIONS, CLINICAL_DISCLAIMER } from '@/lib/breathingAnalysi
  * device output rather than a suggestion (RM-DBF-007, RM-DBF-014).
  *
  * The advice zone is omitted entirely for an unknown type rather than falling
- * back to another type's wording, and the disclaimer sits above the steps so
- * it is read first.
+ * back to another type's wording, and the disclaimer closes it so the advice
+ * is never read without its caveat attached.
  *
  * @param {{
  *   dibhDuration: number|null,
@@ -51,14 +51,9 @@ export default function AnalysisResultCard({ dibhDuration, cv, type }) {
       {/* What they imply — advisory, and kept visually separate from the above */}
       {copy && (
         <div className="mt-6 border-t border-[#30363D] pt-5">
-          <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
-            <div className="flex shrink-0 items-center gap-2">
-              <span className="h-5 w-1 rounded-full bg-gradient-to-b from-[#3B82F6] to-[#8B5CF6]" />
-              <h3 className="text-base font-bold text-white sm:text-lg">권장 조치</h3>
-            </div>
-            <p className="text-xs leading-relaxed text-[#8B949E] sm:max-w-[58%] sm:text-right">
-              {CLINICAL_DISCLAIMER}
-            </p>
+          <div className="mb-4 flex items-center gap-2">
+            <span className="h-5 w-1 rounded-full bg-gradient-to-b from-[#3B82F6] to-[#8B5CF6]" />
+            <h3 className="text-base font-bold text-white sm:text-lg">권장 조치</h3>
           </div>
 
           <p className="mb-4 text-sm font-semibold text-white">{copy.headline}</p>
@@ -73,6 +68,10 @@ export default function AnalysisResultCard({ dibhDuration, cv, type }) {
               </li>
             ))}
           </ul>
+
+          <p className="mt-5 border-t border-[#30363D]/60 pt-4 text-xs leading-relaxed text-[#8B949E]">
+            {CLINICAL_DISCLAIMER}
+          </p>
         </div>
       )}
     </div>
