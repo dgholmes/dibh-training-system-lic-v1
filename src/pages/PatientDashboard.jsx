@@ -167,6 +167,11 @@ export default function PatientDashboard() {
     navigate('/login', { replace: true });
   };
 
+  // Both entry points lead to the merged upload + analysis screen.
+  const handleAddData = () => {
+    navigate(createPageUrl('AnalysisFileSelect') + `?patientId=${encodeURIComponent(patientId)}`);
+  };
+
   const handleRecalibrate = () => {
     navigate(createPageUrl('AnalysisFileSelect') + `?patientId=${encodeURIComponent(patientId)}`);
   };
@@ -433,20 +438,37 @@ export default function PatientDashboard() {
               </div>
             )}
 
-            {/* Upload and analysis are one screen now (formative evaluation #9) */}
+            {/*
+              Both buttons open the same merged screen (upload and analysis are
+              one screen since #9). They are kept separate deliberately: a
+              single button labelled 다시 분석 hid the upload path for any
+              patient that already had a calibration, which is most of them.
+              Each label names a job the operator recognises from v1.1.6.
+            */}
             <div className="flex flex-col gap-2 sm:flex-row">
               <Button
                 type="button"
-                onClick={handleRecalibrate}
-                className="h-12 flex-1 bg-gradient-to-r from-[#3B82F6] to-[#8B5CF6] font-semibold text-white hover:from-[#2563EB] hover:to-[#7C3AED]"
-              >
-                {latestCalibration ? (
-                  <RefreshCw className="mr-2 h-4 w-4" />
-                ) : (
-                  <Plus className="mr-2 h-4 w-4" />
+                onClick={handleAddData}
+                className={cn(
+                  'h-12 flex-1 font-semibold text-white',
+                  latestCalibration
+                    ? 'border border-[#30363D] bg-[#1C2128] hover:bg-[#30363D]'
+                    : 'bg-gradient-to-r from-[#3B82F6] to-[#8B5CF6] hover:from-[#2563EB] hover:to-[#7C3AED]'
                 )}
-                {latestCalibration ? '다시 분석' : '호흡 데이터 · 분석'}
+              >
+                <Plus className="mr-2 h-4 w-4" />
+                데이터 추가
               </Button>
+              {latestCalibration && (
+                <Button
+                  type="button"
+                  onClick={handleRecalibrate}
+                  className="h-12 flex-1 bg-gradient-to-r from-[#3B82F6] to-[#8B5CF6] font-semibold text-white hover:from-[#2563EB] hover:to-[#7C3AED]"
+                >
+                  <RefreshCw className="mr-2 h-4 w-4" />
+                  다시 분석
+                </Button>
+              )}
             </div>
 
             {/* Calibration history table */}
