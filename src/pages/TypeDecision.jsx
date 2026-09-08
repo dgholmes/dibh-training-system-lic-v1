@@ -98,30 +98,39 @@ export default function TypeDecision() {
   const displayType = trainingType ?? 'B';
 
   return (
-    <div className="min-h-screen bg-[#0D1117] p-6 pb-28">
+    <div className="min-h-screen bg-[#0D1117] p-6 pb-20">
       <PatientFlowPageHeader
         backHref={createPageUrl('PatientDashboard') + `?patientId=${patientId}`}
         title="호흡 분석 결과"
         patient={patient}
       />
 
-      <div className="mx-auto mt-2 max-w-2xl space-y-5">
-        <ComprehensiveBreathingReportCard
-          trainingType={displayType}
-          onOpenInfo={() => setComparisonOpen(true)}
-        />
+      {/*
+        Two columns from lg up. The tablet this runs on reports roughly a
+        1280x800 CSS viewport, so a 672px centred column left ~600px of width
+        unused while pushing the waveform below the fold. Verdict and figures
+        read down the left, the waveform sits beside them.
+      */}
+      <div className="mx-auto mt-2 max-w-6xl">
+        <div className="grid gap-4 lg:grid-cols-2 lg:items-start">
+          <div className="space-y-4">
+            <ComprehensiveBreathingReportCard
+              trainingType={displayType}
+              onOpenInfo={() => setComparisonOpen(true)}
+            />
+            <AnalysisResultCard dibhDuration={dibhDuration} cv={cv} type={displayType} />
+          </div>
 
-        <AnalysisResultCard dibhDuration={dibhDuration} cv={cv} type={displayType} />
-
-        <AnalysisPlaybackPanel playback={playback} />
+          <AnalysisPlaybackPanel playback={playback} />
+        </div>
       </div>
 
-      <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-[#30363D] bg-[#0D1117]/95 p-4 backdrop-blur">
-        <div className="mx-auto max-w-2xl">
+      <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-[#30363D] bg-[#0D1117]/95 p-3 backdrop-blur">
+        <div className="mx-auto max-w-6xl">
           <Button
             type="button"
             onClick={handleDashboard}
-            className="h-12 w-full bg-gradient-to-r from-[#3B82F6] to-[#8B5CF6] text-base font-semibold text-white hover:from-[#2563EB] hover:to-[#7C3AED]"
+            className="h-11 w-full bg-gradient-to-r from-[#3B82F6] to-[#8B5CF6] text-base font-semibold text-white hover:from-[#2563EB] hover:to-[#7C3AED]"
           >
             환자 대시보드로 이동
           </Button>

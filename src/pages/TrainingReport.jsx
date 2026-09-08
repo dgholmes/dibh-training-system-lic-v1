@@ -66,7 +66,7 @@ export default function TrainingReport() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0D1117] p-6 pb-28">
+    <div className="min-h-screen bg-[#0D1117] p-6 pb-20">
       <PatientFlowPageHeader
         backHref={
           patientId
@@ -77,33 +77,41 @@ export default function TrainingReport() {
         patient={patient}
       />
 
-      <div className="mx-auto mt-2 max-w-2xl space-y-5">
-        <ComprehensiveBreathingReportCard
-          trainingType={trainingType}
-          onOpenInfo={() => setComparisonOpen(true)}
-        />
+      {/*
+        Two columns from lg up — see TypeDecision: the tablet's CSS viewport is
+        about 1280x800, so a single 672px column wasted the width and pushed
+        the waveform off screen.
+      */}
+      <div className="mx-auto mt-2 max-w-6xl">
+        <div className="grid gap-4 lg:grid-cols-2 lg:items-start">
+          <div className="space-y-4">
+            <ComprehensiveBreathingReportCard
+              trainingType={trainingType}
+              onOpenInfo={() => setComparisonOpen(true)}
+            />
+            {/*
+              `type` is gated on a real calibration: trainingType falls back to
+              'A' when there is none, and 'A' advice ('DIBH 치료 계획 수립을
+              고려할 수 있습니다') must never be shown for a patient who has not
+              been analysed (RM-DBF-014). The measured values still render.
+            */}
+            <AnalysisResultCard
+              dibhDuration={dibhDuration}
+              cv={cv}
+              type={calibration ? trainingType : null}
+            />
+          </div>
 
-        {/*
-          `type` is gated on a real calibration: trainingType falls back to 'A'
-          when there is none, and 'A' advice ('DIBH 치료 계획 수립을 고려할 수
-          있습니다') must never be shown for a patient who has not been analysed
-          (RM-DBF-014). The measured values still render either way.
-        */}
-        <AnalysisResultCard
-          dibhDuration={dibhDuration}
-          cv={cv}
-          type={calibration ? trainingType : null}
-        />
-
-        <AnalysisPlaybackPanel playback={playback} />
+          <AnalysisPlaybackPanel playback={playback} />
+        </div>
       </div>
 
-      <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-[#30363D] bg-[#0D1117]/95 p-4 backdrop-blur">
-        <div className="mx-auto max-w-2xl">
+      <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-[#30363D] bg-[#0D1117]/95 p-3 backdrop-blur">
+        <div className="mx-auto max-w-6xl">
           <Button
             type="button"
             onClick={handleDashboard}
-            className="h-12 w-full bg-gradient-to-r from-[#3B82F6] to-[#8B5CF6] text-base font-semibold text-white hover:from-[#2563EB] hover:to-[#7C3AED]"
+            className="h-11 w-full bg-gradient-to-r from-[#3B82F6] to-[#8B5CF6] text-base font-semibold text-white hover:from-[#2563EB] hover:to-[#7C3AED]"
           >
             환자 대시보드로 이동
           </Button>

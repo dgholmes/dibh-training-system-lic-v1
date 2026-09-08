@@ -35,7 +35,7 @@ export default function AnalysisResultCard({ dibhDuration, cv, type }) {
     cv != null && Number.isFinite(Number(cv)) ? `${Number(cv).toFixed(1)}%` : '—';
 
   return (
-    <div className="rounded-2xl border border-[#30363D] bg-[#1C2128] px-5 py-6 sm:px-6">
+    <div className="rounded-2xl border border-[#30363D] bg-[#1C2128] px-5 py-5 sm:px-6">
       {/* Measured values */}
       <div className="grid grid-cols-2 gap-4 text-center">
         <div>
@@ -50,14 +50,14 @@ export default function AnalysisResultCard({ dibhDuration, cv, type }) {
 
       {/* What they imply — advisory, and kept visually separate from the above */}
       {copy && (
-        <div className="mt-6 border-t border-[#30363D] pt-5">
-          <div className="mb-4 flex items-center gap-2">
+        <div className="mt-5 border-t border-[#30363D] pt-4">
+          <div className="mb-3 flex items-center gap-2">
             <span className="h-5 w-1 rounded-full bg-gradient-to-b from-[#3B82F6] to-[#8B5CF6]" />
-            <h3 className="text-base font-bold text-white sm:text-lg">권장 조치</h3>
+            <h3 className="text-base font-bold text-white">권장 조치</h3>
           </div>
 
-          <p className="mb-4 text-sm font-semibold text-white">{copy.headline}</p>
-          <ul className="space-y-2.5">
+          <p className="mb-3 text-sm font-semibold text-white">{copy.headline}</p>
+          <ul className="space-y-2">
             {copy.steps.map((line, i) => (
               <li key={i} className="flex gap-2.5 text-sm leading-snug text-[#C9D1D9]">
                 <span
@@ -69,7 +69,7 @@ export default function AnalysisResultCard({ dibhDuration, cv, type }) {
             ))}
           </ul>
 
-          <p className="mt-5 border-t border-[#30363D]/60 pt-4 text-xs leading-relaxed text-[#8B949E]">
+          <p className="mt-4 border-t border-[#30363D]/60 pt-3 text-xs leading-relaxed text-[#8B949E]">
             {CLINICAL_DISCLAIMER}
           </p>
         </div>
