@@ -22,6 +22,7 @@ import { BreathingTypeBadge } from '@/components/breathing/BreathingTypeBadge';
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { toast } from '@/components/ui/use-toast';
 import BirthDateField from '@/components/common/BirthDateField';
+import DoctorSelectField from '@/components/common/DoctorSelectField';
 
 const genderOptions = [
   { value: 'male', label: '남성' },
@@ -56,6 +57,7 @@ export default function PatientDashboard() {
     treatment_session_count: 0,
     patient_code: '',
     assigned_doctor_name: '',
+    assigned_doctor_account_id: '',
   });
   const [editSessionManualMode, setEditSessionManualMode] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -205,6 +207,7 @@ export default function PatientDashboard() {
         treatment_session_count: editFormData.treatment_session_count,
         patient_code: editFormData.patient_code,
         assigned_doctor_name: editFormData.assigned_doctor_name.trim(),
+        assigned_doctor_account_id: editFormData.assigned_doctor_account_id,
       });
       await queryClient.invalidateQueries({ queryKey: ['patient', patientId] });
       await queryClient.invalidateQueries({ queryKey: ['patients'] });
@@ -231,6 +234,7 @@ export default function PatientDashboard() {
         treatment_session_count: patient.treatment_session_count ?? 0,
         patient_code: patient.patient_code || nextPatientCode(),
         assigned_doctor_name: patient.assigned_doctor_name || '',
+        assigned_doctor_account_id: patient.assigned_doctor_account_id || '',
       });
     }
   }, [showEditModal, patient]);
@@ -556,12 +560,16 @@ export default function PatientDashboard() {
                 <Label htmlFor="edit-doctor" className="mb-2 block font-medium text-[#8B949E]">
                   담당 의사
                 </Label>
-                <Input
-                  id="edit-doctor"
-                  placeholder="담당 의사 이름을 입력하세요"
-                  value={editFormData.assigned_doctor_name}
-                  onChange={(e) => setEditFormData({ ...editFormData, assigned_doctor_name: e.target.value })}
-                  className="h-12 rounded-xl border-[#30363D] bg-[#0D1117] text-white placeholder:text-[#6E7681] focus-visible:ring-[#3B82F6]/40"
+                <DoctorSelectField
+                  name={editFormData.assigned_doctor_name}
+                  accountId={editFormData.assigned_doctor_account_id}
+                  onChange={({ name, accountId }) =>
+                    setEditFormData({
+                      ...editFormData,
+                      assigned_doctor_name: name,
+                      assigned_doctor_account_id: accountId,
+                    })
+                  }
                 />
               </div>
 

@@ -8,6 +8,7 @@ import { createPageUrl } from '@/utils';
 import { useAuth } from '@/context/AuthContext';
 import { PatientFlowPageHeader } from '@/components/common/PatientFlowPageHeader';
 import BirthDateField from '@/components/common/BirthDateField';
+import DoctorSelectField from '@/components/common/DoctorSelectField';
 import { Patient } from '@/api/entities';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from '@/components/ui/use-toast';
@@ -28,7 +29,7 @@ export default function NewPatient() {
     treatment_session_count: 0,
     patient_code: '',
     assigned_doctor_name: session?.displayName || session?.username || '',
-    assigned_doctor_account_id: '',
+    assigned_doctor_account_id: session?.userId || '',
   });
 
   const [sessionManualMode, setSessionManualMode] = useState(false);
@@ -147,12 +148,16 @@ export default function NewPatient() {
                 <Label htmlFor="new-doctor" className="text-[#8B949E] mb-2 block font-medium">
                   담당 의사
                 </Label>
-                <Input
-                  id="new-doctor"
-                  placeholder="담당 의사 이름을 입력하세요"
-                  value={formData.assigned_doctor_name}
-                  onChange={(e) => setFormData({ ...formData, assigned_doctor_name: e.target.value })}
-                  className="h-12 rounded-xl border-[#30363D] bg-[#0D1117] text-white placeholder:text-[#8B949E] focus:border-[#3B82F6]"
+                <DoctorSelectField
+                  name={formData.assigned_doctor_name}
+                  accountId={formData.assigned_doctor_account_id}
+                  onChange={({ name, accountId }) =>
+                    setFormData({
+                      ...formData,
+                      assigned_doctor_name: name,
+                      assigned_doctor_account_id: accountId,
+                    })
+                  }
                 />
               </div>
 
