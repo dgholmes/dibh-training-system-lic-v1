@@ -133,9 +133,19 @@ export default function TypeDecision() {
           phrasing would aggravate. Copy is DRAFT pending clinical sign-off.
         */}
         <div className="rounded-2xl border border-[#30363D] bg-[#1C2128] px-5 py-6 sm:px-6">
-          <div className="mb-4 flex items-center gap-2">
-            <span className="h-5 w-1 rounded-full bg-gradient-to-b from-[#3B82F6] to-[#8B5CF6]" />
-            <h3 className="text-base font-bold text-white sm:text-lg">권장 조치</h3>
+          <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+            <div className="flex shrink-0 items-center gap-2">
+              <span className="h-5 w-1 rounded-full bg-gradient-to-b from-[#3B82F6] to-[#8B5CF6]" />
+              <h3 className="text-base font-bold text-white sm:text-lg">권장 조치</h3>
+            </div>
+            {/*
+              Read before the recommendations rather than after them —
+              RM-DBF-007 / RM-DBF-014 are about the analysis being over-trusted
+              or misread, so the caveat should not sit below the fold.
+            */}
+            <p className="text-xs leading-relaxed text-[#8B949E] sm:max-w-[58%] sm:text-right">
+              {CLINICAL_DISCLAIMER}
+            </p>
           </div>
           <p className="mb-4 text-sm font-semibold text-white">
             {RECOMMENDED_ACTIONS[displayType].headline}
@@ -148,9 +158,6 @@ export default function TypeDecision() {
               </li>
             ))}
           </ul>
-          <p className="mt-5 border-t border-[#30363D] pt-4 text-xs leading-relaxed text-[#8B949E]">
-            {CLINICAL_DISCLAIMER}
-          </p>
         </div>
 
         <AnalysisPlaybackPanel playback={playback} />

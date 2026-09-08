@@ -34,12 +34,7 @@ export default function ComprehensiveBreathingReportCard({ trainingType, onOpenI
       <div className="mb-5 flex items-center gap-2">
         <span className="h-5 w-1 rounded-full bg-gradient-to-b from-[#3B82F6] to-[#8B5CF6]" />
         <h2 className="text-base font-bold text-white sm:text-lg">종합 호흡 분석 진단리포트</h2>
-        <span
-          className="inline-flex h-6 w-6 items-center justify-center rounded-full border border-[#30363D] text-[#8B949E]"
-          aria-hidden
-        >
-          <Info className="h-3.5 w-3.5" />
-        </span>
+        <Info className="h-4 w-4 shrink-0 text-[#8B949E]" aria-hidden />
       </div>
 
       {/* Body: type card + summary */}
