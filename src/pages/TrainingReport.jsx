@@ -8,6 +8,7 @@ import { useQuery } from '@tanstack/react-query';
 import ComprehensiveBreathingReportCard from '@/components/breathing/ComprehensiveBreathingReportCard';
 import BreathingTypeComparisonModal from '@/components/breathing/BreathingTypeComparisonModal';
 import AnalysisPlaybackPanel from '@/components/breathing/AnalysisPlaybackPanel';
+import RecommendedActionsCard from '@/components/breathing/RecommendedActionsCard';
 import { getLatestCalibration } from '@/lib/calibration/sortCalibrations';
 
 /**
@@ -94,6 +95,14 @@ export default function TrainingReport() {
             </div>
           </div>
         </div>
+
+        {/*
+          Only with a real calibration behind it. trainingType falls back to
+          'A' when there is none, and 'A' advice ('DIBH 치료 계획 수립을 고려할
+          수 있습니다') must never be shown for a patient who has not been
+          analysed — RM-DBF-014.
+        */}
+        {calibration && <RecommendedActionsCard type={trainingType} />}
 
         <AnalysisPlaybackPanel playback={playback} />
       </div>

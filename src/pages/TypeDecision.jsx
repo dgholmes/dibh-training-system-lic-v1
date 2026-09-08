@@ -9,7 +9,7 @@ import ComprehensiveBreathingReportCard from '@/components/breathing/Comprehensi
 import BreathingTypeComparisonModal from '@/components/breathing/BreathingTypeComparisonModal';
 import AnalysisPlaybackPanel from '@/components/breathing/AnalysisPlaybackPanel';
 import { getLatestCalibration } from '@/lib/calibration/sortCalibrations';
-import { RECOMMENDED_ACTIONS, CLINICAL_DISCLAIMER } from '@/lib/breathingAnalysisReportContent';
+import RecommendedActionsCard from '@/components/breathing/RecommendedActionsCard';
 
 export default function TypeDecision() {
   const navigate = useNavigate();
@@ -126,39 +126,7 @@ export default function TypeDecision() {
           </div>
         </div>
 
-        {/*
-          What to do next. The screen named the Type but not its implication
-          (formative eval #5). Worded as a suggestion with a standing
-          disclaimer — RM-DBF-007 / RM-DBF-014 are the risks directive
-          phrasing would aggravate. Copy is DRAFT pending clinical sign-off.
-        */}
-        <div className="rounded-2xl border border-[#30363D] bg-[#1C2128] px-5 py-6 sm:px-6">
-          <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
-            <div className="flex shrink-0 items-center gap-2">
-              <span className="h-5 w-1 rounded-full bg-gradient-to-b from-[#3B82F6] to-[#8B5CF6]" />
-              <h3 className="text-base font-bold text-white sm:text-lg">권장 조치</h3>
-            </div>
-            {/*
-              Read before the recommendations rather than after them —
-              RM-DBF-007 / RM-DBF-014 are about the analysis being over-trusted
-              or misread, so the caveat should not sit below the fold.
-            */}
-            <p className="text-xs leading-relaxed text-[#8B949E] sm:max-w-[58%] sm:text-right">
-              {CLINICAL_DISCLAIMER}
-            </p>
-          </div>
-          <p className="mb-4 text-sm font-semibold text-white">
-            {RECOMMENDED_ACTIONS[displayType].headline}
-          </p>
-          <ul className="space-y-2.5">
-            {RECOMMENDED_ACTIONS[displayType].steps.map((line, i) => (
-              <li key={i} className="flex gap-2.5 text-sm leading-snug text-[#C9D1D9]">
-                <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#8B949E]" aria-hidden />
-                <span>{line}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
+        <RecommendedActionsCard type={displayType} />
 
         <AnalysisPlaybackPanel playback={playback} />
       </div>
