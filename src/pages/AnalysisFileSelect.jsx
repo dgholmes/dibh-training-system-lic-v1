@@ -16,6 +16,8 @@ import { toast } from '@/components/ui/use-toast';
 import { analyzeFiles } from '@/lib/calibration/analyzeFiles';
 import { isAllowedBreathingUploadFile } from '@/lib/breathingFileFormat';
 import BreathingCategorySection from '@/components/breathing/BreathingCategorySection';
+import UploadConfirmDialog from '@/components/breathing/UploadConfirmDialog';
+import { buildUploadConfirmItems } from '@/lib/breathingFileCategory';
 export default function AnalysisFileSelect() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -30,6 +32,7 @@ export default function AnalysisFileSelect() {
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [isDeletingFile, setIsDeletingFile] = useState(false);
   const [pending, setPending] = useState({ general: [], dibh: [] });
+  const [confirmState, setConfirmState] = useState(null);
   const generalInputRef = useRef(null);
   const dibhInputRef = useRef(null);
   const abortRef = useRef(null);
@@ -107,21 +110,30 @@ export default function AnalysisFileSelect() {
     [patientId, queryClient]
   );
 
-  const handleAddFiles = useCallback(
-    (fileList, category) => {
-      const incoming = Array.from(fileList).filter(isAllowedBreathingUploadFile);
-      const skipped = Array.from(fileList).length - incoming.length;
-      if (skipped > 0) {
-        toast({
-          title: 'CSV 또는 VXP만 업로드할 수 있습니다',
-          description: `${skipped}개 파일은 지원 형식이 아니어서 제외되었습니다.`,
-          variant: 'destructive',
-        });
-      }
-      if (incoming.length) void persistFiles(incoming, category);
-    },
-    [persistFiles]
-  );
+  /**
+   * Nothing is written here. Files are staged and the operator confirms the
+   * destination category first — putting a DIBH recording in the general slot
+   * changes the resulting Type, so this is a safety gate (RM-DBF-010), not a
+   * courtesy prompt.
+   */
+  const handleAddFiles = useCallback((fileList, category) => {
+    const incoming = Array.from(fileList).filter(isAllowedBreathingUploadFile);
+    const skipped = Array.from(fileList).length - incoming.length;
+    if (skipped > 0) {
+      toast({
+        title: 'CSV 또는 VXP만 업로드할 수 있습니다',
+        description: `${skipped}개 파일은 지원 형식이 아니어서 제외되었습니다.`,
+        variant: 'destructive',
+      });
+    }
+    if (!incoming.length) return;
+
+    setConfirmState({
+      category,
+      files: incoming,
+      items: buildUploadConfirmItems(incoming, category),
+    });
+  }, []);
 
   const handleStartAnalysis = async () => {
     if (!patientId) return;
@@ -304,6 +316,17 @@ export default function AnalysisFileSelect() {
           </Button>
         </div>
       </div>
+
+      <UploadConfirmDialog
+        open={!!confirmState}
+        items={confirmState?.items ?? []}
+        onCancel={() => setConfirmState(null)}
+        onConfirm={() => {
+          const { files, category } = confirmState;
+          setConfirmState(null);
+          void persistFiles(files, category);
+        }}
+      />
 
       {/* Validation modal */}
       <Dialog open={showValidationModal} onOpenChange={setShowValidationModal}>

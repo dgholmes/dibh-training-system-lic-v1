@@ -34,3 +34,32 @@ export function detectCategoryFromFileName(name) {
   if (isGeneral === isDibh) return null;
   return isDibh ? 'dibh' : 'general';
 }
+
+/**
+ * Pairs each picked file with the category it is headed for and the category
+ * its filename suggests. Kept pure so the confirmation gate's decision is
+ * unit-testable — it guards a safety control (RM-DBF-010), not just a prompt.
+ *
+ * @param {Array<{name: string}>} files
+ * @param {'general'|'dibh'} category destination the operator dropped them on
+ * @returns {Array<{name: string, category: 'general'|'dibh', detected: 'general'|'dibh'|null}>}
+ */
+export function buildUploadConfirmItems(files, category) {
+  return Array.from(files ?? []).map((f) => ({
+    name: f.name,
+    category,
+    detected: detectCategoryFromFileName(f.name),
+  }));
+}
+
+/**
+ * How many staged files have a filename that contradicts their destination.
+ * An unreadable filename (`detected === null`) is never a mismatch, so the
+ * warning stays meaningful.
+ *
+ * @param {Array<{category: string, detected: string|null}>} items
+ * @returns {number}
+ */
+export function countCategoryMismatches(items) {
+  return (items ?? []).filter((i) => i.detected && i.detected !== i.category).length;
+}
