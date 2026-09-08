@@ -10,6 +10,7 @@ import PatientCard from '@/components/common/PatientCard';
 import { useAuth } from '@/context/AuthContext';
 import { Shield } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { PRODUCT_CODE, PRODUCT_CODE_LABEL } from '@/config/product';
 
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -179,6 +180,11 @@ export default function Home() {
             </Button>
           </div>
         )}
+
+        {/* Version was only visible on login and the admin screens (#6) */}
+        <p className="mt-10 text-center text-xs text-[#6E7681]">
+          DIBH - Flow v{__APP_VERSION__} &nbsp;·&nbsp; {PRODUCT_CODE_LABEL} {PRODUCT_CODE}
+        </p>
       </div>
     </div>
   );
