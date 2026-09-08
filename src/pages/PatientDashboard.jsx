@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '@/context/AuthContext';
-import { ArrowLeft, LogOut, Plus, Edit, Trash2, Folder, RefreshCw, Minus } from 'lucide-react';
+import { ArrowLeft, LogOut, Plus, Edit, Trash2, Folder, RefreshCw, Activity, Minus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -461,7 +461,9 @@ export default function PatientDashboard() {
                   onClick={handleRecalibrate}
                   className="h-12 flex-1 bg-gradient-to-r from-[#3B82F6] to-[#8B5CF6] font-semibold text-white hover:from-[#2563EB] hover:to-[#7C3AED]"
                 >
-                  <RefreshCw className="mr-2 h-4 w-4" />
+                  {/* Pulse line, not circular arrows — this analyses a waveform
+                      rather than reloading anything. */}
+                  <Activity className="mr-2 h-4 w-4" />
                   분석
                 </Button>
               )}
