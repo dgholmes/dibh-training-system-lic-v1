@@ -56,7 +56,7 @@ export const Patient = {
   async filter(filters) {
     const raw = getStorageItem(STORAGE_KEYS.PATIENTS);
     // Filter on non-encrypted fields first (fast), then decrypt matched records
-    const PII = ['name', 'birth_date', 'assigned_doctor_name'];
+    const PII = ['name', 'birth_date', 'assigned_doctor_name', 'assigned_doctor_account_id'];
     const nonPiiFilters = Object.fromEntries(Object.entries(filters).filter(([k]) => !PII.includes(k)));
     const piiFilters = Object.fromEntries(Object.entries(filters).filter(([k]) => PII.includes(k)));
 
