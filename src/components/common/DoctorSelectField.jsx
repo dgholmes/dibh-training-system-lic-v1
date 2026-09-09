@@ -1,5 +1,6 @@
 /* eslint-disable react/prop-types -- small internal field, props documented below */
 import { useEffect, useState } from 'react';
+import { X } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import {
   Select,
@@ -11,7 +12,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { UserStore } from '@/api/authStore';
-import { listDoctorRoster } from '@/api/doctorRosterStore';
+import { listDoctorRoster, forgetDoctorName } from '@/api/doctorRosterStore';
 
 const MANUAL = '__manual__';
 /** Prefix marking a remembered free-text name, so it cannot collide with an account id. */
@@ -25,6 +26,8 @@ const TYPED = 'typed:';
  * heading, so a physician without a login does not have to be retyped for
  * every patient. They stay visually separate from accounts because they are
  * not accounts — nobody logs in as one, and nothing validates the spelling.
+ * Each remembered name carries an × so a mistyped one can be cleared instead
+ * of waiting for it to age off the cap.
  *
  * Only id/username/displayName are kept off the account list. UserStore.list()
  * also returns role and lockout state — this component drops those immediately
@@ -68,6 +71,16 @@ export default function DoctorSelectField({ name, accountId, onChange }) {
   const orphaned = loaded && !accountId && !!name && !rememberedMatch;
   const staleAccount = loaded && !!accountId && !known;
   const showManual = manual || orphaned || staleAccount;
+
+  const handleForget = async (n) => {
+    setRemembered((prev) => prev.filter((x) => x !== n));
+    try {
+      await forgetDoctorName(n);
+    } catch (err) {
+      console.error('[DoctorSelectField] could not forget name:', err);
+      setRemembered(await listDoctorRoster());
+    }
+  };
 
   const selectValue = showManual
     ? MANUAL
@@ -120,6 +133,35 @@ export default function DoctorSelectField({ name, accountId, onChange }) {
                   key={n}
                   value={`${TYPED}${n}`}
                   className="focus:bg-[#30363D] focus:text-white"
+                  action={
+                    <span
+                      role="button"
+                      tabIndex={-1}
+                      aria-label={`${n} 이력에서 삭제`}
+                      title="이력에서 삭제"
+                      /*
+                        Radix selects the row on pointerup, so both pointer
+                        events are stopped here — otherwise removing an entry
+                        would also assign it to the patient on the way out.
+                      */
+                      onPointerDown={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                      }}
+                      onPointerUp={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                      }}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        void handleForget(n);
+                      }}
+                      className="flex h-6 w-6 items-center justify-center rounded text-[#8B949E] hover:bg-[#30363D] hover:text-white"
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </span>
+                  }
                 >
                   {n}
                 </SelectItem>

@@ -96,4 +96,36 @@ describe('doctor roster', () => {
     expect(list).toHaveLength(3);
     expect(list).toEqual(expect.arrayContaining(['가의사', '나의사', '다의사']));
   });
+  it('forgets a name on request', async () => {
+    await roster.rememberDoctorName('박지우');
+    await roster.rememberDoctorName('정현서');
+    await roster.forgetDoctorName('박지우');
+    expect(await roster.listDoctorRoster()).toEqual(['정현서']);
+  });
+
+  it('forgets regardless of case and surrounding whitespace', async () => {
+    await roster.rememberDoctorName('Dr Kim');
+    await roster.forgetDoctorName('  dr kim  ');
+    expect(await roster.listDoctorRoster()).toEqual([]);
+  });
+
+  it('ignores a request to forget something not in the roster', async () => {
+    await roster.rememberDoctorName('박지우');
+    await roster.forgetDoctorName('없는이름');
+    await roster.forgetDoctorName('');
+    await roster.forgetDoctorName(null);
+    expect(await roster.listDoctorRoster()).toEqual(['박지우']);
+  });
+
+  it('serializes a forget against concurrent remembers', async () => {
+    await roster.rememberDoctorName('가의사');
+    await Promise.all([
+      roster.rememberDoctorName('나의사'),
+      roster.forgetDoctorName('가의사'),
+      roster.rememberDoctorName('다의사'),
+    ]);
+    const list = await roster.listDoctorRoster();
+    expect(list).not.toContain('가의사');
+    expect(list).toEqual(expect.arrayContaining(['나의사', '다의사']));
+  });
 });

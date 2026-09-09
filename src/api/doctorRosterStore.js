@@ -94,3 +94,28 @@ export async function rememberDoctorName(name) {
 
   return writeQueue;
 }
+
+/**
+ * Drop a remembered name. The roster is a convenience list, so an operator can
+ * clear out a mistyped entry without waiting for it to age off the cap.
+ *
+ * Only the roster is touched — a patient already assigned this doctor keeps
+ * the name on their record, and the field falls back to showing it as free
+ * text.
+ *
+ * @param {string} name
+ */
+export async function forgetDoctorName(name) {
+  if (typeof name !== 'string') return;
+  const clean = normalize(name);
+  if (!clean) return;
+
+  writeQueue = writeQueue.then(async () => {
+    const entries = await readEntries();
+    const key = identity(clean);
+    const next = entries.filter((e) => identity(String(e.name ?? '')) !== key);
+    if (next.length !== entries.length) await writeEntries(next);
+  });
+
+  return writeQueue;
+}
