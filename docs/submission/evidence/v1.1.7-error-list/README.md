@@ -2,7 +2,8 @@
 
 - 대상: DIBH-Flow **v1.1.7** (versionCode 10107)
 - 작성일: 2026-09-09
-- 캡처 환경: Chromium, **Galaxy Tab S6 세로(portrait)** — CSS 800×1280 / DPR 2 → **PNG 1600×2560**
+- 캡처 환경 ①: Chromium, **Galaxy Tab S6 세로(portrait)** — CSS 800×1280 / DPR 2 → **PNG 1600×2560**
+- 캡처 환경 ②: **Android 에뮬레이터(Galaxy Tab S6, 세로)** — `adb exec-out screencap` → **PNG 1600×2560**
 - 캡처 방식: **실제 화면·실제 컴포넌트**. `/debug/errors` 증적 하네스를 사용하지 않았습니다.
 
 ## 이 폴더의 구성
@@ -30,7 +31,7 @@ node scripts/capture-real-conditions.mjs
   문구가 없으면 `MISS`로 남습니다 — 나타나지 않은 메시지의 스크린샷은 증적이 아니라
   오해의 소지이기 때문입니다.
 
-## 캡처 결과 — 16건 검증 완료
+## 캡처 결과 — 20장 / 메시지 21건
 
 검증되지 않은 항목의 PNG는 **폴더에 두지 않았습니다.** 메시지가 실제로 화면에
 나타나지 않은 스크린샷은 증적이 아니기 때문입니다. 시도 이력 전체는
@@ -59,23 +60,80 @@ node scripts/capture-real-conditions.mjs
 `일반호흡 (GEN)(으)로 저장 · 파일명은 DIBH 호흡 (DIBH)(으)로 보입니다` 로 함께 담겨
 있습니다.
 
+
+## 실기기(에뮬레이터) 캡처 — 시작 차단 화면 5건
+
+브라우저에서 원리적으로 발생하지 않는 항목을 **Android 디버그 빌드**로 재현했습니다.
+캡처는 `adb exec-out screencap` 이므로 상태표시줄을 포함한 **기기 화면 그대로**입니다.
+
+| 파일 | 담긴 메시지 | 발생시킨 실제 조건 |
+|---|---|---|
+| `M001_암호화_키_오류_실기기.png` | #1 암호화 키 오류<br>#2 저장된 암호화 키를 복구할 수 없습니다… | 봉인된 설치 키(`dibh_install_key_v2`)를 복호화 불가능한 값으로 교체 후 재시작 |
+| `M003_무결성_검사_실패_파일변조_실기기.png` | #3 무결성 검사 실패<br>#4 앱 파일의 무결성을 확인할 수 없습니다…<br>#13 무결성 검사 실패 (파일 변조 감지): `{파일}` | 빌드 후 `dist/assets/index-*.js` 에 1줄 추가하여 해시 불일치 유발 |
+| `M011_무결성_매니페스트_로드불가_실기기.png` | #3, #4<br>#11 무결성 매니페스트를 로드할 수 없습니다 (integrity.json) | `dist/integrity.json` 삭제 후 APK 빌드 |
+| `M012_무결성_검사_파일_로드_실패_실기기.png` | #3, #4<br>#12 무결성 검사 파일 로드 실패: `{파일}` | 매니페스트에 등재된 `dist/assets/web-*.js` 삭제 후 APK 빌드 |
+
+`M001` 캡처에는 `secureKey.js` 가 던지는 **영문 상세 문구**
+(`[secureKey] Stored key could not be unwrapped (null). …`)도 함께 담겨 있습니다.
+목록 문서 1장에 기재한 미한글화 항목이며, 실제 화면에 표시됨이 확인되었습니다.
+
+이 4장은 **DC-03 / SI-04 통제가 실기기에서 실제로 동작함**을 함께 보여줍니다 —
+봉인 키를 복구할 수 없을 때 앱은 새 키를 만들지 않고 차단되며(fail-closed),
+번들이 1줄이라도 바뀌면 시작이 차단됩니다.
+
+### 재현 절차
+
+```bash
+# ① 암호화 키 오류 (#1, #2)
+npm run cap:build && (cd android && ./gradlew assembleDebug)
+adb install -r android/app/build/outputs/apk/debug/app-debug.apk
+node scripts/capture-android-blocking.mjs keyerror
+
+# ② 무결성 검사 실패 (#3, #4, #13) — 해시 불일치
+npm run build
+printf '\n// tampered\n' >> dist/assets/index-*.js     # 매니페스트 생성 '이후' 변조
+npx cap sync android && (cd android && ./gradlew assembleDebug)
+adb install -r android/app/build/outputs/apk/debug/app-debug.apk && adb shell pm clear com.thepict.dibhtraining
+node scripts/capture-android-blocking.mjs asis
+
+# ③ 매니페스트 부재 (#11) — 위 ②에서 rm dist/integrity.json 으로 대체
+# ④ 등재 파일 부재 (#12) — 위 ②에서 rm dist/assets/web-*.js 로 대체
+```
+
+> 마지막에 반드시 `npm run build && npx cap sync android` 로 **정상 번들을 복원**하십시오.
+
+> **디버그 빌드를 사용한 이유**: WebView DevTools 접속(`adb forward`)이 필요하고,
+> 무결성 검사는 `import.meta.env.PROD` 기준이므로 **디버그 APK에서도 웹 번들은 프로덕션
+> 빌드**여서 검사가 그대로 수행됩니다. 즉 릴리즈와 동일한 코드 경로가 실행됩니다.
+
+## WRONGKEY APK 에 대한 확인 결과
+
+`dibh-Flow1.1.5_release_WRONGKEY.apk` 로는 위 무결성 화면을 재현할 수 **없습니다.**
+
+```
+$ adb install -r dibh-Flow1.1.5_release_WRONGKEY.apk
+Failure [INSTALL_FAILED_VERSION_DOWNGRADE: Update version code 10105 is older than current 10106]
+```
+
+- 이 APK는 `CN=WRONG KEY - TEST ONLY - DO NOT SHIP` 인증서로 서명되어 있습니다.
+- **서명 키가 다르면 Android 패키지 관리자가 설치 자체를 거부**합니다(동일 버전일 경우
+  `INSTALL_FAILED_UPDATE_INCOMPATIBLE`). 앱이 실행되지 않으므로 앱 내부 메시지는 나올 수 없습니다.
+- 앱의 무결성 검사는 **번들 자산의 SHA-256 을 `integrity.json` 과 대조**하는 것으로,
+  APK 서명 키와는 무관합니다. 서명 키만 바꾼 APK는 (설치된다 하더라도) 무결성 검사를
+  **통과**합니다.
+- 따라서 WRONGKEY APK는 **서명 검증 증적**으로서는 유효하지만 SI-04 무결성 증적은 아니며,
+  위 ②~④ 방식으로 번들을 변조해야 합니다.
+
 ## 아직 캡처하지 못한 항목과 그 이유
 
 정직하게 기록합니다. 아래는 **캡처 실패가 아니라, 현재 조건에서 발생시킬 수 없거나
 추가 작업이 필요한 항목**입니다.
 
-### (가) 브라우저에서 원리적으로 발생하지 않는 것
+### (가) UI 경로가 존재하지 않는 것 — 실측으로 확인
 
-| # | 메시지 | 사유 |
+| # | 메시지 | 확인 결과 |
 |---|---|---|
-| 1, 2 | 암호화 키 오류 / 저장된 암호화 키를 복구할 수 없습니다 | 봉인 키(`dibh_install_key_v2`)는 **Android Keystore 경로에서만** 사용됩니다. 브라우저 빌드는 기존 localStorage 방식을 쓰므로 이 차단 화면에 도달할 수 없습니다. **실기기에서 취득해야 합니다.** |
-| 3, 4, 11, 12, 13 | 무결성 검사 실패 계열 | `main.jsx:144` 의 `import.meta.env.PROD` 안에 있어 **개발 서버에서는 실행되지 않습니다.** `npm run build` 후 `dist/integrity.json` 을 변조한 preview 서버에서 취득해야 합니다. |
-
-### (나) UI 경로가 존재하지 않는 것
-
-| # | 메시지 | 사유 |
-|---|---|---|
-| 35 | 마지막 계정은 삭제할 수 없습니다 | 삭제 버튼은 `u.id !== session?.userId` 일 때만 렌더링됩니다. 계정이 하나뿐이면 그 계정이 곧 로그인 계정이므로 **삭제 버튼 자체가 표시되지 않습니다.** 저장소 계층의 방어 코드이며 화면에서 도달할 수 없습니다. 문구 유지는 타당하나, **증적으로 캡처할 수 없다는 점을 기록**합니다. |
+| 35 | 마지막 계정은 삭제할 수 없습니다 | **화면에서 도달할 수 없음 (실측 확인).** 계정 2개(admin, doctor2)를 만들어 시험한 결과: 계정 2개일 때 삭제 버튼 **1개**(자신의 계정에는 표시되지 않음) → 다른 계정을 삭제하여 1개만 남기면 삭제 버튼 **0개**. 즉 마지막 계정을 삭제하려는 조작 자체가 불가능합니다. 저장소 계층(`UserStore.delete`)의 방어 코드로서 유지할 가치는 있으나 **증적 캡처는 불가능**합니다. |
 
 ### (다) 추가 작업이 필요한 것
 
