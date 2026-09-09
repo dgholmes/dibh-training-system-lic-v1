@@ -112,6 +112,15 @@ window.__h = {
     hit.click();
     return true;
   },
+  // '등록' must not match '등록 완료'; exact comparison where the label is a prefix
+  // of another one on the same screen.
+  clickExact(text, sel) {
+    const nodes = [...document.querySelectorAll(sel || 'button, a, [role="button"]')];
+    const hit = nodes.reverse().find((n) => (n.textContent || '').trim() === text);
+    if (!hit) throw new Error('no element with exact text: ' + text);
+    hit.click();
+    return true;
+  },
   has(text) { return (document.body.innerText || '').includes(text); },
   // React listens for focusout at the root, and 'blur' does not bubble — a
   // synthetic Event('blur') is invisible to it. Focus then blur for real, and
@@ -187,6 +196,23 @@ async function goto(path) {
   await sleep(600);
 }
 
+/**
+ * Install a script that runs BEFORE any page script on the next navigation.
+ * Startup failures (#5-#10) are decided before React mounts, so they can only
+ * be induced from here — breaking a global after load is too late.
+ */
+let preloadId = null;
+async function preload(source) {
+  await clearPreload();
+  const { identifier } = await cdp.send('Page.addScriptToEvaluateOnNewDocument', { source });
+  preloadId = identifier;
+}
+async function clearPreload() {
+  if (!preloadId) return;
+  try { await cdp.send('Page.removeScriptToEvaluateOnNewDocument', { identifier: preloadId }); } catch { /* gone */ }
+  preloadId = null;
+}
+
 /** Wipe app state so each case starts from a known place. */
 async function reset() {
   await goto('/login');
@@ -229,16 +255,21 @@ async function capture({ id, num, name, expect, setup }) {
   }
 }
 
-export { capture, cdp, connect, goto, reset, results, sleep, shoot, OUT, PROFILE, chrome };
+export { capture, cdp, connect, goto, preload, clearPreload, reset, results, sleep, shoot, OUT, PROFILE, chrome };
 
 /* ── entry ────────────────────────────────────────────────────────────────── */
 
 if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   mkdirSync(OUT, { recursive: true });
   const { runCases } = await import('./capture-real-conditions.cases.mjs');
+  const { runCases2 } = await import('./capture-real-conditions.cases2.mjs');
+  const { runCases3 } = await import('./capture-real-conditions.cases3.mjs');
   await connect();
   try {
-    await runCases({ capture, cdp, goto, reset, sleep });
+    const ctx = { capture, cdp, goto, preload, clearPreload, reset, sleep };
+    await runCases(ctx);
+    await runCases2(ctx);
+    await runCases3(ctx);
   } finally {
     try { chrome.kill(); } catch { /* already gone */ }
     try { rmSync(PROFILE, { recursive: true, force: true }); } catch { /* leave it */ }

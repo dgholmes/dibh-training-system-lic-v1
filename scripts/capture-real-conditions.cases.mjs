@@ -24,13 +24,13 @@ async function signIn({ cdp, goto, sleep }, { pw = ADMIN.p, newPw = NEWPW } = {}
   const forced = await cdp.evaluate(`return window.__h.has('초기 비밀번호');`);
   if (forced) {
     await cdp.evaluate(`
-      const inputs = [...document.querySelectorAll('input[type=password]')];
+      const modal=[...document.querySelectorAll('div')].find(d=>(d.textContent||'').includes('새 비밀번호 확인')&&d.querySelectorAll('input[type=password]').length>=2);if(!modal) throw new Error('change-password modal not found');const inputs=[...modal.querySelectorAll('input[type=password]')];
       const set = (el, v) => {
         Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set.call(el, v);
         el.dispatchEvent(new Event('input', { bubbles: true }));
       };
-      set(inputs[inputs.length - 2], ${JSON.stringify(newPw)});
-      set(inputs[inputs.length - 1], ${JSON.stringify(newPw)});
+      set(inputs[0], ${JSON.stringify(newPw)});
+      set(inputs[1], ${JSON.stringify(newPw)});
       return true;
     `);
     await cdp.evaluate(`return window.__h.clickText('비밀번호 변경');`);
@@ -154,13 +154,13 @@ export async function runCases(ctx) {
     setup: async () => {
       // Still on the forced-change modal from M018.
       await cdp.evaluate(`
-        const inputs = [...document.querySelectorAll('input[type=password]')];
+        const modal=[...document.querySelectorAll('div')].find(d=>(d.textContent||'').includes('새 비밀번호 확인')&&d.querySelectorAll('input[type=password]').length>=2);if(!modal) throw new Error('change-password modal not found');const inputs=[...modal.querySelectorAll('input[type=password]')];
         const set = (el, v) => {
           Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set.call(el, v);
           el.dispatchEvent(new Event('input', { bubbles: true }));
         };
-        set(inputs[inputs.length - 2], 'abc');
-        set(inputs[inputs.length - 1], 'abc');
+        set(inputs[0], 'abc');
+        set(inputs[1], 'abc');
         return true;
       `);
       await sleep(600);
@@ -172,13 +172,13 @@ export async function runCases(ctx) {
     expect: '일치하지 않습니다',
     setup: async () => {
       await cdp.evaluate(`
-        const inputs = [...document.querySelectorAll('input[type=password]')];
+        const modal=[...document.querySelectorAll('div')].find(d=>(d.textContent||'').includes('새 비밀번호 확인')&&d.querySelectorAll('input[type=password]').length>=2);if(!modal) throw new Error('change-password modal not found');const inputs=[...modal.querySelectorAll('input[type=password]')];
         const set = (el, v) => {
           Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set.call(el, v);
           el.dispatchEvent(new Event('input', { bubbles: true }));
         };
-        set(inputs[inputs.length - 2], 'Test@1234!');
-        set(inputs[inputs.length - 1], 'Other@1234!');
+        set(inputs[0], 'Test@1234!');
+        set(inputs[1], 'Other@1234!');
         return true;
       `);
       await sleep(400);
@@ -266,10 +266,10 @@ export async function runCases(ctx) {
       await goto(`/breathingdataupload?patientId=${patientId}`);
       // Two files with no parseable rows, one per category.
       await dropFiles(ctx, 0, [{ name: 'GEN_empty.csv', body: 'header only\n' }]);
-      await cdp.evaluate(`return window.__h.clickText('등록');`);
+      await cdp.evaluate(`return window.__h.clickExact('등록');`);
       await sleep(1200);
       await dropFiles(ctx, 1, [{ name: 'DIBH_empty.csv', body: 'header only\n' }]);
-      await cdp.evaluate(`return window.__h.clickText('등록');`);
+      await cdp.evaluate(`return window.__h.clickExact('등록');`);
       await sleep(1200);
       await goto(`/analysisfileselect?patientId=${patientId}`);
       // File rows show the patient-name display form, so pick the first row in
@@ -421,7 +421,7 @@ export async function runCases(ctx) {
       // Fill the category to its limit, then attempt one more.
       const batch = Array.from({ length: 10 }, (_, i) => ({ name: `GEN_${i}.csv`, body: CSV_OK }));
       await dropFiles(ctx, 0, batch);
-      await cdp.evaluate(`return window.__h.clickText('등록');`);
+      await cdp.evaluate(`return window.__h.clickExact('등록');`);
       await sleep(4000);
       await dropFiles(ctx, 0, [{ name: 'GEN_over.csv', body: CSV_OK }]);
       await sleep(600);
@@ -439,23 +439,8 @@ export async function runCases(ctx) {
     },
   });
 
-  /* ── 시작 차단: 암호화 키 오류 ─────────────────────────────────────────── */
-
-  await capture({
-    id: 'M001', num: 1, name: '암호화 키 오류 (차단 화면)',
-    expect: '암호화 키 오류',
-    setup: async () => {
-      await reset();
-      // A wrapped key that cannot be unwrapped — loadOrCreateInstallKey must
-      // fail closed rather than mint a replacement (DC-03).
-      await cdp.evaluate(`
-        localStorage.setItem('dibh_install_key_v2', 'bm90LWEtcmVhbC13cmFwcGVkLWtleQ==');
-        return true;
-      `);
-      await goto('/login');
-      await sleep(2000);
-    },
-  });
+  // 시작 차단(암호화 키 오류)은 Android Keystore 경로에서만 발생하므로
+  // 브라우저 실행에서는 다루지 않습니다 — scripts/capture-android-blocking.mjs 참조.
 
   /* ── 5. 백업 / 복구 ────────────────────────────────────────────────────── */
 
