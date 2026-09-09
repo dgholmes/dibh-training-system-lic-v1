@@ -273,23 +273,7 @@
   },
   {
     "file": "src/components/breathing/AnalysisPlaybackPanel.jsx",
-    "line": 114,
-    "kind": "UNCLASSIFIED",
-    "how": "",
-    "dynamic": false,
-    "text": "일반 호흡 그래프"
-  },
-  {
-    "file": "src/components/breathing/AnalysisPlaybackPanel.jsx",
-    "line": 114,
-    "kind": "UNCLASSIFIED",
-    "how": "",
-    "dynamic": false,
-    "text": "DIBH 호흡 그래프"
-  },
-  {
-    "file": "src/components/breathing/AnalysisPlaybackPanel.jsx",
-    "line": 115,
+    "line": 9,
     "kind": "UNCLASSIFIED",
     "how": "",
     "dynamic": false,
@@ -297,7 +281,7 @@
   },
   {
     "file": "src/components/breathing/AnalysisPlaybackPanel.jsx",
-    "line": 120,
+    "line": 117,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -305,7 +289,7 @@
   },
   {
     "file": "src/components/breathing/AnalysisPlaybackPanel.jsx",
-    "line": 121,
+    "line": 118,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -313,7 +297,23 @@
   },
   {
     "file": "src/components/breathing/AnalysisPlaybackPanel.jsx",
-    "line": 163,
+    "line": 138,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "호흡 파형 재생"
+  },
+  {
+    "file": "src/components/breathing/AnalysisPlaybackPanel.jsx",
+    "line": 143,
+    "kind": "CHROME",
+    "how": "attr aria-label",
+    "dynamic": false,
+    "text": "그래프 선택"
+  },
+  {
+    "file": "src/components/breathing/AnalysisPlaybackPanel.jsx",
+    "line": 185,
     "kind": "UNCLASSIFIED",
     "how": "",
     "dynamic": false,
@@ -321,7 +321,7 @@
   },
   {
     "file": "src/components/breathing/AnalysisPlaybackPanel.jsx",
-    "line": 163,
+    "line": 185,
     "kind": "UNCLASSIFIED",
     "how": "",
     "dynamic": false,
@@ -329,11 +329,43 @@
   },
   {
     "file": "src/components/breathing/AnalysisPlaybackPanel.jsx",
-    "line": 185,
+    "line": 207,
     "kind": "CHROME",
     "how": "attr aria-label",
     "dynamic": false,
     "text": "재생 위치"
+  },
+  {
+    "file": "src/components/breathing/AnalysisResultCard.jsx",
+    "line": 32,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": true,
+    "text": "${…}초"
+  },
+  {
+    "file": "src/components/breathing/AnalysisResultCard.jsx",
+    "line": 42,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "DIBH 유지 시간"
+  },
+  {
+    "file": "src/components/breathing/AnalysisResultCard.jsx",
+    "line": 46,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "호흡 안정성 (CV)"
+  },
+  {
+    "file": "src/components/breathing/AnalysisResultCard.jsx",
+    "line": 56,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "권장 조치"
   },
   {
     "file": "src/components/breathing/BreathingTypeComparisonModal.jsx",
@@ -374,6 +406,134 @@
     "how": "JSX text",
     "dynamic": false,
     "text": "종합 호흡 분석 진단리포트"
+  },
+  {
+    "file": "src/components/breathing/UploadConfirmDialog.jsx",
+    "line": 8,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "일반호흡 (GEN)"
+  },
+  {
+    "file": "src/components/breathing/UploadConfirmDialog.jsx",
+    "line": 8,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "DIBH 호흡 (DIBH)"
+  },
+  {
+    "file": "src/components/breathing/UploadConfirmDialog.jsx",
+    "line": 36,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "업로드 확인"
+  },
+  {
+    "file": "src/components/breathing/UploadConfirmDialog.jsx",
+    "line": 37,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "등록할 파일과 저장될 구분을 확인합니다."
+  },
+  {
+    "file": "src/components/breathing/UploadConfirmDialog.jsx",
+    "line": 42,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "아래 내용으로 등록할까요?"
+  },
+  {
+    "file": "src/components/breathing/UploadConfirmDialog.jsx",
+    "line": 43,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "구분을 잘못 지정하면 분석 결과(Type)가 달라집니다."
+  },
+  {
+    "file": "src/components/breathing/UploadConfirmDialog.jsx",
+    "line": 60,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "(으)로 저장"
+  },
+  {
+    "file": "src/components/breathing/UploadConfirmDialog.jsx",
+    "line": 61,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": true,
+    "text": " · 파일명은 ${…}(으)로 보입니다"
+  },
+  {
+    "file": "src/components/breathing/UploadConfirmDialog.jsx",
+    "line": 71,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "파일명과 구분이 일치하지 않는 파일이"
+  },
+  {
+    "file": "src/components/breathing/UploadConfirmDialog.jsx",
+    "line": 72,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "개 있습니다. 그대로 등록하면\n                분석 결과가 달라질 수 있습니다."
+  },
+  {
+    "file": "src/components/breathing/UploadConfirmDialog.jsx",
+    "line": 84,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "취소"
+  },
+  {
+    "file": "src/components/breathing/UploadConfirmDialog.jsx",
+    "line": 97,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "그대로 등록"
+  },
+  {
+    "file": "src/components/breathing/UploadConfirmDialog.jsx",
+    "line": 97,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "등록"
+  },
+  {
+    "file": "src/components/common/BirthDateField.jsx",
+    "line": 93,
+    "kind": "CHROME",
+    "how": "attr aria-label",
+    "dynamic": false,
+    "text": "달력에서 선택"
+  },
+  {
+    "file": "src/components/common/BirthDateField.jsx",
+    "line": 131,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "생년월일을 확인해 주세요. 예: 19900512"
+  },
+  {
+    "file": "src/components/common/BirthDateField.jsx",
+    "line": 131,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "예: 19900512 (구분자 입력 가능)"
   },
   {
     "file": "src/components/common/BreathingChart.jsx",
@@ -422,6 +582,62 @@
     "how": "JSX text",
     "dynamic": false,
     "text": "목표선(보라) | 유지 시작/종료(세로선)"
+  },
+  {
+    "file": "src/components/common/DoctorSelectField.jsx",
+    "line": 112,
+    "kind": "CHROME",
+    "how": "attr placeholder",
+    "dynamic": false,
+    "text": "담당 의사를 선택하세요"
+  },
+  {
+    "file": "src/components/common/DoctorSelectField.jsx",
+    "line": 117,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "등록 계정"
+  },
+  {
+    "file": "src/components/common/DoctorSelectField.jsx",
+    "line": 128,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "직접 입력 이력"
+  },
+  {
+    "file": "src/components/common/DoctorSelectField.jsx",
+    "line": 140,
+    "kind": "CHROME",
+    "how": "JSX expression",
+    "dynamic": true,
+    "text": "${…} 이력에서 삭제"
+  },
+  {
+    "file": "src/components/common/DoctorSelectField.jsx",
+    "line": 141,
+    "kind": "CHROME",
+    "how": "attr title",
+    "dynamic": false,
+    "text": "이력에서 삭제"
+  },
+  {
+    "file": "src/components/common/DoctorSelectField.jsx",
+    "line": 172,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "직접 입력"
+  },
+  {
+    "file": "src/components/common/DoctorSelectField.jsx",
+    "line": 180,
+    "kind": "CHROME",
+    "how": "attr placeholder",
+    "dynamic": false,
+    "text": "담당 의사 이름을 입력하세요"
   },
   {
     "file": "src/components/common/EmergencyStopModal.jsx",
@@ -518,6 +734,38 @@
     "how": "JSX text",
     "dynamic": false,
     "text": "마지막 훈련:"
+  },
+  {
+    "file": "src/components/common/PatientFlowPageHeader.jsx",
+    "line": 33,
+    "kind": "CHROME",
+    "how": "attr aria-label",
+    "dynamic": false,
+    "text": "뒤로 가기"
+  },
+  {
+    "file": "src/components/common/PatientFlowPageHeader.jsx",
+    "line": 35,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "뒤로"
+  },
+  {
+    "file": "src/components/common/PatientFlowPageHeader.jsx",
+    "line": 51,
+    "kind": "CHROME",
+    "how": "attr aria-label",
+    "dynamic": false,
+    "text": "홈으로 이동"
+  },
+  {
+    "file": "src/components/common/PatientFlowPageHeader.jsx",
+    "line": 53,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "홈"
   },
   {
     "file": "src/components/common/StepIndicator.jsx",
@@ -912,6 +1160,110 @@
     "text": "잦은 호흡 횟수로 인해\n주기 오차 발생 가능성 높음"
   },
   {
+    "file": "src/lib/breathingAnalysisReportContent.js",
+    "line": 94,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "DIBH 치료 계획 수립을 고려할 수 있습니다"
+  },
+  {
+    "file": "src/lib/breathingAnalysisReportContent.js",
+    "line": 96,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "호흡 유지 시간과 안정성이 DIBH 기준을 충족합니다."
+  },
+  {
+    "file": "src/lib/breathingAnalysisReportContent.js",
+    "line": 97,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "동일 조건에서 1회 더 측정하여 재현성을 확인하는 것을 권장합니다."
+  },
+  {
+    "file": "src/lib/breathingAnalysisReportContent.js",
+    "line": 98,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "치료 계획 수립 시 실제 호흡 유지 가능 시간을 함께 검토해 주세요."
+  },
+  {
+    "file": "src/lib/breathingAnalysisReportContent.js",
+    "line": 102,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "추가 훈련 후 재평가를 고려할 수 있습니다"
+  },
+  {
+    "file": "src/lib/breathingAnalysisReportContent.js",
+    "line": 104,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "호흡은 안정적이나 DIBH 기준에는 도달하지 않았습니다."
+  },
+  {
+    "file": "src/lib/breathingAnalysisReportContent.js",
+    "line": 105,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "호흡 유지 훈련을 진행한 뒤 재측정하는 것을 권장합니다."
+  },
+  {
+    "file": "src/lib/breathingAnalysisReportContent.js",
+    "line": 106,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "재측정 시 측정 조건(자세·시간대)을 이전과 동일하게 유지해 주세요."
+  },
+  {
+    "file": "src/lib/breathingAnalysisReportContent.js",
+    "line": 110,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "호흡 안정화가 우선 필요할 수 있습니다"
+  },
+  {
+    "file": "src/lib/breathingAnalysisReportContent.js",
+    "line": 112,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "호흡이 짧고 변동이 커 현재 조건에서는 DIBH 적용이 어려울 수 있습니다."
+  },
+  {
+    "file": "src/lib/breathingAnalysisReportContent.js",
+    "line": 113,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "호흡 안정화 훈련을 먼저 진행하는 것을 권장합니다."
+  },
+  {
+    "file": "src/lib/breathingAnalysisReportContent.js",
+    "line": 114,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "측정 중 환자 상태나 자세에 문제가 없었는지 확인 후 재측정을 고려해 주세요."
+  },
+  {
+    "file": "src/lib/breathingAnalysisReportContent.js",
+    "line": 121,
+    "kind": "CHROME",
+    "how": "const CLINICAL_DISCLAIMER",
+    "dynamic": false,
+    "text": "본 결과는 참고 정보이며, 최종 치료 방침은 담당 의료진의 판단에 따릅니다."
+  },
+  {
     "file": "src/lib/calibration/analyzeFiles.js",
     "line": 125,
     "kind": "ERROR",
@@ -1097,7 +1449,7 @@
   },
   {
     "file": "src/lib/crypto.js",
-    "line": 268,
+    "line": 271,
     "kind": "UNCLASSIFIED",
     "how": "",
     "dynamic": false,
@@ -1785,6 +2137,14 @@
   },
   {
     "file": "src/pages/AdminAccounts.jsx",
+    "line": 343,
+    "kind": "CHROME",
+    "how": "attr aria-label",
+    "dynamic": false,
+    "text": "닫기"
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
     "line": 350,
     "kind": "CHROME",
     "how": "JSX text",
@@ -1910,6 +2270,14 @@
     "how": "JSX text",
     "dynamic": false,
     "text": "] 비밀번호 초기화"
+  },
+  {
+    "file": "src/pages/AdminAccounts.jsx",
+    "line": 414,
+    "kind": "CHROME",
+    "how": "attr aria-label",
+    "dynamic": false,
+    "text": "닫기"
   },
   {
     "file": "src/pages/AdminAccounts.jsx",
@@ -2361,7 +2729,7 @@
   },
   {
     "file": "src/pages/AdminBackup.jsx",
-    "line": 154,
+    "line": 158,
     "kind": "AUDIT",
     "how": "audit log",
     "dynamic": true,
@@ -2369,7 +2737,7 @@
   },
   {
     "file": "src/pages/AdminBackup.jsx",
-    "line": 155,
+    "line": 159,
     "kind": "INFO",
     "how": "status message (success)",
     "dynamic": true,
@@ -2377,7 +2745,7 @@
   },
   {
     "file": "src/pages/AdminBackup.jsx",
-    "line": 159,
+    "line": 163,
     "kind": "ERROR",
     "how": "message: (error)",
     "dynamic": false,
@@ -2385,7 +2753,7 @@
   },
   {
     "file": "src/pages/AdminBackup.jsx",
-    "line": 176,
+    "line": 180,
     "kind": "AUDIT",
     "how": "audit log",
     "dynamic": true,
@@ -2393,7 +2761,7 @@
   },
   {
     "file": "src/pages/AdminBackup.jsx",
-    "line": 177,
+    "line": 181,
     "kind": "INFO",
     "how": "status message (success)",
     "dynamic": true,
@@ -2401,7 +2769,7 @@
   },
   {
     "file": "src/pages/AdminBackup.jsx",
-    "line": 181,
+    "line": 185,
     "kind": "ERROR",
     "how": "message: (error)",
     "dynamic": false,
@@ -2409,7 +2777,7 @@
   },
   {
     "file": "src/pages/AdminBackup.jsx",
-    "line": 196,
+    "line": 200,
     "kind": "AUDIT",
     "how": "audit log",
     "dynamic": true,
@@ -2417,7 +2785,7 @@
   },
   {
     "file": "src/pages/AdminBackup.jsx",
-    "line": 197,
+    "line": 201,
     "kind": "INFO",
     "how": "status message (success)",
     "dynamic": true,
@@ -2425,7 +2793,7 @@
   },
   {
     "file": "src/pages/AdminBackup.jsx",
-    "line": 197,
+    "line": 201,
     "kind": "UNCLASSIFIED",
     "how": "",
     "dynamic": false,
@@ -2433,7 +2801,7 @@
   },
   {
     "file": "src/pages/AdminBackup.jsx",
-    "line": 204,
+    "line": 208,
     "kind": "AUDIT",
     "how": "audit log",
     "dynamic": false,
@@ -2441,7 +2809,7 @@
   },
   {
     "file": "src/pages/AdminBackup.jsx",
-    "line": 209,
+    "line": 213,
     "kind": "UNCLASSIFIED",
     "how": "",
     "dynamic": false,
@@ -2449,7 +2817,7 @@
   },
   {
     "file": "src/pages/AdminBackup.jsx",
-    "line": 210,
+    "line": 214,
     "kind": "UNCLASSIFIED",
     "how": "",
     "dynamic": false,
@@ -2457,7 +2825,7 @@
   },
   {
     "file": "src/pages/AdminBackup.jsx",
-    "line": 227,
+    "line": 231,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -2465,7 +2833,7 @@
   },
   {
     "file": "src/pages/AdminBackup.jsx",
-    "line": 228,
+    "line": 232,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -2473,7 +2841,7 @@
   },
   {
     "file": "src/pages/AdminBackup.jsx",
-    "line": 249,
+    "line": 253,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -2481,7 +2849,7 @@
   },
   {
     "file": "src/pages/AdminBackup.jsx",
-    "line": 251,
+    "line": 255,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -2489,7 +2857,7 @@
   },
   {
     "file": "src/pages/AdminBackup.jsx",
-    "line": 259,
+    "line": 263,
     "kind": "UNCLASSIFIED",
     "how": "",
     "dynamic": false,
@@ -2497,7 +2865,7 @@
   },
   {
     "file": "src/pages/AdminBackup.jsx",
-    "line": 259,
+    "line": 263,
     "kind": "UNCLASSIFIED",
     "how": "",
     "dynamic": false,
@@ -2505,7 +2873,7 @@
   },
   {
     "file": "src/pages/AdminBackup.jsx",
-    "line": 269,
+    "line": 273,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -2513,7 +2881,7 @@
   },
   {
     "file": "src/pages/AdminBackup.jsx",
-    "line": 271,
+    "line": 275,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -2521,7 +2889,7 @@
   },
   {
     "file": "src/pages/AdminBackup.jsx",
-    "line": 279,
+    "line": 283,
     "kind": "UNCLASSIFIED",
     "how": "",
     "dynamic": false,
@@ -2529,7 +2897,7 @@
   },
   {
     "file": "src/pages/AdminBackup.jsx",
-    "line": 279,
+    "line": 283,
     "kind": "UNCLASSIFIED",
     "how": "",
     "dynamic": false,
@@ -2537,7 +2905,7 @@
   },
   {
     "file": "src/pages/AdminBackup.jsx",
-    "line": 289,
+    "line": 293,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -2545,7 +2913,7 @@
   },
   {
     "file": "src/pages/AdminBackup.jsx",
-    "line": 291,
+    "line": 295,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -2553,7 +2921,7 @@
   },
   {
     "file": "src/pages/AdminBackup.jsx",
-    "line": 297,
+    "line": 301,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -2561,7 +2929,7 @@
   },
   {
     "file": "src/pages/AdminBackup.jsx",
-    "line": 302,
+    "line": 306,
     "kind": "UNCLASSIFIED",
     "how": "",
     "dynamic": false,
@@ -2569,7 +2937,7 @@
   },
   {
     "file": "src/pages/AdminBackup.jsx",
-    "line": 302,
+    "line": 306,
     "kind": "UNCLASSIFIED",
     "how": "",
     "dynamic": false,
@@ -2577,7 +2945,7 @@
   },
   {
     "file": "src/pages/AnalysisFileSelect.jsx",
-    "line": 140,
+    "line": 143,
     "kind": "UNCLASSIFIED",
     "how": "",
     "dynamic": false,
@@ -2585,7 +2953,7 @@
   },
   {
     "file": "src/pages/AnalysisFileSelect.jsx",
-    "line": 173,
+    "line": 176,
     "kind": "ERROR",
     "how": "toast title (destructive)",
     "dynamic": false,
@@ -2593,7 +2961,7 @@
   },
   {
     "file": "src/pages/AnalysisFileSelect.jsx",
-    "line": 174,
+    "line": 177,
     "kind": "ERROR",
     "how": "toast description (destructive)",
     "dynamic": false,
@@ -2601,7 +2969,7 @@
   },
   {
     "file": "src/pages/AnalysisFileSelect.jsx",
-    "line": 191,
+    "line": 194,
     "kind": "CHROME",
     "how": "attr title",
     "dynamic": false,
@@ -2609,7 +2977,7 @@
   },
   {
     "file": "src/pages/AnalysisFileSelect.jsx",
-    "line": 196,
+    "line": 199,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -2617,7 +2985,7 @@
   },
   {
     "file": "src/pages/AnalysisFileSelect.jsx",
-    "line": 197,
+    "line": 200,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -2625,7 +2993,7 @@
   },
   {
     "file": "src/pages/AnalysisFileSelect.jsx",
-    "line": 199,
+    "line": 202,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -2633,7 +3001,7 @@
   },
   {
     "file": "src/pages/AnalysisFileSelect.jsx",
-    "line": 199,
+    "line": 202,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -2641,7 +3009,7 @@
   },
   {
     "file": "src/pages/AnalysisFileSelect.jsx",
-    "line": 206,
+    "line": 209,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -2649,7 +3017,7 @@
   },
   {
     "file": "src/pages/AnalysisFileSelect.jsx",
-    "line": 208,
+    "line": 211,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -2657,7 +3025,7 @@
   },
   {
     "file": "src/pages/AnalysisFileSelect.jsx",
-    "line": 215,
+    "line": 218,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -2665,7 +3033,7 @@
   },
   {
     "file": "src/pages/AnalysisFileSelect.jsx",
-    "line": 222,
+    "line": 225,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -2673,7 +3041,7 @@
   },
   {
     "file": "src/pages/AnalysisFileSelect.jsx",
-    "line": 226,
+    "line": 229,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -2681,7 +3049,7 @@
   },
   {
     "file": "src/pages/AnalysisFileSelect.jsx",
-    "line": 228,
+    "line": 231,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -2689,7 +3057,7 @@
   },
   {
     "file": "src/pages/AnalysisFileSelect.jsx",
-    "line": 257,
+    "line": 262,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -2697,7 +3065,7 @@
   },
   {
     "file": "src/pages/AnalysisFileSelect.jsx",
-    "line": 274,
+    "line": 279,
     "kind": "CHROME",
     "how": "attr aria-label",
     "dynamic": false,
@@ -2705,7 +3073,7 @@
   },
   {
     "file": "src/pages/AnalysisFileSelect.jsx",
-    "line": 288,
+    "line": 298,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -2713,7 +3081,7 @@
   },
   {
     "file": "src/pages/AnalysisFileSelect.jsx",
-    "line": 292,
+    "line": 302,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -2721,7 +3089,7 @@
   },
   {
     "file": "src/pages/AnalysisFileSelect.jsx",
-    "line": 294,
+    "line": 304,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -2729,7 +3097,7 @@
   },
   {
     "file": "src/pages/AnalysisFileSelect.jsx",
-    "line": 319,
+    "line": 331,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -2737,7 +3105,7 @@
   },
   {
     "file": "src/pages/AnalysisFileSelect.jsx",
-    "line": 336,
+    "line": 348,
     "kind": "CHROME",
     "how": "attr aria-label",
     "dynamic": false,
@@ -2745,7 +3113,7 @@
   },
   {
     "file": "src/pages/AnalysisFileSelect.jsx",
-    "line": 359,
+    "line": 376,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -2753,7 +3121,7 @@
   },
   {
     "file": "src/pages/AnalysisFileSelect.jsx",
-    "line": 367,
+    "line": 384,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -2761,7 +3129,7 @@
   },
   {
     "file": "src/pages/AnalysisFileSelect.jsx",
-    "line": 379,
+    "line": 396,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -2769,7 +3137,7 @@
   },
   {
     "file": "src/pages/AnalysisFileSelect.jsx",
-    "line": 380,
+    "line": 397,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -2777,7 +3145,7 @@
   },
   {
     "file": "src/pages/AnalysisFileSelect.jsx",
-    "line": 388,
+    "line": 405,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -2785,7 +3153,7 @@
   },
   {
     "file": "src/pages/AnalysisFileSelect.jsx",
-    "line": 391,
+    "line": 408,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -2793,7 +3161,7 @@
   },
   {
     "file": "src/pages/AnalysisFileSelect.jsx",
-    "line": 398,
+    "line": 415,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -2801,7 +3169,7 @@
   },
   {
     "file": "src/pages/AnalysisFileSelect.jsx",
-    "line": 410,
+    "line": 427,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -2809,7 +3177,7 @@
   },
   {
     "file": "src/pages/AnalysisFileSelect.jsx",
-    "line": 411,
+    "line": 428,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -2817,7 +3185,7 @@
   },
   {
     "file": "src/pages/AnalysisFileSelect.jsx",
-    "line": 419,
+    "line": 436,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -2825,7 +3193,7 @@
   },
   {
     "file": "src/pages/AnalysisFileSelect.jsx",
-    "line": 421,
+    "line": 438,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -2833,7 +3201,7 @@
   },
   {
     "file": "src/pages/AnalysisFileSelect.jsx",
-    "line": 429,
+    "line": 446,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -2841,7 +3209,7 @@
   },
   {
     "file": "src/pages/AnalysisFileSelect.jsx",
-    "line": 438,
+    "line": 455,
     "kind": "UNCLASSIFIED",
     "how": "",
     "dynamic": false,
@@ -2849,7 +3217,7 @@
   },
   {
     "file": "src/pages/AnalysisFileSelect.jsx",
-    "line": 438,
+    "line": 455,
     "kind": "UNCLASSIFIED",
     "how": "",
     "dynamic": false,
@@ -2857,7 +3225,7 @@
   },
   {
     "file": "src/pages/AnalysisFileSelect.jsx",
-    "line": 453,
+    "line": 470,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -2865,7 +3233,7 @@
   },
   {
     "file": "src/pages/AnalysisFileSelect.jsx",
-    "line": 454,
+    "line": 471,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -2873,7 +3241,7 @@
   },
   {
     "file": "src/pages/AnalysisFileSelect.jsx",
-    "line": 464,
+    "line": 481,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -2881,7 +3249,7 @@
   },
   {
     "file": "src/pages/AnalysisFileSelect.jsx",
-    "line": 473,
+    "line": 490,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -2889,7 +3257,7 @@
   },
   {
     "file": "src/pages/AnalysisFileSelect.jsx",
-    "line": 479,
+    "line": 496,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -2897,7 +3265,7 @@
   },
   {
     "file": "src/pages/AnalysisFileSelect.jsx",
-    "line": 480,
+    "line": 497,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -2905,7 +3273,7 @@
   },
   {
     "file": "src/pages/AnalysisFileSelect.jsx",
-    "line": 483,
+    "line": 500,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -2913,7 +3281,7 @@
   },
   {
     "file": "src/pages/AnalysisFileSelect.jsx",
-    "line": 489,
+    "line": 506,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -2921,7 +3289,7 @@
   },
   {
     "file": "src/pages/BreathingDataUpload.jsx",
-    "line": 69,
+    "line": 73,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -2929,7 +3297,7 @@
   },
   {
     "file": "src/pages/BreathingDataUpload.jsx",
-    "line": 70,
+    "line": 74,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -2937,7 +3305,7 @@
   },
   {
     "file": "src/pages/BreathingDataUpload.jsx",
-    "line": 86,
+    "line": 90,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -2945,7 +3313,7 @@
   },
   {
     "file": "src/pages/BreathingDataUpload.jsx",
-    "line": 102,
+    "line": 108,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -2953,7 +3321,7 @@
   },
   {
     "file": "src/pages/BreathingDataUpload.jsx",
-    "line": 118,
+    "line": 127,
     "kind": "CHROME",
     "how": "attr aria-label",
     "dynamic": false,
@@ -2961,7 +3329,7 @@
   },
   {
     "file": "src/pages/BreathingDataUpload.jsx",
-    "line": 140,
+    "line": 149,
     "kind": "UNCLASSIFIED",
     "how": "",
     "dynamic": false,
@@ -2969,7 +3337,7 @@
   },
   {
     "file": "src/pages/BreathingDataUpload.jsx",
-    "line": 142,
+    "line": 150,
     "kind": "UNCLASSIFIED",
     "how": "",
     "dynamic": true,
@@ -2977,31 +3345,15 @@
   },
   {
     "file": "src/pages/BreathingDataUpload.jsx",
-    "line": 143,
-    "kind": "UNCLASSIFIED",
-    "how": "",
-    "dynamic": true,
-    "text": "${…} · ${…}% 업로드 중…"
-  },
-  {
-    "file": "src/pages/BreathingDataUpload.jsx",
-    "line": 176,
-    "kind": "UNCLASSIFIED",
-    "how": "",
-    "dynamic": false,
-    "text": "업로드 취소"
-  },
-  {
-    "file": "src/pages/BreathingDataUpload.jsx",
-    "line": 176,
-    "kind": "UNCLASSIFIED",
-    "how": "",
+    "line": 173,
+    "kind": "CHROME",
+    "how": "attr aria-label",
     "dynamic": false,
     "text": "항목 제거"
   },
   {
     "file": "src/pages/BreathingDataUpload.jsx",
-    "line": 253,
+    "line": 247,
     "kind": "ERROR",
     "how": "throw new Error",
     "dynamic": false,
@@ -3009,7 +3361,7 @@
   },
   {
     "file": "src/pages/BreathingDataUpload.jsx",
-    "line": 259,
+    "line": 253,
     "kind": "CHROME",
     "how": "const safeMsg",
     "dynamic": false,
@@ -3017,7 +3369,7 @@
   },
   {
     "file": "src/pages/BreathingDataUpload.jsx",
-    "line": 261,
+    "line": 255,
     "kind": "ERROR",
     "how": "toast title (destructive)",
     "dynamic": false,
@@ -3025,7 +3377,7 @@
   },
   {
     "file": "src/pages/BreathingDataUpload.jsx",
-    "line": 282,
+    "line": 273,
     "kind": "ERROR",
     "how": "toast title (destructive)",
     "dynamic": false,
@@ -3033,7 +3385,7 @@
   },
   {
     "file": "src/pages/BreathingDataUpload.jsx",
-    "line": 283,
+    "line": 274,
     "kind": "ERROR",
     "how": "toast description (destructive)",
     "dynamic": false,
@@ -3041,7 +3393,7 @@
   },
   {
     "file": "src/pages/BreathingDataUpload.jsx",
-    "line": 292,
+    "line": 283,
     "kind": "ERROR",
     "how": "toast title (destructive)",
     "dynamic": false,
@@ -3049,7 +3401,7 @@
   },
   {
     "file": "src/pages/BreathingDataUpload.jsx",
-    "line": 293,
+    "line": 284,
     "kind": "ERROR",
     "how": "toast description (destructive)",
     "dynamic": true,
@@ -3057,7 +3409,7 @@
   },
   {
     "file": "src/pages/BreathingDataUpload.jsx",
-    "line": 319,
+    "line": 312,
     "kind": "ERROR",
     "how": "toast title (destructive)",
     "dynamic": false,
@@ -3065,7 +3417,7 @@
   },
   {
     "file": "src/pages/BreathingDataUpload.jsx",
-    "line": 320,
+    "line": 313,
     "kind": "ERROR",
     "how": "toast description (destructive)",
     "dynamic": false,
@@ -3073,7 +3425,7 @@
   },
   {
     "file": "src/pages/BreathingDataUpload.jsx",
-    "line": 329,
+    "line": 322,
     "kind": "ERROR",
     "how": "toast title (destructive)",
     "dynamic": false,
@@ -3081,7 +3433,7 @@
   },
   {
     "file": "src/pages/BreathingDataUpload.jsx",
-    "line": 330,
+    "line": 323,
     "kind": "ERROR",
     "how": "toast description (destructive)",
     "dynamic": true,
@@ -3089,7 +3441,7 @@
   },
   {
     "file": "src/pages/BreathingDataUpload.jsx",
-    "line": 358,
+    "line": 363,
     "kind": "ERROR",
     "how": "toast title (destructive)",
     "dynamic": false,
@@ -3097,7 +3449,7 @@
   },
   {
     "file": "src/pages/BreathingDataUpload.jsx",
-    "line": 359,
+    "line": 364,
     "kind": "ERROR",
     "how": "toast description (destructive)",
     "dynamic": false,
@@ -3105,7 +3457,7 @@
   },
   {
     "file": "src/pages/BreathingDataUpload.jsx",
-    "line": 377,
+    "line": 382,
     "kind": "ERROR",
     "how": "toast title (destructive)",
     "dynamic": false,
@@ -3113,7 +3465,7 @@
   },
   {
     "file": "src/pages/BreathingDataUpload.jsx",
-    "line": 378,
+    "line": 383,
     "kind": "ERROR",
     "how": "toast description (destructive)",
     "dynamic": false,
@@ -3121,7 +3473,7 @@
   },
   {
     "file": "src/pages/BreathingDataUpload.jsx",
-    "line": 391,
+    "line": 396,
     "kind": "ERROR",
     "how": "toast title (destructive)",
     "dynamic": false,
@@ -3129,7 +3481,7 @@
   },
   {
     "file": "src/pages/BreathingDataUpload.jsx",
-    "line": 392,
+    "line": 397,
     "kind": "ERROR",
     "how": "toast description (destructive)",
     "dynamic": false,
@@ -3137,7 +3489,7 @@
   },
   {
     "file": "src/pages/BreathingDataUpload.jsx",
-    "line": 409,
+    "line": 414,
     "kind": "CHROME",
     "how": "attr title",
     "dynamic": false,
@@ -3145,7 +3497,7 @@
   },
   {
     "file": "src/pages/BreathingDataUpload.jsx",
-    "line": 413,
+    "line": 418,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -3153,7 +3505,7 @@
   },
   {
     "file": "src/pages/BreathingDataUpload.jsx",
-    "line": 417,
+    "line": 422,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -3161,7 +3513,7 @@
   },
   {
     "file": "src/pages/BreathingDataUpload.jsx",
-    "line": 422,
+    "line": 427,
     "kind": "CHROME",
     "how": "attr title",
     "dynamic": false,
@@ -3169,7 +3521,7 @@
   },
   {
     "file": "src/pages/BreathingDataUpload.jsx",
-    "line": 432,
+    "line": 438,
     "kind": "CHROME",
     "how": "attr title",
     "dynamic": false,
@@ -3177,7 +3529,7 @@
   },
   {
     "file": "src/pages/BreathingDataUpload.jsx",
-    "line": 445,
+    "line": 452,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -3185,7 +3537,7 @@
   },
   {
     "file": "src/pages/BreathingDataUpload.jsx",
-    "line": 456,
+    "line": 463,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -3193,7 +3545,7 @@
   },
   {
     "file": "src/pages/BreathingDataUpload.jsx",
-    "line": 460,
+    "line": 467,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -3201,7 +3553,7 @@
   },
   {
     "file": "src/pages/BreathingDataUpload.jsx",
-    "line": 470,
+    "line": 484,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -3209,7 +3561,7 @@
   },
   {
     "file": "src/pages/BreathingDataUpload.jsx",
-    "line": 471,
+    "line": 485,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -3217,7 +3569,7 @@
   },
   {
     "file": "src/pages/BreathingDataUpload.jsx",
-    "line": 481,
+    "line": 495,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -3225,7 +3577,7 @@
   },
   {
     "file": "src/pages/BreathingDataUpload.jsx",
-    "line": 483,
+    "line": 497,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -3233,7 +3585,7 @@
   },
   {
     "file": "src/pages/BreathingDataUpload.jsx",
-    "line": 491,
+    "line": 505,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -3241,7 +3593,7 @@
   },
   {
     "file": "src/pages/BreathingDataUpload.jsx",
-    "line": 500,
+    "line": 514,
     "kind": "UNCLASSIFIED",
     "how": "",
     "dynamic": false,
@@ -3249,7 +3601,7 @@
   },
   {
     "file": "src/pages/BreathingDataUpload.jsx",
-    "line": 500,
+    "line": 514,
     "kind": "UNCLASSIFIED",
     "how": "",
     "dynamic": false,
@@ -3329,7 +3681,7 @@
   },
   {
     "file": "src/pages/Home.jsx",
-    "line": 50,
+    "line": 54,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -3337,7 +3689,7 @@
   },
   {
     "file": "src/pages/Home.jsx",
-    "line": 57,
+    "line": 61,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -3345,7 +3697,7 @@
   },
   {
     "file": "src/pages/Home.jsx",
-    "line": 62,
+    "line": 66,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -3353,7 +3705,7 @@
   },
   {
     "file": "src/pages/Home.jsx",
-    "line": 75,
+    "line": 79,
     "kind": "CHROME",
     "how": "attr placeholder",
     "dynamic": false,
@@ -3361,7 +3713,7 @@
   },
   {
     "file": "src/pages/Home.jsx",
-    "line": 83,
+    "line": 90,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -3369,25 +3721,57 @@
   },
   {
     "file": "src/pages/Home.jsx",
-    "line": 93,
-    "kind": "CHROME",
-    "how": "JSX text",
+    "line": 101,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "검색 결과"
+  },
+  {
+    "file": "src/pages/Home.jsx",
+    "line": 101,
+    "kind": "UNCLASSIFIED",
+    "how": "",
     "dynamic": false,
     "text": "최근 치료 환자"
   },
   {
     "file": "src/pages/Home.jsx",
-    "line": 110,
-    "kind": "CHROME",
-    "how": "JSX text",
+    "line": 121,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": true,
+    "text": "검색 결과 (${…}건)"
+  },
+  {
+    "file": "src/pages/Home.jsx",
+    "line": 121,
+    "kind": "UNCLASSIFIED",
+    "how": "",
     "dynamic": false,
     "text": "최근 치료 환자"
   },
   {
     "file": "src/pages/Home.jsx",
-    "line": 123,
+    "line": 133,
     "kind": "CHROME",
     "how": "JSX text",
+    "dynamic": false,
+    "text": "검색 해제"
+  },
+  {
+    "file": "src/pages/Home.jsx",
+    "line": 151,
+    "kind": "UNCLASSIFIED",
+    "how": "",
+    "dynamic": false,
+    "text": "검색 결과가 없습니다"
+  },
+  {
+    "file": "src/pages/Home.jsx",
+    "line": 151,
+    "kind": "UNCLASSIFIED",
+    "how": "",
     "dynamic": false,
     "text": "등록된 환자가 없습니다"
   },
@@ -3697,103 +4081,15 @@
   },
   {
     "file": "src/pages/NewPatient.jsx",
-    "line": 62,
-    "kind": "CHROME",
-    "how": "JSX text",
-    "dynamic": false,
-    "text": "파일을 선택하세요"
-  },
-  {
-    "file": "src/pages/NewPatient.jsx",
-    "line": 63,
-    "kind": "CHROME",
-    "how": "JSX text",
-    "dynamic": false,
-    "text": "CSV, VXP 지원 (다중 선택 가능 · 분석은 CSV만)"
-  },
-  {
-    "file": "src/pages/NewPatient.jsx",
-    "line": 79,
-    "kind": "CHROME",
-    "how": "JSX text",
-    "dynamic": false,
-    "text": "업로드 파일 ("
-  },
-  {
-    "file": "src/pages/NewPatient.jsx",
-    "line": 96,
-    "kind": "UNCLASSIFIED",
-    "how": "",
-    "dynamic": true,
-    "text": "${…} · ${…}% 업로드 중..."
-  },
-  {
-    "file": "src/pages/NewPatient.jsx",
-    "line": 97,
-    "kind": "UNCLASSIFIED",
-    "how": "",
-    "dynamic": true,
-    "text": "${…} · 업로드 완료"
-  },
-  {
-    "file": "src/pages/NewPatient.jsx",
-    "line": 131,
-    "kind": "CHROME",
-    "how": "attr aria-label",
-    "dynamic": false,
-    "text": "파일 제거"
-  },
-  {
-    "file": "src/pages/NewPatient.jsx",
-    "line": 205,
+    "line": 93,
     "kind": "ERROR",
-    "how": "toast title (destructive)",
+    "how": "message:",
     "dynamic": false,
-    "text": "CSV 또는 VXP만 업로드할 수 있습니다"
+    "text": "등록이 완료되었습니다. 호흡 데이터는 환자 대시보드에서 추가할 수 있습니다."
   },
   {
     "file": "src/pages/NewPatient.jsx",
-    "line": 206,
-    "kind": "ERROR",
-    "how": "toast description (destructive)",
-    "dynamic": true,
-    "text": "${…}개 파일은 지원 형식이 아니어서 제외되었습니다."
-  },
-  {
-    "file": "src/pages/NewPatient.jsx",
-    "line": 253,
-    "kind": "ERROR",
-    "how": "toast title (destructive)",
-    "dynamic": false,
-    "text": "업로드 진행 중입니다"
-  },
-  {
-    "file": "src/pages/NewPatient.jsx",
-    "line": 254,
-    "kind": "ERROR",
-    "how": "toast description (destructive)",
-    "dynamic": false,
-    "text": "모든 파일의 업로드가 완료된 뒤 등록 완료를 눌러 주세요. 진행 중에는 파일이 DB에 저장되지 않습니다."
-  },
-  {
-    "file": "src/pages/NewPatient.jsx",
-    "line": 309,
-    "kind": "UNCLASSIFIED",
-    "how": "",
-    "dynamic": false,
-    "text": "등록은 완료되었습니다. 분석을 진행하려면 나중에 환자 대시보드에서 일반호흡·DIBH 데이터를 각각 1개 이상 채워 주세요."
-  },
-  {
-    "file": "src/pages/NewPatient.jsx",
-    "line": 310,
-    "kind": "UNCLASSIFIED",
-    "how": "",
-    "dynamic": false,
-    "text": "등록은 완료되었습니다. 호흡 데이터는 나중에 환자 대시보드에서 추가할 수 있습니다."
-  },
-  {
-    "file": "src/pages/NewPatient.jsx",
-    "line": 317,
+    "line": 99,
     "kind": "ERROR",
     "how": "toast title (destructive)",
     "dynamic": false,
@@ -3801,7 +4097,7 @@
   },
   {
     "file": "src/pages/NewPatient.jsx",
-    "line": 318,
+    "line": 100,
     "kind": "ERROR",
     "how": "toast description (destructive)",
     "dynamic": false,
@@ -3809,7 +4105,7 @@
   },
   {
     "file": "src/pages/NewPatient.jsx",
-    "line": 327,
+    "line": 109,
     "kind": "UNCLASSIFIED",
     "how": "",
     "dynamic": false,
@@ -3817,7 +4113,7 @@
   },
   {
     "file": "src/pages/NewPatient.jsx",
-    "line": 328,
+    "line": 110,
     "kind": "UNCLASSIFIED",
     "how": "",
     "dynamic": false,
@@ -3825,7 +4121,7 @@
   },
   {
     "file": "src/pages/NewPatient.jsx",
-    "line": 329,
+    "line": 111,
     "kind": "UNCLASSIFIED",
     "how": "",
     "dynamic": false,
@@ -3833,7 +4129,7 @@
   },
   {
     "file": "src/pages/NewPatient.jsx",
-    "line": 337,
+    "line": 119,
     "kind": "CHROME",
     "how": "attr title",
     "dynamic": false,
@@ -3841,7 +4137,7 @@
   },
   {
     "file": "src/pages/NewPatient.jsx",
-    "line": 345,
+    "line": 127,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -3849,7 +4145,7 @@
   },
   {
     "file": "src/pages/NewPatient.jsx",
-    "line": 351,
+    "line": 133,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -3857,7 +4153,7 @@
   },
   {
     "file": "src/pages/NewPatient.jsx",
-    "line": 356,
+    "line": 138,
     "kind": "CHROME",
     "how": "attr placeholder",
     "dynamic": false,
@@ -3865,7 +4161,7 @@
   },
   {
     "file": "src/pages/NewPatient.jsx",
-    "line": 373,
+    "line": 155,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -3873,15 +4169,7 @@
   },
   {
     "file": "src/pages/NewPatient.jsx",
-    "line": 378,
-    "kind": "CHROME",
-    "how": "attr placeholder",
-    "dynamic": false,
-    "text": "담당 의사 이름을 입력하세요"
-  },
-  {
-    "file": "src/pages/NewPatient.jsx",
-    "line": 386,
+    "line": 172,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -3889,7 +4177,7 @@
   },
   {
     "file": "src/pages/NewPatient.jsx",
-    "line": 448,
+    "line": 189,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -3897,7 +4185,7 @@
   },
   {
     "file": "src/pages/NewPatient.jsx",
-    "line": 477,
+    "line": 218,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -3905,7 +4193,7 @@
   },
   {
     "file": "src/pages/NewPatient.jsx",
-    "line": 532,
+    "line": 273,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -3913,7 +4201,7 @@
   },
   {
     "file": "src/pages/NewPatient.jsx",
-    "line": 539,
+    "line": 280,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -3921,39 +4209,15 @@
   },
   {
     "file": "src/pages/NewPatient.jsx",
-    "line": 553,
-    "kind": "CHROME",
-    "how": "attr title",
-    "dynamic": false,
-    "text": "일반호흡 데이터 업로드(선택)"
-  },
-  {
-    "file": "src/pages/NewPatient.jsx",
-    "line": 561,
-    "kind": "CHROME",
-    "how": "attr title",
-    "dynamic": false,
-    "text": "DIBH 데이터 업로드(선택)"
-  },
-  {
-    "file": "src/pages/NewPatient.jsx",
-    "line": 570,
+    "line": 294,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
-    "text": "파일 업로드가 끝날 때까지 기다린 뒤 등록 완료를 눌러 주세요."
+    "text": "호흡 데이터는 등록 후 환자 대시보드의 [데이터 추가]에서 등록합니다."
   },
   {
     "file": "src/pages/NewPatient.jsx",
-    "line": 575,
-    "kind": "CHROME",
-    "how": "JSX text",
-    "dynamic": false,
-    "text": "지금은 호흡 데이터를 생략해도 됩니다. 다만 분석 단계에서는 일반호흡·DIBH 파일이 각각 1개 이상 필요합니다."
-  },
-  {
-    "file": "src/pages/NewPatient.jsx",
-    "line": 587,
+    "line": 305,
     "kind": "UNCLASSIFIED",
     "how": "",
     "dynamic": false,
@@ -3961,7 +4225,7 @@
   },
   {
     "file": "src/pages/NewPatient.jsx",
-    "line": 605,
+    "line": 323,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -3969,7 +4233,7 @@
   },
   {
     "file": "src/pages/NewPatient.jsx",
-    "line": 610,
+    "line": 328,
     "kind": "UNCLASSIFIED",
     "how": "",
     "dynamic": true,
@@ -3977,7 +4241,7 @@
   },
   {
     "file": "src/pages/NewPatient.jsx",
-    "line": 611,
+    "line": 329,
     "kind": "UNCLASSIFIED",
     "how": "",
     "dynamic": false,
@@ -3985,7 +4249,7 @@
   },
   {
     "file": "src/pages/NewPatient.jsx",
-    "line": 612,
+    "line": 330,
     "kind": "UNCLASSIFIED",
     "how": "",
     "dynamic": false,
@@ -3993,7 +4257,7 @@
   },
   {
     "file": "src/pages/NewPatient.jsx",
-    "line": 616,
+    "line": 334,
     "kind": "UNCLASSIFIED",
     "how": "",
     "dynamic": false,
@@ -4001,7 +4265,7 @@
   },
   {
     "file": "src/pages/NewPatient.jsx",
-    "line": 622,
+    "line": 340,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -4009,7 +4273,7 @@
   },
   {
     "file": "src/pages/NewPatient.jsx",
-    "line": 648,
+    "line": 366,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -4017,7 +4281,7 @@
   },
   {
     "file": "src/pages/NewPatient.jsx",
-    "line": 667,
+    "line": 385,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -4073,7 +4337,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 140,
+    "line": 139,
     "kind": "ERROR",
     "how": "errors.push",
     "dynamic": false,
@@ -4081,7 +4345,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 192,
+    "line": 191,
     "kind": "ERROR",
     "how": "toast title (destructive)",
     "dynamic": false,
@@ -4089,7 +4353,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 193,
+    "line": 192,
     "kind": "ERROR",
     "how": "toast description (destructive)",
     "dynamic": false,
@@ -4097,7 +4361,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 223,
+    "line": 226,
     "kind": "ERROR",
     "how": "toast title (destructive)",
     "dynamic": false,
@@ -4105,7 +4369,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 224,
+    "line": 227,
     "kind": "ERROR",
     "how": "toast description (destructive)",
     "dynamic": false,
@@ -4113,7 +4377,23 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 257,
+    "line": 261,
+    "kind": "CHROME",
+    "how": "attr aria-label",
+    "dynamic": false,
+    "text": "홈으로 이동"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 263,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
+    "text": "홈"
+  },
+  {
+    "file": "src/pages/PatientDashboard.jsx",
+    "line": 266,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -4121,7 +4401,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 265,
+    "line": 274,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -4129,7 +4409,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 270,
+    "line": 279,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -4137,7 +4417,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 295,
+    "line": 304,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -4145,7 +4425,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 304,
+    "line": 313,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -4153,7 +4433,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 312,
+    "line": 321,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -4161,7 +4441,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 320,
+    "line": 329,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -4169,7 +4449,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 326,
+    "line": 335,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -4177,7 +4457,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 329,
+    "line": 338,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -4185,7 +4465,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 333,
+    "line": 342,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -4193,7 +4473,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 335,
+    "line": 344,
     "kind": "UNCLASSIFIED",
     "how": "",
     "dynamic": false,
@@ -4201,7 +4481,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 347,
+    "line": 356,
     "kind": "CHROME",
     "how": "attr aria-label",
     "dynamic": false,
@@ -4209,7 +4489,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 351,
+    "line": 360,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -4217,7 +4497,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 355,
+    "line": 364,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -4225,7 +4505,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 357,
+    "line": 366,
     "kind": "UNCLASSIFIED",
     "how": "",
     "dynamic": false,
@@ -4233,7 +4513,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 370,
+    "line": 379,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -4241,7 +4521,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 374,
+    "line": 383,
     "kind": "UNCLASSIFIED",
     "how": "",
     "dynamic": false,
@@ -4249,7 +4529,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 375,
+    "line": 384,
     "kind": "UNCLASSIFIED",
     "how": "",
     "dynamic": false,
@@ -4257,7 +4537,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 376,
+    "line": 385,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -4265,7 +4545,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 381,
+    "line": 390,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -4273,7 +4553,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 384,
+    "line": 393,
     "kind": "UNCLASSIFIED",
     "how": "",
     "dynamic": true,
@@ -4281,7 +4561,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 389,
+    "line": 398,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -4289,7 +4569,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 412,
+    "line": 421,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -4297,7 +4577,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 416,
+    "line": 425,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -4305,7 +4585,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 418,
+    "line": 427,
     "kind": "UNCLASSIFIED",
     "how": "",
     "dynamic": false,
@@ -4313,7 +4593,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 424,
+    "line": 433,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -4321,7 +4601,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 425,
+    "line": 434,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -4329,7 +4609,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 426,
+    "line": 435,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -4337,7 +4617,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 426,
+    "line": 435,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -4345,7 +4625,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 428,
+    "line": 437,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -4353,7 +4633,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 428,
+    "line": 437,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -4361,7 +4641,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 447,
+    "line": 459,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -4369,23 +4649,15 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 457,
-    "kind": "UNCLASSIFIED",
-    "how": "",
+    "line": 470,
+    "kind": "CHROME",
+    "how": "JSX text",
     "dynamic": false,
-    "text": "다시 분석"
+    "text": "분석"
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 457,
-    "kind": "UNCLASSIFIED",
-    "how": "",
-    "dynamic": false,
-    "text": "호흡 분석"
-  },
-  {
-    "file": "src/pages/PatientDashboard.jsx",
-    "line": 465,
+    "line": 479,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -4393,7 +4665,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 470,
+    "line": 484,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -4401,7 +4673,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 471,
+    "line": 485,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -4409,7 +4681,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 480,
+    "line": 494,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -4417,7 +4689,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 481,
+    "line": 495,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -4425,7 +4697,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 482,
+    "line": 496,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -4433,7 +4705,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 483,
+    "line": 497,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -4441,7 +4713,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 516,
+    "line": 530,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -4449,7 +4721,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 540,
+    "line": 554,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -4457,7 +4729,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 541,
+    "line": 555,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -4465,7 +4737,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 544,
+    "line": 558,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -4473,7 +4745,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 549,
+    "line": 563,
     "kind": "CHROME",
     "how": "attr aria-label",
     "dynamic": false,
@@ -4481,7 +4753,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 557,
+    "line": 571,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -4489,7 +4761,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 562,
+    "line": 576,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -4497,7 +4769,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 567,
+    "line": 581,
     "kind": "CHROME",
     "how": "attr placeholder",
     "dynamic": false,
@@ -4505,7 +4777,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 576,
+    "line": 590,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -4513,15 +4785,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 581,
-    "kind": "CHROME",
-    "how": "attr placeholder",
-    "dynamic": false,
-    "text": "담당 의사 이름을 입력하세요"
-  },
-  {
-    "file": "src/pages/PatientDashboard.jsx",
-    "line": 589,
+    "line": 607,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -4529,7 +4793,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 640,
+    "line": 616,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -4537,7 +4801,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 669,
+    "line": 645,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -4545,7 +4809,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 724,
+    "line": 700,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -4553,7 +4817,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 731,
+    "line": 707,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -4561,7 +4825,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 747,
+    "line": 723,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -4569,7 +4833,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 760,
+    "line": 736,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -4577,7 +4841,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 768,
+    "line": 744,
     "kind": "UNCLASSIFIED",
     "how": "",
     "dynamic": false,
@@ -4585,7 +4849,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 768,
+    "line": 744,
     "kind": "UNCLASSIFIED",
     "how": "",
     "dynamic": false,
@@ -4593,7 +4857,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 781,
+    "line": 757,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -4601,7 +4865,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 782,
+    "line": 758,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -4609,7 +4873,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 791,
+    "line": 767,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -4617,7 +4881,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 792,
+    "line": 768,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -4625,7 +4889,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 795,
+    "line": 771,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -4633,7 +4897,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 804,
+    "line": 780,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -4641,7 +4905,7 @@
   },
   {
     "file": "src/pages/PatientDashboard.jsx",
-    "line": 811,
+    "line": 787,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -4753,35 +5017,11 @@
   },
   {
     "file": "src/pages/TrainingReport.jsx",
-    "line": 75,
+    "line": 76,
     "kind": "CHROME",
     "how": "attr title",
     "dynamic": false,
     "text": "호흡 분석 결과"
-  },
-  {
-    "file": "src/pages/TrainingReport.jsx",
-    "line": 88,
-    "kind": "CHROME",
-    "how": "JSX text",
-    "dynamic": false,
-    "text": "DIBH 유지 시간"
-  },
-  {
-    "file": "src/pages/TrainingReport.jsx",
-    "line": 89,
-    "kind": "CHROME",
-    "how": "JSX text",
-    "dynamic": false,
-    "text": "초"
-  },
-  {
-    "file": "src/pages/TrainingReport.jsx",
-    "line": 92,
-    "kind": "CHROME",
-    "how": "JSX text",
-    "dynamic": false,
-    "text": "호흡 안정성 (CV)"
   },
   {
     "file": "src/pages/TrainingReport.jsx",
@@ -4793,7 +5033,7 @@
   },
   {
     "file": "src/pages/TypeDecision.jsx",
-    "line": 47,
+    "line": 48,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -4801,19 +5041,11 @@
   },
   {
     "file": "src/pages/TypeDecision.jsx",
-    "line": 78,
+    "line": 79,
     "kind": "CHROME",
     "how": "attr title",
     "dynamic": false,
     "text": "호흡 분석 결과"
-  },
-  {
-    "file": "src/pages/TypeDecision.jsx",
-    "line": 82,
-    "kind": "CHROME",
-    "how": "JSX text",
-    "dynamic": false,
-    "text": "저장된 분석 결과가 없습니다"
   },
   {
     "file": "src/pages/TypeDecision.jsx",
@@ -4821,11 +5053,19 @@
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
+    "text": "저장된 분석 결과가 없습니다"
+  },
+  {
+    "file": "src/pages/TypeDecision.jsx",
+    "line": 84,
+    "kind": "CHROME",
+    "how": "JSX text",
+    "dynamic": false,
     "text": "호흡 데이터를 업로드한 뒤 파일을 선택하여 분석을 실행해 주세요."
   },
   {
     "file": "src/pages/TypeDecision.jsx",
-    "line": 90,
+    "line": 91,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
@@ -4833,7 +5073,7 @@
   },
   {
     "file": "src/pages/TypeDecision.jsx",
-    "line": 103,
+    "line": 104,
     "kind": "CHROME",
     "how": "attr title",
     "dynamic": false,
@@ -4841,31 +5081,7 @@
   },
   {
     "file": "src/pages/TypeDecision.jsx",
-    "line": 116,
-    "kind": "CHROME",
-    "how": "JSX text",
-    "dynamic": false,
-    "text": "DIBH 유지 시간"
-  },
-  {
-    "file": "src/pages/TypeDecision.jsx",
-    "line": 118,
-    "kind": "UNCLASSIFIED",
-    "how": "",
-    "dynamic": true,
-    "text": "${…}초"
-  },
-  {
-    "file": "src/pages/TypeDecision.jsx",
-    "line": 122,
-    "kind": "CHROME",
-    "how": "JSX text",
-    "dynamic": false,
-    "text": "호흡 안정성 (CV)"
-  },
-  {
-    "file": "src/pages/TypeDecision.jsx",
-    "line": 137,
+    "line": 125,
     "kind": "CHROME",
     "how": "JSX text",
     "dynamic": false,
