@@ -218,7 +218,10 @@ async function capture({ id, num, name, expect, setup }) {
     await setup();
     const seen = expect ? await cdp.evaluate(`return window.__h.has(${JSON.stringify(expect)});`) : true;
     const file = await shoot(id, name);
-    results.push({ id, num, name, file, verified: seen, expect });
+    // Record everything visible, not just the string we checked — a frame often
+    // carries several catalogued messages, and coverage has to be countable.
+    const screenText = await cdp.evaluate(`return (document.body.innerText || '').slice(0, 4000);`);
+    results.push({ id, num, name, file, verified: seen, expect, screenText });
     console.log(`${seen ? '  ok ' : ' MISS'} ${id}  ${name}`);
   } catch (err) {
     results.push({ id, num, name, file: null, verified: false, error: String(err.message || err) });
