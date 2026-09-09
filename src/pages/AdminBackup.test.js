@@ -19,7 +19,7 @@ describe('createBackup / restoreBackup', () => {
     vi.resetModules();
   });
 
-  it('round-trips all 6 keys plus the SQLite blob through a full backup/restore cycle', async () => {
+  it('round-trips all 7 keys plus the SQLite blob through a full backup/restore cycle', async () => {
     vi.stubGlobal('localStorage', createMockLocalStorage({
       dibh_patients: JSON.stringify([{ id: 'p1' }]),
       dibh_calibrations: JSON.stringify([{ id: 'c1' }]),
@@ -27,6 +27,7 @@ describe('createBackup / restoreBackup', () => {
       dibh_audit_log: JSON.stringify([{ id: 'a1' }]),
       dibh_users: JSON.stringify([{ id: 'u1' }]),
       dibh_calibration_sessions: JSON.stringify([{ id: 'cs1' }]),
+      dibh_doctor_roster: JSON.stringify({ v: 1, data: 'enc:abcd:1234' }),
     }));
     const { initCrypto } = await import('@/lib/crypto');
     await initCrypto();
@@ -40,6 +41,11 @@ describe('createBackup / restoreBackup', () => {
 
     expect(JSON.parse(localStorage.getItem('dibh_users'))).toEqual([{ id: 'u1' }]);
     expect(JSON.parse(localStorage.getItem('dibh_calibration_sessions'))).toEqual([{ id: 'cs1' }]);
+    // JSON envelope around an encrypted payload — round-trips opaquely.
+    expect(JSON.parse(localStorage.getItem('dibh_doctor_roster'))).toEqual({
+      v: 1,
+      data: 'enc:abcd:1234',
+    });
   });
 
   it('restores a legacy (v1, 4-key) backup fixture without error, leaving new keys untouched', async () => {

@@ -116,7 +116,7 @@ export default function TypeDecision() {
         <AnalysisPlaybackPanel playback={playback} />
       </div>
 
-      <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-[#30363D] bg-[#0D1117]/95 p-3 backdrop-blur">
+      <div className="fixed bottom-0 left-0 right-0 z-40 bg-[#0D1117]/95 p-3 backdrop-blur">
         <div className="mx-auto max-w-2xl">
           <Button
             type="button"

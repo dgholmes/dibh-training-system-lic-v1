@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
 import { darkPopoverCalendarClassNames } from '@/lib/darkPopoverCalendar';
-import { normalizeBirthDateInput, formatBirthDateForDisplay } from '@/lib/birthDate';
+import { normalizeBirthDateInput, formatBirthDateForDisplay, MIN_BIRTH_YEAR } from '@/lib/birthDate';
 import { cn } from '@/lib/utils';
 import { format, parseISO, isValid } from 'date-fns';
 
@@ -102,14 +102,15 @@ export default function BirthDateField({ id, value, onChange, invalid = false })
             sideOffset={8}
           >
             {/*
-              Default caption (month arrows), not captionLayout="dropdown-buttons".
-              The dropdown layout renders react-day-picker's own <select>s plus
-              a .rdp-vhidden label, and this project styles neither — the
-              "Month:"/"Year:" labels showed through unstyled. Reaching a
-              distant year is what the text input is for.
+              Arrows and dropdowns together. The dropdown caption needs
+              classNames this project has to supply itself (rdp's own
+              stylesheet is not loaded) — see darkPopoverCalendar.js.
             */}
             <Calendar
               mode="single"
+              captionLayout="dropdown-buttons"
+              fromYear={MIN_BIRTH_YEAR}
+              toYear={new Date().getFullYear()}
               selected={selected}
               defaultMonth={selected ?? new Date()}
               onSelect={(date) => {

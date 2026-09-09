@@ -366,7 +366,7 @@ export default function AnalysisFileSelect() {
       </div>
 
       {/* Bottom action bar */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-[#30363D] bg-[#0D1117]/95 p-4 backdrop-blur">
+      <div className="fixed bottom-0 left-0 right-0 z-40 bg-[#0D1117]/95 p-4 backdrop-blur">
         <div className="mx-auto flex max-w-2xl gap-3">
           <Button
             type="button"

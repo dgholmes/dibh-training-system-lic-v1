@@ -22,6 +22,7 @@ import { BreathingTypeBadge } from '@/components/breathing/BreathingTypeBadge';
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { toast } from '@/components/ui/use-toast';
 import BirthDateField from '@/components/common/BirthDateField';
+import { rememberDoctorName } from '@/api/doctorRosterStore';
 import DoctorSelectField from '@/components/common/DoctorSelectField';
 
 const genderOptions = [
@@ -213,6 +214,9 @@ export default function PatientDashboard() {
         assigned_doctor_name: editFormData.assigned_doctor_name.trim(),
         assigned_doctor_account_id: editFormData.assigned_doctor_account_id,
       });
+      if (!editFormData.assigned_doctor_account_id && editFormData.assigned_doctor_name.trim()) {
+        await rememberDoctorName(editFormData.assigned_doctor_name);
+      }
       await queryClient.invalidateQueries({ queryKey: ['patient', patientId] });
       await queryClient.invalidateQueries({ queryKey: ['patients'] });
       setShowEditModal(false);

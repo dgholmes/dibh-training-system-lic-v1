@@ -72,7 +72,7 @@ const COLOR_ACTION_BTN = {
   purple: 'border-[#A78BFA]/40 bg-transparent text-[#A78BFA] shadow-none hover:border-[#A78BFA]/70 hover:bg-[#A78BFA]/10 hover:text-[#A78BFA]',
 };
 
-const BACKUP_KEYS = ['dibh_patients', 'dibh_calibrations', 'dibh_training_sessions', 'dibh_audit_log', 'dibh_users', 'dibh_calibration_sessions'];
+const BACKUP_KEYS = ['dibh_patients', 'dibh_calibrations', 'dibh_training_sessions', 'dibh_audit_log', 'dibh_users', 'dibh_calibration_sessions', 'dibh_doctor_roster'];
 const BACKUP_FORMAT_VERSION = 2;
 
 /** SHA-256 hex of a string — used for pseudonymisation (DC-02) */
@@ -128,8 +128,12 @@ export async function restoreBackup(encryptedText) {
 
   const payload = JSON.parse(data);
   for (const key of BACKUP_KEYS) {
-    if (Array.isArray(payload[key])) {
-      localStorage.setItem(key, JSON.stringify(payload[key]));
+    const value = payload[key];
+    // Most keys hold arrays; dibh_doctor_roster holds an envelope object.
+    // A key absent from the payload is left untouched, which is what keeps a
+    // legacy 4-key backup from wiping stores it never knew about.
+    if (Array.isArray(value) || (value !== null && typeof value === 'object')) {
+      localStorage.setItem(key, JSON.stringify(value));
     }
   }
   if (payload._backup_format_version >= 2 && payload._sqlite_blob_base64) {

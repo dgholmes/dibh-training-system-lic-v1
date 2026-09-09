@@ -4,18 +4,27 @@ import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
 import { UserStore } from '@/api/authStore';
+import { listDoctorRoster } from '@/api/doctorRosterStore';
 
 const MANUAL = '__manual__';
+/** Prefix marking a remembered free-text name, so it cannot collide with an account id. */
+const TYPED = 'typed:';
 
 /**
  * Doctor assignment. Free-text entry produced spelling variants and duplicate
  * names (formative evaluation #3), so the default is a registered account.
- * "직접 입력" stays available for a physician without an account.
+ *
+ * Names entered through 직접 입력 are remembered and offered under their own
+ * heading, so a physician without a login does not have to be retyped for
+ * every patient. They stay visually separate from accounts because they are
+ * not accounts — nobody logs in as one, and nothing validates the spelling.
  *
  * Only id/username/displayName are kept off the account list. UserStore.list()
  * also returns role and lockout state — this component drops those immediately
@@ -29,19 +38,21 @@ const MANUAL = '__manual__';
  */
 export default function DoctorSelectField({ name, accountId, onChange }) {
   const [accounts, setAccounts] = useState([]);
+  const [remembered, setRemembered] = useState([]);
   const [loaded, setLoaded] = useState(false);
   const [manual, setManual] = useState(false);
 
   useEffect(() => {
     let alive = true;
-    UserStore.list()
-      .then((list) => {
+    Promise.all([UserStore.list(), listDoctorRoster()])
+      .then(([list, roster]) => {
         if (!alive) return;
         setAccounts(list.map(({ id, username, displayName }) => ({ id, username, displayName })));
+        setRemembered(roster);
         setLoaded(true);
       })
       .catch((err) => {
-        console.error('[DoctorSelectField] account list failed:', err);
+        console.error('[DoctorSelectField] doctor options failed to load:', err);
         if (alive) setLoaded(true);
       });
     return () => {
@@ -50,13 +61,19 @@ export default function DoctorSelectField({ name, accountId, onChange }) {
   }, []);
 
   // A stored doctor whose account no longer exists (or was always free text)
-  // must keep showing — falling back to manual preserves the record.
+  // must keep showing — falling back to a remembered entry, or to the manual
+  // field, preserves the record either way.
   const known = accounts.some((a) => a.id === accountId);
-  const orphaned = loaded && !accountId && !!name;
+  const rememberedMatch = loaded && !accountId && !!name && remembered.includes(name);
+  const orphaned = loaded && !accountId && !!name && !rememberedMatch;
   const staleAccount = loaded && !!accountId && !known;
   const showManual = manual || orphaned || staleAccount;
 
-  const selectValue = showManual ? MANUAL : accountId || '';
+  const selectValue = showManual
+    ? MANUAL
+    : rememberedMatch
+      ? `${TYPED}${name}`
+      : accountId || '';
 
   return (
     <div className="space-y-2">
@@ -68,8 +85,13 @@ export default function DoctorSelectField({ name, accountId, onChange }) {
             onChange({ name: '', accountId: '' });
             return;
           }
-          const picked = accounts.find((a) => a.id === v);
           setManual(false);
+          if (v.startsWith(TYPED)) {
+            // A remembered free-text name: no account behind it.
+            onChange({ name: v.slice(TYPED.length), accountId: '' });
+            return;
+          }
+          const picked = accounts.find((a) => a.id === v);
           onChange({ name: picked?.displayName || '', accountId: v });
         }}
       >
@@ -77,11 +99,34 @@ export default function DoctorSelectField({ name, accountId, onChange }) {
           <SelectValue placeholder="담당 의사를 선택하세요" />
         </SelectTrigger>
         <SelectContent className="border-[#30363D] bg-[#1C2128] text-white">
-          {accounts.map((a) => (
-            <SelectItem key={a.id} value={a.id} className="focus:bg-[#30363D] focus:text-white">
-              {a.displayName} ({a.username})
-            </SelectItem>
-          ))}
+          {accounts.length > 0 && (
+            <SelectGroup>
+              <SelectLabel className="text-xs font-semibold text-[#8B949E]">등록 계정</SelectLabel>
+              {accounts.map((a) => (
+                <SelectItem key={a.id} value={a.id} className="focus:bg-[#30363D] focus:text-white">
+                  {a.displayName} ({a.username})
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          )}
+
+          {remembered.length > 0 && (
+            <SelectGroup>
+              <SelectLabel className="text-xs font-semibold text-[#8B949E]">
+                직접 입력 이력
+              </SelectLabel>
+              {remembered.map((n) => (
+                <SelectItem
+                  key={n}
+                  value={`${TYPED}${n}`}
+                  className="focus:bg-[#30363D] focus:text-white"
+                >
+                  {n}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          )}
+
           <SelectItem value={MANUAL} className="focus:bg-[#30363D] focus:text-white">
             직접 입력
           </SelectItem>

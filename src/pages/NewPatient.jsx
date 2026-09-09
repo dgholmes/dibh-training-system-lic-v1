@@ -10,6 +10,7 @@ import { PatientFlowPageHeader } from '@/components/common/PatientFlowPageHeader
 import BirthDateField from '@/components/common/BirthDateField';
 import DoctorSelectField from '@/components/common/DoctorSelectField';
 import { Patient } from '@/api/entities';
+import { rememberDoctorName } from '@/api/doctorRosterStore';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from '@/components/ui/use-toast';
 import { nextPatientCode } from '@/lib/patientCode';
@@ -77,6 +78,12 @@ export default function NewPatient() {
         treatment_method: '',
         breathing_method: '',
       });
+
+      // Only names actually committed to a record are remembered, and only
+      // free-text ones — an account needs no roster entry.
+      if (!formData.assigned_doctor_account_id && formData.assigned_doctor_name.trim()) {
+        await rememberDoctorName(formData.assigned_doctor_name);
+      }
 
       await queryClient.invalidateQueries({ queryKey: ['patients'] });
 
