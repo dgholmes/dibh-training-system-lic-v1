@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '@/context/AuthContext';
-import { ArrowLeft, LogOut, Plus, Edit, Trash2, Folder, RefreshCw, Activity, Minus } from 'lucide-react';
+import { ArrowLeft, LogOut, Plus, Edit, Trash2, Folder, RefreshCw, Activity, Minus, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -559,10 +559,10 @@ export default function PatientDashboard() {
               <button
                 type="button"
                 onClick={() => setShowEditModal(false)}
-                className="rounded-lg p-1 text-[#8B949E] transition-colors hover:bg-[#30363D] hover:text-white"
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-[#8B949E] transition-colors hover:bg-[#30363D] hover:text-white"
                 aria-label="닫기"
               >
-                <span className="text-lg leading-none">×</span>
+                <X className="h-4 w-4" />
               </button>
             </div>
 
