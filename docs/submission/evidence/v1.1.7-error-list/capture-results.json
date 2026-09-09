@@ -1,0 +1,178 @@
+[
+  {
+    "id": "M014",
+    "num": 14,
+    "name": "아이디 또는 비밀번호가 올바르지 않습니다 (남은 시도)",
+    "file": "M014_아이디_또는_비밀번호가_올바르지_않습니다_(남은_시도).png",
+    "verified": true,
+    "expect": "남은 시도"
+  },
+  {
+    "id": "M015",
+    "num": 15,
+    "name": "로그인 시도 횟수를 초과하여 계정이 잠금되었습니다",
+    "file": "M015_로그인_시도_횟수를_초과하여_계정이_잠금되었습니다.png",
+    "verified": true,
+    "expect": "잠금"
+  },
+  {
+    "id": "M016",
+    "num": 16,
+    "name": "계정이 잠금되었습니다 약 N분 후 다시 시도",
+    "file": "M016_계정이_잠금되었습니다_약_N분_후_다시_시도.png",
+    "verified": true,
+    "expect": "분 후 다시 시도"
+  },
+  {
+    "id": "M018",
+    "num": 18,
+    "name": "초기 비밀번호 변경 필요",
+    "file": "M018_초기_비밀번호_변경_필요.png",
+    "verified": true,
+    "expect": "초기 비밀번호"
+  },
+  {
+    "id": "M025",
+    "num": 25,
+    "name": "비밀번호 정책 오류 (8자 대문자 소문자 숫자 특수문자)",
+    "file": "M025_비밀번호_정책_오류_(8자_대문자_소문자_숫자_특수문자).png",
+    "verified": true,
+    "expect": "8자 이상"
+  },
+  {
+    "id": "M024",
+    "num": 24,
+    "name": "비밀번호가 일치하지 않습니다",
+    "file": "M024_비밀번호가_일치하지_않습니다.png",
+    "verified": false,
+    "expect": "일치하지 않습니다"
+  },
+  {
+    "id": "M067",
+    "num": 67,
+    "name": "누락된 항목 안내",
+    "file": "M067_누락된_항목_안내.png",
+    "verified": true,
+    "expect": "누락된 항목"
+  },
+  {
+    "id": "M080",
+    "num": 80,
+    "name": "생년월일을 확인해 주세요 예 19900512",
+    "file": "M080_생년월일을_확인해_주세요_예_19900512.png",
+    "verified": true,
+    "expect": "생년월일을 확인해 주세요"
+  },
+  {
+    "id": "M056",
+    "num": 56,
+    "name": "CSV 또는 VXP만 업로드할 수 있습니다",
+    "file": "M056_CSV_또는_VXP만_업로드할_수_있습니다.png",
+    "verified": true,
+    "expect": "CSV 또는 VXP"
+  },
+  {
+    "id": "M081",
+    "num": 81,
+    "name": "등록 전 확인 팝업 구분 주의",
+    "file": "M081_등록_전_확인_팝업_구분_주의.png",
+    "verified": true,
+    "expect": "구분을 잘못 지정하면"
+  },
+  {
+    "id": "M082",
+    "num": 82,
+    "name": "파일명과 구분이 일치하지 않는 파일 경고",
+    "file": "M082_파일명과_구분이_일치하지_않는_파일_경고.png",
+    "verified": true,
+    "expect": "일치하지 않는 파일이"
+  },
+  {
+    "id": "M075",
+    "num": 75,
+    "name": "일반호흡 파일에 유효한 데이터가 없습니다",
+    "file": "M075_일반호흡_파일에_유효한_데이터가_없습니다.png",
+    "verified": true,
+    "expect": "유효한 데이터가 없습니다"
+  },
+  {
+    "id": "M030",
+    "num": 30,
+    "name": "아이디를 입력하세요",
+    "file": "M030_아이디를_입력하세요.png",
+    "verified": true,
+    "expect": "아이디를 입력하세요"
+  },
+  {
+    "id": "M035",
+    "num": 35,
+    "name": "마지막 계정은 삭제할 수 없습니다",
+    "file": null,
+    "verified": false,
+    "error": "Error: no element with text: 삭제\n    at Object.clickText (<anonymous>:25:21)\n    at <anonymous>:1:34\n    at <anonymous>:1:53"
+  },
+  {
+    "id": "M023",
+    "num": 23,
+    "name": "비밀번호 변경 예정 안내",
+    "file": "M023_비밀번호_변경_예정_안내.png",
+    "verified": false,
+    "expect": "비밀번호 사용 기간이"
+  },
+  {
+    "id": "M020",
+    "num": 20,
+    "name": "비밀번호 변경 주기 도래",
+    "file": "M020_비밀번호_변경_주기_도래.png",
+    "verified": false,
+    "expect": "비밀번호 변경 주기 도래"
+  },
+  {
+    "id": "M031",
+    "num": 31,
+    "name": "아이디는 영문 숫자 만 사용 가능하며 2~30자",
+    "file": "M031_아이디는_영문_숫자_만_사용_가능하며_2~30자.png",
+    "verified": true,
+    "expect": "2~30자"
+  },
+  {
+    "id": "M032",
+    "num": 32,
+    "name": "이미 존재하는 아이디입니다",
+    "file": "M032_이미_존재하는_아이디입니다.png",
+    "verified": true,
+    "expect": "이미 존재하는"
+  },
+  {
+    "id": "M052",
+    "num": 52,
+    "name": "일반호흡 데이터는 최대 10개까지 저장됩니다",
+    "file": "M052_일반호흡_데이터는_최대_10개까지_저장됩니다.png",
+    "verified": true,
+    "expect": "최대 10개까지"
+  },
+  {
+    "id": "M062",
+    "num": 62,
+    "name": "환자를 찾을 수 없습니다",
+    "file": "M062_환자를_찾을_수_없습니다.png",
+    "verified": true,
+    "expect": "환자를 찾을 수 없습니다"
+  },
+  {
+    "id": "M001",
+    "num": 1,
+    "name": "암호화 키 오류 (차단 화면)",
+    "file": "M001_암호화_키_오류_(차단_화면).png",
+    "verified": false,
+    "expect": "암호화 키 오류"
+  },
+  {
+    "id": "M046",
+    "num": 46,
+    "name": "백업 파일의 무결성 검증에 실패했습니다",
+    "file": null,
+    "verified": false,
+    "error": "Error: no file input on backup screen\n    at <anonymous>:3:35\n    at <anonymous>:11:10"
+  }
+]
