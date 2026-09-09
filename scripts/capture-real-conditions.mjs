@@ -239,7 +239,7 @@ async function shoot(id, name) {
  * Run one case. `expect` is text that must be on screen for the shot to count —
  * a screenshot of a message that never appeared is worse than no screenshot.
  */
-async function capture({ id, num, name, expect, setup }) {
+async function capture({ id, num, name, expect, setup, method = 'user-action' }) {
   try {
     await setup();
     const seen = expect ? await cdp.evaluate(`return window.__h.has(${JSON.stringify(expect)});`) : true;
@@ -247,10 +247,10 @@ async function capture({ id, num, name, expect, setup }) {
     // Record everything visible, not just the string we checked — a frame often
     // carries several catalogued messages, and coverage has to be countable.
     const screenText = await cdp.evaluate(`return (document.body.innerText || '').slice(0, 4000);`);
-    results.push({ id, num, name, file, verified: seen, expect, screenText });
+    results.push({ id, num, name, file, verified: seen, expect, method, screenText });
     console.log(`${seen ? '  ok ' : ' MISS'} ${id}  ${name}`);
   } catch (err) {
-    results.push({ id, num, name, file: null, verified: false, error: String(err.message || err) });
+    results.push({ id, num, name, file: null, verified: false, method, error: String(err.message || err) });
     console.log(` FAIL ${id}  ${name}  — ${err.message}`);
   }
 }
@@ -264,12 +264,16 @@ if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   const { runCases } = await import('./capture-real-conditions.cases.mjs');
   const { runCases2 } = await import('./capture-real-conditions.cases2.mjs');
   const { runCases3 } = await import('./capture-real-conditions.cases3.mjs');
+  const { runCases4 } = await import('./capture-real-conditions.cases4.mjs');
+  const { runCases5 } = await import('./capture-real-conditions.cases5.mjs');
   await connect();
   try {
     const ctx = { capture, cdp, goto, preload, clearPreload, reset, sleep };
     await runCases(ctx);
     await runCases2(ctx);
     await runCases3(ctx);
+    await runCases4(ctx);
+    await runCases5(ctx);
   } finally {
     try { chrome.kill(); } catch { /* already gone */ }
     try { rmSync(PROFILE, { recursive: true, force: true }); } catch { /* leave it */ }

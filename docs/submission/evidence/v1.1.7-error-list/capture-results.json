@@ -6,6 +6,7 @@
     "file": "M014_아이디_또는_비밀번호가_올바르지_않습니다_(남은_시도).png",
     "verified": true,
     "expect": "남은 시도",
+    "method": "user-action",
     "screenText": "원주세브란스기독병원\n\n아이디 또는 비밀번호가 올바르지 않습니다. (남은 시도: 4회)\n\n시작하기\n\n© 2026 THEPICT Inc.  ·  v1.1.7\n유통표준코드(GTIN-13) 8800398360005"
   },
   {
@@ -15,6 +16,7 @@
     "file": "M015_로그인_시도_횟수를_초과하여_계정이_잠금되었습니다.png",
     "verified": true,
     "expect": "잠금",
+    "method": "user-action",
     "screenText": "원주세브란스기독병원\n\n로그인 시도 횟수를 초과하여 계정이 잠금되었습니다. 관리자에게 문의하여 잠금을 해제해 주세요.\n\n시작하기\n\n© 2026 THEPICT Inc.  ·  v1.1.7\n유통표준코드(GTIN-13) 8800398360005"
   },
   {
@@ -24,6 +26,7 @@
     "file": "M016_계정이_잠금되었습니다_약_N분_후_다시_시도.png",
     "verified": true,
     "expect": "분 후 다시 시도",
+    "method": "user-action",
     "screenText": "원주세브란스기독병원\n\n계정이 잠금되었습니다. 약 15분 후 다시 시도하거나 관리자에게 문의하세요.\n\n시작하기\n\n© 2026 THEPICT Inc.  ·  v1.1.7\n유통표준코드(GTIN-13) 8800398360005"
   },
   {
@@ -33,6 +36,7 @@
     "file": "M018_초기_비밀번호_변경_필요.png",
     "verified": true,
     "expect": "초기 비밀번호",
+    "method": "user-action",
     "screenText": "초기 비밀번호 변경 필요\n\n초기 비밀번호를 사용 중입니다. 보안을 위해 새 비밀번호로 변경해주세요.\n\n새 비밀번호\n새 비밀번호 확인\n\n• 8자 이상\n\n• 대문자 포함\n\n• 소문자 포함\n\n• 숫자 포함\n\n• 특수문자 포함\n\n비밀번호 변경\n원주세브란스기독병원\n시작하기\n\n© 2026 THEPICT Inc.  ·  v1.1.7\n유통표준코드(GTIN-13) 8800398360005"
   },
   {
@@ -42,6 +46,7 @@
     "file": "M025_비밀번호_정책_오류_(8자_대문자_소문자_숫자_특수문자).png",
     "verified": true,
     "expect": "8자 이상",
+    "method": "user-action",
     "screenText": "초기 비밀번호 변경 필요\n\n초기 비밀번호를 사용 중입니다. 보안을 위해 새 비밀번호로 변경해주세요.\n\n새 비밀번호\n새 비밀번호 확인\n\n• 8자 이상\n\n• 대문자 포함\n\n• 소문자 포함\n\n• 숫자 포함\n\n• 특수문자 포함\n\n비밀번호 변경\n원주세브란스기독병원\n시작하기\n\n© 2026 THEPICT Inc.  ·  v1.1.7\n유통표준코드(GTIN-13) 8800398360005"
   },
   {
@@ -51,6 +56,7 @@
     "file": "M024_비밀번호가_일치하지_않습니다.png",
     "verified": false,
     "expect": "일치하지 않습니다",
+    "method": "user-action",
     "screenText": "초기 비밀번호 변경 필요\n\n초기 비밀번호를 사용 중입니다. 보안을 위해 새 비밀번호로 변경해주세요.\n\n새 비밀번호\n새 비밀번호 확인\n\n• 8자 이상\n\n• 대문자 포함\n\n• 소문자 포함\n\n• 숫자 포함\n\n• 특수문자 포함\n\n비밀번호 변경\n원주세브란스기독병원\n시작하기\n\n© 2026 THEPICT Inc.  ·  v1.1.7\n유통표준코드(GTIN-13) 8800398360005"
   },
   {
@@ -60,6 +66,7 @@
     "file": "M067_누락된_항목_안내.png",
     "verified": true,
     "expect": "누락된 항목",
+    "method": "user-action",
     "screenText": "뒤로\n신규 환자 등록\n홈\n기본 정보(필수)\n환자 이름\n담당 의사\n관리자 (admin)\n직접 입력\n관리자 (admin)\n생년월일\n\n생년월일을 확인해 주세요. 예: 19900512\n\n성별\n남성\n여성\n선택안함\n치료회차\n0\n직접입력\n환자 코드\n\n호흡 데이터는 등록 후 환자 대시보드의 [데이터 추가]에서 등록합니다.\n\n등록 완료\n!\n\n기본정보(필수입력)를 모두 입력하세요.\n\n누락된 항목: 환자 이름, 생년월일\n\n확인"
   },
   {
@@ -69,6 +76,7 @@
     "file": "M080_생년월일을_확인해_주세요_예_19900512.png",
     "verified": true,
     "expect": "생년월일을 확인해 주세요",
+    "method": "user-action",
     "screenText": "뒤로\n신규 환자 등록\n홈\n기본 정보(필수)\n환자 이름\n담당 의사\n관리자 (admin)\n직접 입력\n관리자 (admin)\n생년월일\n\n생년월일을 확인해 주세요. 예: 19900512\n\n성별\n남성\n여성\n선택안함\n치료회차\n0\n직접입력\n환자 코드\n\n호흡 데이터는 등록 후 환자 대시보드의 [데이터 추가]에서 등록합니다.\n\n등록 완료"
   },
   {
@@ -78,6 +86,7 @@
     "file": "M056_CSV_또는_VXP만_업로드할_수_있습니다.png",
     "verified": true,
     "expect": "CSV 또는 VXP",
+    "method": "user-action",
     "screenText": "뒤로\n호흡 데이터 추가\n\n홍길동 • PT-2026-001\n\n홈\n\n일반호흡·DIBH 파일을 추가하면 \"분석할 파일 선택\" 화면 목록에 바로 반영됩니다.\n\n일반호흡 업로드 (필수)\n\n파일을 선택하세요\n\nCSV, VXP 지원 (다중 선택 가능 · 분석은 CSV만)\n\nDIBH 호흡 업로드 (필수)\n\n파일을 선택하세요\n\nCSV, VXP 지원 (다중 선택 가능 · 분석은 CSV만)\n\n등록 완료\nCSV 또는 VXP만 업로드할 수 있습니다\n1개 파일은 지원 형식이 아니어서 제외되었습니다."
   },
   {
@@ -87,6 +96,7 @@
     "file": "M081_등록_전_확인_팝업_구분_주의.png",
     "verified": true,
     "expect": "구분을 잘못 지정하면",
+    "method": "user-action",
     "screenText": "뒤로\n호흡 데이터 추가\n\n홍길동 • PT-2026-001\n\n홈\n\n일반호흡·DIBH 파일을 추가하면 \"분석할 파일 선택\" 화면 목록에 바로 반영됩니다.\n\n일반호흡 업로드 (필수)\n\n파일을 선택하세요\n\nCSV, VXP 지원 (다중 선택 가능 · 분석은 CSV만)\n\nDIBH 호흡 업로드 (필수)\n\n파일을 선택하세요\n\nCSV, VXP 지원 (다중 선택 가능 · 분석은 CSV만)\n\n등록 완료\n업로드 확인\n\n등록할 파일과 저장될 구분을 확인합니다.\n\n아래 내용으로 등록할까요?\n\n구분을 잘못 지정하면 분석 결과(Type)가 달라집니다.\n\nTYPE_A_GEN_20260508.csv\n\n일반호흡 (GEN)(으)로 저장\n\n취소\n등록"
   },
   {
@@ -96,6 +106,7 @@
     "file": "M082_파일명과_구분이_일치하지_않는_파일_경고.png",
     "verified": true,
     "expect": "일치하지 않는 파일이",
+    "method": "user-action",
     "screenText": "뒤로\n호흡 데이터 추가\n\n홍길동 • PT-2026-001\n\n홈\n\n일반호흡·DIBH 파일을 추가하면 \"분석할 파일 선택\" 화면 목록에 바로 반영됩니다.\n\n일반호흡 업로드 (필수)\n\n파일을 선택하세요\n\nCSV, VXP 지원 (다중 선택 가능 · 분석은 CSV만)\n\nDIBH 호흡 업로드 (필수)\n\n파일을 선택하세요\n\nCSV, VXP 지원 (다중 선택 가능 · 분석은 CSV만)\n\n등록 완료\n업로드 확인\n\n등록할 파일과 저장될 구분을 확인합니다.\n\n아래 내용으로 등록할까요?\n\n구분을 잘못 지정하면 분석 결과(Type)가 달라집니다.\n\nTYPE_A_DIBH_20260508.csv\n\n일반호흡 (GEN)(으)로 저장 · 파일명은 DIBH 호흡 (DIBH)(으)로 보입니다\n\n파일명과 구분이 일치하지 않는 파일이 1개 있습니다. 그대로 등록하면 분석 결과가 달라질 수 있습니다.\n\n취소\n그대로 등록"
   },
   {
@@ -105,7 +116,8 @@
     "file": "M075_일반호흡_파일에_유효한_데이터가_없습니다.png",
     "verified": true,
     "expect": "유효한 데이터가 없습니다",
-    "screenText": "뒤로\n분석할 파일 선택\n\n홍길동 • PT-2026-001\n\n홈\n\n이 환자에게 등록된 호흡 데이터 목록입니다.\n\n업로드는 CSV·VXP 모두 가능합니다. 이 화면에서 실행하는 분석은 일반·DIBH 각각 CSV 파일을 선택해야 합니다.\n\n호흡 파일 추가화면에서 일반·DIBH 파일을 더 등록할 수 있습니다.\n\n일반호흡 업로드 파일\nCSV\n\n홍길동_GEN_20260909.csv\n\n12 B · 2026.09.09 17:56 업로드\n\nDIBH 업로드 파일\nCSV\n\n홍길동_DIBH_20260909.csv\n\n12 B · 2026.09.09 17:56 업로드\n\n처음으로\n분석 시작\n호흡 데이터 분석 중\n\n업로드된 파일의 패턴을 분석하고 있습니다.\n\n분석에 실패했습니다\n\n일반호흡 파일에 유효한 데이터가 없습니다.\n\n확인"
+    "method": "user-action",
+    "screenText": "뒤로\n분석할 파일 선택\n\n홍길동 • PT-2026-001\n\n홈\n\n이 환자에게 등록된 호흡 데이터 목록입니다.\n\n업로드는 CSV·VXP 모두 가능합니다. 이 화면에서 실행하는 분석은 일반·DIBH 각각 CSV 파일을 선택해야 합니다.\n\n호흡 파일 추가화면에서 일반·DIBH 파일을 더 등록할 수 있습니다.\n\n일반호흡 업로드 파일\nCSV\n\n홍길동_GEN_20260909.csv\n\n12 B · 2026.09.09 18:33 업로드\n\nDIBH 업로드 파일\nCSV\n\n홍길동_DIBH_20260909.csv\n\n12 B · 2026.09.09 18:33 업로드\n\n처음으로\n분석 시작\n호흡 데이터 분석 중\n\n업로드된 파일의 패턴을 분석하고 있습니다.\n\n분석에 실패했습니다\n\n일반호흡 파일에 유효한 데이터가 없습니다.\n\n확인"
   },
   {
     "id": "M030",
@@ -114,6 +126,7 @@
     "file": "M030_아이디를_입력하세요.png",
     "verified": true,
     "expect": "아이디를 입력하세요",
+    "method": "user-action",
     "screenText": "계정 관리\n\n관리자 전용 — 사용자 계정 생성·수정·삭제\n\n계정 추가\n계정 관리\n감사 로그\n백업/복구\n등록된 계정 (1)\n관리자\n(admin)\n나\n관리자\n\n생성: 2026.09.09\n\n역할 변경\n시스템 사용 알림 문구\n\n로그인 화면에 표시되는 사전 접속 안내 문구입니다. 비워두면 기본 문구가 표시됩니다. (최대 1000자)\n\n기본값으로 재설정\n저장\n\nDIBH - Flow v1.1.7  ·  유통표준코드(GTIN-13) 8800398360005\n\n계정 추가\n\n새 사용자 계정을 생성합니다.\n\n새 계정 추가\n\n아이디\n실명 (담당의사 표시명)\n\n환자 차트의 '담당 의사'란에 표시됩니다. 비워두면 아이디로 대체됩니다.\n\n초기 비밀번호\n\n8자 이상, 대소문자·숫자·특수문자 포함 — 첫 로그인 시 변경 강제\n\n역할\n임상의\n관리자\n\n아이디를 입력하세요.\n\n취소\n계정 생성"
   },
   {
@@ -122,6 +135,7 @@
     "name": "마지막 계정은 삭제할 수 없습니다",
     "file": null,
     "verified": false,
+    "method": "user-action",
     "error": "Error: no element with text: 삭제\n    at Object.clickText (<anonymous>:25:21)\n    at <anonymous>:1:34\n    at <anonymous>:1:53"
   },
   {
@@ -131,6 +145,7 @@
     "file": "M023_비밀번호_변경_예정_안내.png",
     "verified": true,
     "expect": "비밀번호 사용 기간이",
+    "method": "user-action",
     "screenText": "환자 정보 선택\n관리자\n로그아웃\n신규 환자 등록\n\n등록된 환자가 없습니다\n\nDIBH - Flow v1.1.7  ·  유통표준코드(GTIN-13) 8800398360005\n\n비밀번호 변경 예정 안내\n비밀번호 사용 기간이 10일 남았습니다. 기간이 지나면 비밀번호를 변경해야 이용할 수 있습니다."
   },
   {
@@ -140,6 +155,7 @@
     "file": "M020_비밀번호_변경_주기_도래.png",
     "verified": true,
     "expect": "비밀번호 변경 주기 도래",
+    "method": "user-action",
     "screenText": "비밀번호 변경 주기 도래\n\n마지막으로 비밀번호를 변경한 지 100일이 지났습니다. 보안 정책(90일 주기)에 따라 새 비밀번호로 변경해 주세요.\n\n새 비밀번호\n새 비밀번호 확인\n\n• 8자 이상\n\n• 대문자 포함\n\n• 소문자 포함\n\n• 숫자 포함\n\n• 특수문자 포함\n\n비밀번호 변경\n원주세브란스기독병원\n시작하기\n\n© 2026 THEPICT Inc.  ·  v1.1.7\n유통표준코드(GTIN-13) 8800398360005"
   },
   {
@@ -149,6 +165,7 @@
     "file": "M031_아이디는_영문_숫자_만_사용_가능하며_2~30자.png",
     "verified": true,
     "expect": "2~30자",
+    "method": "user-action",
     "screenText": "계정 관리\n\n관리자 전용 — 사용자 계정 생성·수정·삭제\n\n계정 추가\n계정 관리\n감사 로그\n백업/복구\n등록된 계정 (1)\n관리자\n(admin)\n나\n관리자\n\n생성: 2026.09.09\n\n역할 변경\n시스템 사용 알림 문구\n\n로그인 화면에 표시되는 사전 접속 안내 문구입니다. 비워두면 기본 문구가 표시됩니다. (최대 1000자)\n\n기본값으로 재설정\n저장\n\nDIBH - Flow v1.1.7  ·  유통표준코드(GTIN-13) 8800398360005\n\n계정 추가\n\n새 사용자 계정을 생성합니다.\n\n새 계정 추가\n\n아이디\n실명 (담당의사 표시명)\n\n환자 차트의 '담당 의사'란에 표시됩니다. 비워두면 아이디로 대체됩니다.\n\n초기 비밀번호\n\n8자 이상, 대소문자·숫자·특수문자 포함 — 첫 로그인 시 변경 강제\n\n역할\n임상의\n관리자\n\n아이디는 영문·숫자·_.- 만 사용 가능하며 2~30자여야 합니다.\n\n취소\n계정 생성"
   },
   {
@@ -158,6 +175,7 @@
     "file": "M032_이미_존재하는_아이디입니다.png",
     "verified": true,
     "expect": "이미 존재하는",
+    "method": "user-action",
     "screenText": "계정 관리\n\n관리자 전용 — 사용자 계정 생성·수정·삭제\n\n계정 추가\n계정 관리\n감사 로그\n백업/복구\n등록된 계정 (1)\n관리자\n(admin)\n나\n관리자\n\n생성: 2026.09.09\n\n역할 변경\n시스템 사용 알림 문구\n\n로그인 화면에 표시되는 사전 접속 안내 문구입니다. 비워두면 기본 문구가 표시됩니다. (최대 1000자)\n\n기본값으로 재설정\n저장\n\nDIBH - Flow v1.1.7  ·  유통표준코드(GTIN-13) 8800398360005\n\n계정 추가\n\n새 사용자 계정을 생성합니다.\n\n새 계정 추가\n\n아이디\n실명 (담당의사 표시명)\n\n환자 차트의 '담당 의사'란에 표시됩니다. 비워두면 아이디로 대체됩니다.\n\n초기 비밀번호\n\n8자 이상, 대소문자·숫자·특수문자 포함 — 첫 로그인 시 변경 강제\n\n역할\n임상의\n관리자\n\n이미 존재하는 아이디입니다.\n\n취소\n계정 생성"
   },
   {
@@ -167,7 +185,8 @@
     "file": "M052_일반호흡_데이터는_최대_10개까지_저장됩니다.png",
     "verified": true,
     "expect": "최대 10개까지",
-    "screenText": "뒤로\n호흡 데이터 추가\n\n한도환자 • PT-2026-001\n\n홈\n\n일반호흡·DIBH 파일을 추가하면 \"분석할 파일 선택\" 화면 목록에 바로 반영됩니다.\n\n일반호흡 업로드 (필수)\n\n파일을 선택하세요\n\nCSV, VXP 지원 (다중 선택 가능 · 분석은 CSV만)\n\n등록된 파일 (10)\n\nCSV\n\n한도환자_GEN_20260909.csv\n\n8.0 KB · 업로드 완료 (2026.09.09 17:57)\n\nCSV\n\n한도환자_GEN_20260909_2.csv\n\n8.0 KB · 업로드 완료 (2026.09.09 17:57)\n\nCSV\n\n한도환자_GEN_20260909_3.csv\n\n8.0 KB · 업로드 완료 (2026.09.09 17:57)\n\nCSV\n\n한도환자_GEN_20260909_4.csv\n\n8.0 KB · 업로드 완료 (2026.09.09 17:57)\n\nCSV\n\n한도환자_GEN_20260909_5.csv\n\n8.0 KB · 업로드 완료 (2026.09.09 17:57)\n\nCSV\n\n한도환자_GEN_20260909_6.csv\n\n8.0 KB · 업로드 완료 (2026.09.09 17:57)\n\nCSV\n\n한도환자_GEN_20260909_7.csv\n\n8.0 KB · 업로드 완료 (2026.09.09 17:57)\n\nCSV\n\n한도환자_GEN_20260909_8.csv\n\n8.0 KB · 업로드 완료 (2026.09.09 17:57)\n\nCSV\n\n한도환자_GEN_20260909_9.csv\n\n8.0 KB · 업로드 완료 (2026.09.09 17:57)\n\nCSV\n\n한도환자_GEN_20260909_10.csv\n\n8.0 KB · 업로드 완료 (2026.09.09 17:57)\n\nDIBH 호흡 업로드 (필수)\n\n파일을 선택하세요\n\nCSV, VXP 지원 (다중 선택 가능 · 분석은 CSV만)\n\n등록 완료\n일반호흡 데이터는 최대 10개까지 저장됩니다\n오래된 일반호흡 데이터를 삭제한 뒤 다시 업로드해 주세요."
+    "method": "user-action",
+    "screenText": "뒤로\n호흡 데이터 추가\n\n한도환자 • PT-2026-001\n\n홈\n\n일반호흡·DIBH 파일을 추가하면 \"분석할 파일 선택\" 화면 목록에 바로 반영됩니다.\n\n일반호흡 업로드 (필수)\n\n파일을 선택하세요\n\nCSV, VXP 지원 (다중 선택 가능 · 분석은 CSV만)\n\n등록된 파일 (10)\n\nCSV\n\n한도환자_GEN_20260909.csv\n\n8.0 KB · 업로드 완료 (2026.09.09 18:34)\n\nCSV\n\n한도환자_GEN_20260909_2.csv\n\n8.0 KB · 업로드 완료 (2026.09.09 18:34)\n\nCSV\n\n한도환자_GEN_20260909_3.csv\n\n8.0 KB · 업로드 완료 (2026.09.09 18:34)\n\nCSV\n\n한도환자_GEN_20260909_4.csv\n\n8.0 KB · 업로드 완료 (2026.09.09 18:34)\n\nCSV\n\n한도환자_GEN_20260909_5.csv\n\n8.0 KB · 업로드 완료 (2026.09.09 18:34)\n\nCSV\n\n한도환자_GEN_20260909_6.csv\n\n8.0 KB · 업로드 완료 (2026.09.09 18:34)\n\nCSV\n\n한도환자_GEN_20260909_7.csv\n\n8.0 KB · 업로드 완료 (2026.09.09 18:34)\n\nCSV\n\n한도환자_GEN_20260909_8.csv\n\n8.0 KB · 업로드 완료 (2026.09.09 18:34)\n\nCSV\n\n한도환자_GEN_20260909_9.csv\n\n8.0 KB · 업로드 완료 (2026.09.09 18:34)\n\nCSV\n\n한도환자_GEN_20260909_10.csv\n\n8.0 KB · 업로드 완료 (2026.09.09 18:34)\n\nDIBH 호흡 업로드 (필수)\n\n파일을 선택하세요\n\nCSV, VXP 지원 (다중 선택 가능 · 분석은 CSV만)\n\n등록 완료\n일반호흡 데이터는 최대 10개까지 저장됩니다\n오래된 일반호흡 데이터를 삭제한 뒤 다시 업로드해 주세요."
   },
   {
     "id": "M062",
@@ -176,6 +195,7 @@
     "file": "M062_환자를_찾을_수_없습니다.png",
     "verified": true,
     "expect": "환자를 찾을 수 없습니다",
+    "method": "user-action",
     "screenText": "환자 정보 선택\n관리자\n로그아웃\n신규 환자 등록\n최근 치료 환자\n\n한도환자\n\nPT-2026-001\n\nDIBH - Flow v1.1.7  ·  유통표준코드(GTIN-13) 8800398360005\n\n환자를 찾을 수 없습니다\n목록에서 다시 선택해 주세요."
   },
   {
@@ -185,6 +205,7 @@
     "file": "M046_백업_파일의_무결성_검증에_실패했습니다.png",
     "verified": false,
     "expect": "무결성 검증에 실패",
+    "method": "user-action",
     "screenText": "백업 및 복구\n\n관리자 전용 — AES-256 암호화 백업 (RA-02, RA-03)\n\n계정 관리\n감사 로그\n백업/복구\nUnexpected token 'o', \"not-a-valid-backup\" is not valid JSON\n데이터 백업 (내보내기)\n\n모든 환자·캘리브레이션·감사 로그를 AES-256으로 암호화한 파일로 내보냅니다. 백업 중에는 시스템 사용에 영향을 주지 않습니다.\n\n백업 파일 생성\n비식별 데이터 내보내기 (DC-02)\n\n이름·생년월일을 제외한 캘리브레이션 결과를 CSV로 내보냅니다. 환자 코드·성별·치료회차·분석결과만 포함됩니다.\n\n비식별 CSV 내보내기\n데이터 복구 (가져오기)\n\n이전에 생성한 백업 파일(.enc)을 불러와 복구합니다. 무결성 검증 후 적용되며, 현재 데이터를 덮어씁니다.\n\n⚠ 복구 시 현재 저장된 데이터가 백업 시점으로 대체됩니다.\n백업 파일 선택\n\nDIBH - Flow v1.1.7  ·  유통표준코드(GTIN-13) 8800398360005"
   },
   {
@@ -194,6 +215,7 @@
     "file": "M007_Web_Crypto_API_사용_불가.png",
     "verified": true,
     "expect": "Web Crypto API",
+    "method": "user-action",
     "screenText": "⚠\n보안 자가진단 실패\n\n시스템 보안 기능을 초기화할 수 없습니다.\n\nWeb Crypto API 사용 불가"
   },
   {
@@ -203,6 +225,7 @@
     "file": "M008_암호화_자가진단_실패.png",
     "verified": true,
     "expect": "암호화 자가진단 실패",
+    "method": "user-action",
     "screenText": "⚠\n보안 자가진단 실패\n\n시스템 보안 기능을 초기화할 수 없습니다.\n\n암호화 자가진단 실패"
   },
   {
@@ -212,6 +235,7 @@
     "file": "M009_sessionStorage_사용_불가.png",
     "verified": true,
     "expect": "sessionStorage 사용 불가",
+    "method": "user-action",
     "screenText": "⚠\n보안 자가진단 실패\n\n시스템 보안 기능을 초기화할 수 없습니다.\n\nsessionStorage 사용 불가"
   },
   {
@@ -221,6 +245,7 @@
     "file": "M010_localStorage_사용_불가.png",
     "verified": true,
     "expect": "localStorage 사용 불가",
+    "method": "user-action",
     "screenText": "⚠\n보안 자가진단 실패\n\n시스템 보안 기능을 초기화할 수 없습니다.\n\nlocalStorage 사용 불가"
   },
   {
@@ -230,6 +255,7 @@
     "file": "M025b_비밀번호_정책_오류_전체_(제출_후).png",
     "verified": true,
     "expect": "8자 이상이어야 합니다",
+    "method": "user-action",
     "screenText": "초기 비밀번호 변경 필요\n\n초기 비밀번호를 사용 중입니다. 보안을 위해 새 비밀번호로 변경해주세요.\n\n새 비밀번호\n새 비밀번호 확인\n\n• 8자 이상\n\n• 대문자 포함\n\n• 소문자 포함\n\n• 숫자 포함\n\n• 특수문자 포함\n\n8자 이상이어야 합니다\n\n대문자(A-Z)를 포함해야 합니다\n\n숫자(0-9)를 포함해야 합니다\n\n특수문자(!@#$ 등)를 포함해야 합니다\n\n비밀번호 변경\n원주세브란스기독병원\n시작하기\n\n© 2026 THEPICT Inc.  ·  v1.1.7\n유통표준코드(GTIN-13) 8800398360005"
   },
   {
@@ -239,6 +265,7 @@
     "file": "M024b_비밀번호가_일치하지_않습니다.png",
     "verified": true,
     "expect": "비밀번호가 일치하지 않습니다",
+    "method": "user-action",
     "screenText": "초기 비밀번호 변경 필요\n\n초기 비밀번호를 사용 중입니다. 보안을 위해 새 비밀번호로 변경해주세요.\n\n새 비밀번호\n새 비밀번호 확인\n\n• 8자 이상\n\n• 대문자 포함\n\n• 소문자 포함\n\n• 숫자 포함\n\n• 특수문자 포함\n\n비밀번호가 일치하지 않습니다.\n\n비밀번호 변경\n원주세브란스기독병원\n시작하기\n\n© 2026 THEPICT Inc.  ·  v1.1.7\n유통표준코드(GTIN-13) 8800398360005"
   },
   {
@@ -248,6 +275,7 @@
     "file": "M017_이_계정의_데이터가_손상되어_복호화할_수_없습니다.png",
     "verified": true,
     "expect": "손상되어",
+    "method": "user-action",
     "screenText": "계정 관리\n\n관리자 전용 — 사용자 계정 생성·수정·삭제\n\n계정 추가\n계정 관리\n감사 로그\n백업/복구\n등록된 계정 (2)\n관리자\n(admin)\n나\n관리자\n\n생성: 2026.09.09\n\n역할 변경\ncorrupt\n임상의\n\n생성: 2026.09.09\n\n역할 변경\n비밀번호 초기화\n삭제\n시스템 사용 알림 문구\n\n로그인 화면에 표시되는 사전 접속 안내 문구입니다. 비워두면 기본 문구가 표시됩니다. (최대 1000자)\n\n기본값으로 재설정\n저장\n\nDIBH - Flow v1.1.7  ·  유통표준코드(GTIN-13) 8800398360005\n\n이 계정의 데이터가 손상되어 복호화할 수 없습니다. 계정을 삭제한 후 다시 생성해 주세요."
   },
   {
@@ -257,6 +285,7 @@
     "file": "M023b_비밀번호_변경_예정_안내.png",
     "verified": true,
     "expect": "비밀번호 사용 기간이",
+    "method": "user-action",
     "screenText": "환자 정보 선택\n관리자\n로그아웃\n신규 환자 등록\n\n등록된 환자가 없습니다\n\nDIBH - Flow v1.1.7  ·  유통표준코드(GTIN-13) 8800398360005\n\n비밀번호 변경 예정 안내\n비밀번호 사용 기간이 10일 남았습니다. 기간이 지나면 비밀번호를 변경해야 이용할 수 있습니다."
   },
   {
@@ -266,6 +295,7 @@
     "file": "M020b_비밀번호_변경_주기_도래.png",
     "verified": true,
     "expect": "변경 주기 도래",
+    "method": "user-action",
     "screenText": "비밀번호 변경 주기 도래\n\n마지막으로 비밀번호를 변경한 지 120일이 지났습니다. 보안 정책(90일 주기)에 따라 새 비밀번호로 변경해 주세요.\n\n새 비밀번호\n새 비밀번호 확인\n\n• 8자 이상\n\n• 대문자 포함\n\n• 소문자 포함\n\n• 숫자 포함\n\n• 특수문자 포함\n\n비밀번호 변경\n원주세브란스기독병원\n시작하기\n\n© 2026 THEPICT Inc.  ·  v1.1.7\n유통표준코드(GTIN-13) 8800398360005"
   },
   {
@@ -275,6 +305,7 @@
     "file": "M034_마지막_관리자_계정의_권한은_변경할_수_없습니다.png",
     "verified": true,
     "expect": "마지막 관리자",
+    "method": "user-action",
     "screenText": "계정 관리\n\n관리자 전용 — 사용자 계정 생성·수정·삭제\n\n계정 추가\n계정 관리\n감사 로그\n백업/복구\n등록된 계정 (1)\n관리자\n(admin)\n나\n관리자\n\n생성: 2026.09.09\n\n역할 변경\n시스템 사용 알림 문구\n\n로그인 화면에 표시되는 사전 접속 안내 문구입니다. 비워두면 기본 문구가 표시됩니다. (최대 1000자)\n\n기본값으로 재설정\n저장\n\nDIBH - Flow v1.1.7  ·  유통표준코드(GTIN-13) 8800398360005\n\n마지막 관리자 계정의 권한은 변경할 수 없습니다."
   },
   {
@@ -284,6 +315,7 @@
     "file": "M037_공지_문구는_최대_N자까지_입력할_수_있습니다.png",
     "verified": true,
     "expect": "자까지 입력할 수 있습니다",
+    "method": "user-action",
     "screenText": "계정 관리\n\n관리자 전용 — 사용자 계정 생성·수정·삭제\n\n계정 추가\n계정 관리\n감사 로그\n백업/복구\n등록된 계정 (1)\n관리자\n(admin)\n나\n관리자\n\n생성: 2026.09.09\n\n역할 변경\n시스템 사용 알림 문구\n\n로그인 화면에 표시되는 사전 접속 안내 문구입니다. 비워두면 기본 문구가 표시됩니다. (최대 1000자)\n\n공지 문구는 최대 1000자까지 입력할 수 있습니다.\n\n기본값으로 재설정\n저장\n\nDIBH - Flow v1.1.7  ·  유통표준코드(GTIN-13) 8800398360005"
   },
   {
@@ -293,6 +325,7 @@
     "file": "M038_[복호화_실패]_환자_이름_표시값.png",
     "verified": true,
     "expect": "복호화 실패",
+    "method": "user-action",
     "screenText": "환자 정보 선택\n관리자\n로그아웃\n신규 환자 등록\n최근 치료 환자\n\n[복호화 실패]\n\nPT-2026-001\n\nDIBH - Flow v1.1.7  ·  유통표준코드(GTIN-13) 8800398360005"
   },
   {
@@ -302,7 +335,8 @@
     "file": "M039_감사_로그_저장_공간_부족_(UC-05).png",
     "verified": true,
     "expect": "저장 공간",
-    "screenText": "감사 로그\n\n읽기 전용 — 관리자 전용 (TRE-01)\n\n읽기 전용\n계정 관리\n감사 로그\n백업/복구\n\n감사 로그 저장 공간 부족 (UC-05)\n\n로그 항목: 9,700 / 10,000건 (97%) — 오래된 항목이 자동 삭제됩니다.\n\n기기 저장소: 4.84 MB 사용 중 (감사 로그 4.84 MB) — 저장소 용량이 부족합니다.\n\n백업 후 데이터를 내보내기하세요.\n\n총 9,700건 · 페이지 1/539· 감사 로그 4.84 MB · 저장소 전체 4.84 MB\n\n일시\t사용자\t액션\t대상\t상세\n09.09 15:18:06\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 9699\n09.09 15:18:07\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 9698\n09.09 15:18:08\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 9697\n09.09 15:18:09\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 9696\n09.09 15:18:10\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 9695\n09.09 15:18:11\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 9694\n09.09 15:18:12\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 9693\n09.09 15:18:13\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 9692\n09.09 15:18:14\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 9691\n09.09 15:18:15\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 9690\n09.09 15:18:16\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 9689\n09.09 15:18:17\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 9688\n09.09 15:18:18\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 9687\n09.09 15:18:19\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 9686\n09.09 15:18:20\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 9685\n09.09 15:18:21\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 9684\n09.09 15:18:22\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 9683\n09.09 15:18:23\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 9682\n이전\n1 / 539\n다음\n\nDIBH - Flow v1.1.7  ·  유통표준코드(GTIN-13) 8800398360005"
+    "method": "user-action",
+    "screenText": "감사 로그\n\n읽기 전용 — 관리자 전용 (TRE-01)\n\n읽기 전용\n계정 관리\n감사 로그\n백업/복구\n\n감사 로그 저장 공간 부족 (UC-05)\n\n로그 항목: 9,700 / 10,000건 (97%) — 오래된 항목이 자동 삭제됩니다.\n\n기기 저장소: 4.84 MB 사용 중 (감사 로그 4.84 MB) — 저장소 용량이 부족합니다.\n\n백업 후 데이터를 내보내기하세요.\n\n총 9,700건 · 페이지 1/539· 감사 로그 4.84 MB · 저장소 전체 4.84 MB\n\n일시\t사용자\t액션\t대상\t상세\n09.09 15:55:27\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 9699\n09.09 15:55:28\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 9698\n09.09 15:55:29\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 9697\n09.09 15:55:30\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 9696\n09.09 15:55:31\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 9695\n09.09 15:55:32\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 9694\n09.09 15:55:33\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 9693\n09.09 15:55:34\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 9692\n09.09 15:55:35\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 9691\n09.09 15:55:36\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 9690\n09.09 15:55:37\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 9689\n09.09 15:55:38\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 9688\n09.09 15:55:39\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 9687\n09.09 15:55:40\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 9686\n09.09 15:55:41\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 9685\n09.09 15:55:42\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 9684\n09.09 15:55:43\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 9683\n09.09 15:55:44\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 9682\n이전\n1 / 539\n다음\n\nDIBH - Flow v1.1.7  ·  유통표준코드(GTIN-13) 8800398360005"
   },
   {
     "id": "M040",
@@ -311,7 +345,8 @@
     "file": "M040_감사_로그_저장_공간_경고_(UC-05).png",
     "verified": true,
     "expect": "저장 공간",
-    "screenText": "감사 로그\n\n읽기 전용 — 관리자 전용 (TRE-01)\n\n읽기 전용\n계정 관리\n감사 로그\n백업/복구\n\n감사 로그 저장 공간 부족 (UC-05)\n\n로그 항목: 8,200 / 10,000건 (82%)\n\n기기 저장소: 4.09 MB 사용 중 (감사 로그 4.09 MB) — 저장소 용량이 부족합니다.\n\n백업 후 데이터를 내보내기하세요.\n\n총 8,200건 · 페이지 1/456· 감사 로그 4.09 MB · 저장소 전체 4.09 MB\n\n일시\t사용자\t액션\t대상\t상세\n09.09 15:43:10\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 8199\n09.09 15:43:11\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 8198\n09.09 15:43:12\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 8197\n09.09 15:43:13\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 8196\n09.09 15:43:14\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 8195\n09.09 15:43:15\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 8194\n09.09 15:43:16\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 8193\n09.09 15:43:17\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 8192\n09.09 15:43:18\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 8191\n09.09 15:43:19\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 8190\n09.09 15:43:20\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 8189\n09.09 15:43:21\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 8188\n09.09 15:43:22\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 8187\n09.09 15:43:23\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 8186\n09.09 15:43:24\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 8185\n09.09 15:43:25\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 8184\n09.09 15:43:26\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 8183\n09.09 15:43:27\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 8182\n이전\n1 / 456\n다음\n\nDIBH - Flow v1.1.7  ·  유통표준코드(GTIN-13) 8800398360005"
+    "method": "user-action",
+    "screenText": "감사 로그\n\n읽기 전용 — 관리자 전용 (TRE-01)\n\n읽기 전용\n계정 관리\n감사 로그\n백업/복구\n\n감사 로그 저장 공간 부족 (UC-05)\n\n로그 항목: 8,200 / 10,000건 (82%)\n\n기기 저장소: 4.09 MB 사용 중 (감사 로그 4.09 MB) — 저장소 용량이 부족합니다.\n\n백업 후 데이터를 내보내기하세요.\n\n총 8,200건 · 페이지 1/456· 감사 로그 4.09 MB · 저장소 전체 4.09 MB\n\n일시\t사용자\t액션\t대상\t상세\n09.09 16:20:31\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 8199\n09.09 16:20:32\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 8198\n09.09 16:20:33\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 8197\n09.09 16:20:34\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 8196\n09.09 16:20:35\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 8195\n09.09 16:20:36\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 8194\n09.09 16:20:37\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 8193\n09.09 16:20:38\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 8192\n09.09 16:20:39\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 8191\n09.09 16:20:40\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 8190\n09.09 16:20:41\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 8189\n09.09 16:20:42\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 8188\n09.09 16:20:43\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 8187\n09.09 16:20:44\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 8186\n09.09 16:20:45\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 8185\n09.09 16:20:46\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 8184\n09.09 16:20:47\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 8183\n09.09 16:20:48\t—\tLOGIN\tuser\tcapacity seed capacity seed capacity seed capacity seed capacity seed capacity seed 8182\n이전\n1 / 456\n다음\n\nDIBH - Flow v1.1.7  ·  유통표준코드(GTIN-13) 8800398360005"
   },
   {
     "id": "M046b",
@@ -320,6 +355,7 @@
     "file": "M046b_백업_파일의_무결성_검증에_실패했습니다.png",
     "verified": false,
     "expect": "무결성 검증에 실패",
+    "method": "user-action",
     "screenText": "백업 및 복구\n\n관리자 전용 — AES-256 암호화 백업 (RA-02, RA-03)\n\n계정 관리\n감사 로그\n백업/복구\n복호화에 실패했습니다. 이 백업은 현재 설치 키와 다른 키로 암호화되어 있습니다. 백업을 생성한 기기에서만 복구할 수 있습니다.\n데이터 백업 (내보내기)\n\n모든 환자·캘리브레이션·감사 로그를 AES-256으로 암호화한 파일로 내보냅니다. 백업 중에는 시스템 사용에 영향을 주지 않습니다.\n\n백업 파일 생성\n비식별 데이터 내보내기 (DC-02)\n\n이름·생년월일을 제외한 캘리브레이션 결과를 CSV로 내보냅니다. 환자 코드·성별·치료회차·분석결과만 포함됩니다.\n\n비식별 CSV 내보내기\n데이터 복구 (가져오기)\n\n이전에 생성한 백업 파일(.enc)을 불러와 복구합니다. 무결성 검증 후 적용되며, 현재 데이터를 덮어씁니다.\n\n⚠ 복구 시 현재 저장된 데이터가 백업 시점으로 대체됩니다.\n백업 파일 선택\n\nDIBH - Flow v1.1.7  ·  유통표준코드(GTIN-13) 8800398360005"
   },
   {
@@ -329,7 +365,8 @@
     "file": "M054_DIBH_데이터는_최대_10개까지_저장됩니다.png",
     "verified": true,
     "expect": "DIBH 데이터는 최대 10개",
-    "screenText": "뒤로\n호흡 데이터 추가\n\n증적환자 • PT-2026-001\n\n홈\n\n일반호흡·DIBH 파일을 추가하면 \"분석할 파일 선택\" 화면 목록에 바로 반영됩니다.\n\n일반호흡 업로드 (필수)\n\n파일을 선택하세요\n\nCSV, VXP 지원 (다중 선택 가능 · 분석은 CSV만)\n\nDIBH 호흡 업로드 (필수)\n\n파일을 선택하세요\n\nCSV, VXP 지원 (다중 선택 가능 · 분석은 CSV만)\n\n등록된 파일 (10)\n\nCSV\n\n증적환자_DIBH_20260909.csv\n\n8.0 KB · 업로드 완료 (2026.09.09 18:00)\n\nCSV\n\n증적환자_DIBH_20260909_2.csv\n\n8.0 KB · 업로드 완료 (2026.09.09 18:00)\n\nCSV\n\n증적환자_DIBH_20260909_3.csv\n\n8.0 KB · 업로드 완료 (2026.09.09 18:00)\n\nCSV\n\n증적환자_DIBH_20260909_4.csv\n\n8.0 KB · 업로드 완료 (2026.09.09 18:00)\n\nCSV\n\n증적환자_DIBH_20260909_5.csv\n\n8.0 KB · 업로드 완료 (2026.09.09 18:00)\n\nCSV\n\n증적환자_DIBH_20260909_6.csv\n\n8.0 KB · 업로드 완료 (2026.09.09 18:00)\n\nCSV\n\n증적환자_DIBH_20260909_7.csv\n\n8.0 KB · 업로드 완료 (2026.09.09 18:00)\n\nCSV\n\n증적환자_DIBH_20260909_8.csv\n\n8.0 KB · 업로드 완료 (2026.09.09 18:00)\n\nCSV\n\n증적환자_DIBH_20260909_9.csv\n\n8.0 KB · 업로드 완료 (2026.09.09 18:00)\n\nCSV\n\n증적환자_DIBH_20260909_10.csv\n\n8.0 KB · 업로드 완료 (2026.09.09 18:00)\n\n등록 완료\nDIBH 데이터는 최대 10개까지 저장됩니다\n오래된 DIBH 데이터를 삭제한 뒤 다시 업로드해 주세요."
+    "method": "user-action",
+    "screenText": "뒤로\n호흡 데이터 추가\n\n증적환자 • PT-2026-001\n\n홈\n\n일반호흡·DIBH 파일을 추가하면 \"분석할 파일 선택\" 화면 목록에 바로 반영됩니다.\n\n일반호흡 업로드 (필수)\n\n파일을 선택하세요\n\nCSV, VXP 지원 (다중 선택 가능 · 분석은 CSV만)\n\nDIBH 호흡 업로드 (필수)\n\n파일을 선택하세요\n\nCSV, VXP 지원 (다중 선택 가능 · 분석은 CSV만)\n\n등록된 파일 (10)\n\nCSV\n\n증적환자_DIBH_20260909.csv\n\n8.0 KB · 업로드 완료 (2026.09.09 18:37)\n\nCSV\n\n증적환자_DIBH_20260909_2.csv\n\n8.0 KB · 업로드 완료 (2026.09.09 18:37)\n\nCSV\n\n증적환자_DIBH_20260909_3.csv\n\n8.0 KB · 업로드 완료 (2026.09.09 18:37)\n\nCSV\n\n증적환자_DIBH_20260909_4.csv\n\n8.0 KB · 업로드 완료 (2026.09.09 18:37)\n\nCSV\n\n증적환자_DIBH_20260909_5.csv\n\n8.0 KB · 업로드 완료 (2026.09.09 18:37)\n\nCSV\n\n증적환자_DIBH_20260909_6.csv\n\n8.0 KB · 업로드 완료 (2026.09.09 18:37)\n\nCSV\n\n증적환자_DIBH_20260909_7.csv\n\n8.0 KB · 업로드 완료 (2026.09.09 18:37)\n\nCSV\n\n증적환자_DIBH_20260909_8.csv\n\n8.0 KB · 업로드 완료 (2026.09.09 18:37)\n\nCSV\n\n증적환자_DIBH_20260909_9.csv\n\n8.0 KB · 업로드 완료 (2026.09.09 18:37)\n\nCSV\n\n증적환자_DIBH_20260909_10.csv\n\n8.0 KB · 업로드 완료 (2026.09.09 18:37)\n\n등록 완료\nDIBH 데이터는 최대 10개까지 저장됩니다\n오래된 DIBH 데이터를 삭제한 뒤 다시 업로드해 주세요."
   },
   {
     "id": "M049",
@@ -338,7 +375,8 @@
     "file": "M049_파일을_저장할_수_없습니다___파일_저장_중_오류.png",
     "verified": true,
     "expect": "파일을 저장할 수 없습니다",
-    "screenText": "뒤로\n호흡 데이터 추가\n\n증적환자 • PT-2026-001\n\n홈\n\n일반호흡·DIBH 파일을 추가하면 \"분석할 파일 선택\" 화면 목록에 바로 반영됩니다.\n\n일반호흡 업로드 (필수)\n\n파일을 선택하세요\n\nCSV, VXP 지원 (다중 선택 가능 · 분석은 CSV만)\n\n등록된 파일 (1)\n\nCSV\n\nGEN_fail.csv\n\n파일 저장 중 오류가 발생했습니다. 다시 시도해 주세요.\n\nDIBH 호흡 업로드 (필수)\n\n파일을 선택하세요\n\nCSV, VXP 지원 (다중 선택 가능 · 분석은 CSV만)\n\n등록된 파일 (10)\n\nCSV\n\n증적환자_DIBH_20260909.csv\n\n8.0 KB · 업로드 완료 (2026.09.09 18:00)\n\nCSV\n\n증적환자_DIBH_20260909_2.csv\n\n8.0 KB · 업로드 완료 (2026.09.09 18:00)\n\nCSV\n\n증적환자_DIBH_20260909_3.csv\n\n8.0 KB · 업로드 완료 (2026.09.09 18:00)\n\nCSV\n\n증적환자_DIBH_20260909_4.csv\n\n8.0 KB · 업로드 완료 (2026.09.09 18:00)\n\nCSV\n\n증적환자_DIBH_20260909_5.csv\n\n8.0 KB · 업로드 완료 (2026.09.09 18:00)\n\nCSV\n\n증적환자_DIBH_20260909_6.csv\n\n8.0 KB · 업로드 완료 (2026.09.09 18:00)\n\nCSV\n\n증적환자_DIBH_20260909_7.csv\n\n8.0 KB · 업로드 완료 (2026.09.09 18:00)\n\nCSV\n\n증적환자_DIBH_20260909_8.csv\n\n8.0 KB · 업로드 완료 (2026.09.09 18:00)\n\nCSV\n\n증적환자_DIBH_20260909_9.csv\n\n8.0 KB · 업로드 완료 (2026.09.09 18:00)\n\nCSV\n\n증적환자_DIBH_20260909_10.csv\n\n8.0 KB · 업로드 완료 (2026.09.09 18:00)\n\n등록 완료\n파일을 저장할 수 없습니다\n파일 저장 중 오류가 발생했습니다. 다시 시도해 주세요."
+    "method": "user-action",
+    "screenText": "뒤로\n호흡 데이터 추가\n\n증적환자 • PT-2026-001\n\n홈\n\n일반호흡·DIBH 파일을 추가하면 \"분석할 파일 선택\" 화면 목록에 바로 반영됩니다.\n\n일반호흡 업로드 (필수)\n\n파일을 선택하세요\n\nCSV, VXP 지원 (다중 선택 가능 · 분석은 CSV만)\n\n등록된 파일 (1)\n\nCSV\n\nGEN_fail.csv\n\n파일 저장 중 오류가 발생했습니다. 다시 시도해 주세요.\n\nDIBH 호흡 업로드 (필수)\n\n파일을 선택하세요\n\nCSV, VXP 지원 (다중 선택 가능 · 분석은 CSV만)\n\n등록된 파일 (10)\n\nCSV\n\n증적환자_DIBH_20260909.csv\n\n8.0 KB · 업로드 완료 (2026.09.09 18:37)\n\nCSV\n\n증적환자_DIBH_20260909_2.csv\n\n8.0 KB · 업로드 완료 (2026.09.09 18:37)\n\nCSV\n\n증적환자_DIBH_20260909_3.csv\n\n8.0 KB · 업로드 완료 (2026.09.09 18:37)\n\nCSV\n\n증적환자_DIBH_20260909_4.csv\n\n8.0 KB · 업로드 완료 (2026.09.09 18:37)\n\nCSV\n\n증적환자_DIBH_20260909_5.csv\n\n8.0 KB · 업로드 완료 (2026.09.09 18:37)\n\nCSV\n\n증적환자_DIBH_20260909_6.csv\n\n8.0 KB · 업로드 완료 (2026.09.09 18:37)\n\nCSV\n\n증적환자_DIBH_20260909_7.csv\n\n8.0 KB · 업로드 완료 (2026.09.09 18:37)\n\nCSV\n\n증적환자_DIBH_20260909_8.csv\n\n8.0 KB · 업로드 완료 (2026.09.09 18:37)\n\nCSV\n\n증적환자_DIBH_20260909_9.csv\n\n8.0 KB · 업로드 완료 (2026.09.09 18:37)\n\nCSV\n\n증적환자_DIBH_20260909_10.csv\n\n8.0 KB · 업로드 완료 (2026.09.09 18:37)\n\n등록 완료\n파일을 저장할 수 없습니다\n파일 저장 중 오류가 발생했습니다. 다시 시도해 주세요."
   },
   {
     "id": "M076",
@@ -347,7 +385,8 @@
     "file": "M076_DIBH_파일에_유효한_데이터가_없습니다.png",
     "verified": true,
     "expect": "DIBH 파일에 유효한 데이터가 없습니다",
-    "screenText": "뒤로\n분석할 파일 선택\n\n분석환자 • PT-2026-002\n\n홈\n\n이 환자에게 등록된 호흡 데이터 목록입니다.\n\n업로드는 CSV·VXP 모두 가능합니다. 이 화면에서 실행하는 분석은 일반·DIBH 각각 CSV 파일을 선택해야 합니다.\n\n호흡 파일 추가화면에서 일반·DIBH 파일을 더 등록할 수 있습니다.\n\n일반호흡 업로드 파일\nCSV\n\n분석환자_GEN_20260909.csv\n\n8.0 KB · 2026.09.09 18:00 업로드\n\nDIBH 업로드 파일\nCSV\n\n분석환자_DIBH_20260909.csv\n\n12 B · 2026.09.09 18:00 업로드\n\n처음으로\n분석 시작\n호흡 데이터 분석 중\n\n업로드된 파일의 패턴을 분석하고 있습니다.\n\n분석에 실패했습니다\n\nDIBH 파일에 유효한 데이터가 없습니다.\n\n확인"
+    "method": "user-action",
+    "screenText": "뒤로\n분석할 파일 선택\n\n분석환자 • PT-2026-002\n\n홈\n\n이 환자에게 등록된 호흡 데이터 목록입니다.\n\n업로드는 CSV·VXP 모두 가능합니다. 이 화면에서 실행하는 분석은 일반·DIBH 각각 CSV 파일을 선택해야 합니다.\n\n호흡 파일 추가화면에서 일반·DIBH 파일을 더 등록할 수 있습니다.\n\n일반호흡 업로드 파일\nCSV\n\n분석환자_GEN_20260909.csv\n\n8.0 KB · 2026.09.09 18:38 업로드\n\nDIBH 업로드 파일\nCSV\n\n분석환자_DIBH_20260909.csv\n\n12 B · 2026.09.09 18:38 업로드\n\n처음으로\n분석 시작\n호흡 데이터 분석 중\n\n업로드된 파일의 패턴을 분석하고 있습니다.\n\n분석에 실패했습니다\n\nDIBH 파일에 유효한 데이터가 없습니다.\n\n확인"
   },
   {
     "id": "M077",
@@ -356,7 +395,8 @@
     "file": "M077_VXP_파일에서_[Data]_섹션을_찾을_수_없습니다.png",
     "verified": true,
     "expect": "[Data]",
-    "screenText": "뒤로\n분석할 파일 선택\n\nVXP환자 • PT-2026-003\n\n홈\n\n이 환자에게 등록된 호흡 데이터 목록입니다.\n\n업로드는 CSV·VXP 모두 가능합니다. 이 화면에서 실행하는 분석은 일반·DIBH 각각 CSV 파일을 선택해야 합니다.\n\n호흡 파일 추가화면에서 일반·DIBH 파일을 더 등록할 수 있습니다.\n\n일반호흡 업로드 파일\nVXP\n\nVXP환자_GEN_20260909.vxp\n\n30 B · 2026.09.09 18:01 업로드\n\nDIBH 업로드 파일\nVXP\n\nVXP환자_DIBH_20260909.vxp\n\n30 B · 2026.09.09 18:01 업로드\n\n처음으로\n분석 시작\n호흡 데이터 분석 중\n\n업로드된 파일의 패턴을 분석하고 있습니다.\n\n분석에 실패했습니다\n\nVXP 파일에서 [Data] 섹션을 찾을 수 없습니다.\n\n확인"
+    "method": "user-action",
+    "screenText": "뒤로\n분석할 파일 선택\n\nVXP환자 • PT-2026-003\n\n홈\n\n이 환자에게 등록된 호흡 데이터 목록입니다.\n\n업로드는 CSV·VXP 모두 가능합니다. 이 화면에서 실행하는 분석은 일반·DIBH 각각 CSV 파일을 선택해야 합니다.\n\n호흡 파일 추가화면에서 일반·DIBH 파일을 더 등록할 수 있습니다.\n\n일반호흡 업로드 파일\nVXP\n\nVXP환자_GEN_20260909.vxp\n\n30 B · 2026.09.09 18:38 업로드\n\nDIBH 업로드 파일\nVXP\n\nVXP환자_DIBH_20260909.vxp\n\n30 B · 2026.09.09 18:38 업로드\n\n처음으로\n분석 시작\n호흡 데이터 분석 중\n\n업로드된 파일의 패턴을 분석하고 있습니다.\n\n분석에 실패했습니다\n\nVXP 파일에서 [Data] 섹션을 찾을 수 없습니다.\n\n확인"
   },
   {
     "id": "M064",
@@ -365,6 +405,7 @@
     "file": "M064_저장에_실패했습니다___환자_정보를_저장하는_중_오류.png",
     "verified": true,
     "expect": "저장에 실패했습니다",
+    "method": "user-action",
     "screenText": "뒤로\n신규 환자 등록\n홈\n기본 정보(필수)\n환자 이름\n담당 의사\n관리자 (admin)\n직접 입력\n관리자 (admin)\n생년월일\n\n예: 19900512 (구분자 입력 가능)\n\n성별\n남성\n여성\n선택안함\n치료회차\n0\n직접입력\n환자 코드\n\n호흡 데이터는 등록 후 환자 대시보드의 [데이터 추가]에서 등록합니다.\n\n등록 완료\n저장에 실패했습니다\n환자 정보를 저장하는 중 오류가 발생했습니다. 다시 시도해 주세요."
   },
   {
@@ -374,6 +415,7 @@
     "file": "M069_환자_삭제에_실패했습니다.png",
     "verified": false,
     "expect": "환자 삭제에 실패",
+    "method": "user-action",
     "screenText": "홈\n환자 차트 (대시보드)\n로그아웃\n증적환자\nPT-2026-001\n정보 수정\n삭제\n\n생년월일(성별)\n\n1990.05.12 (M)\n\n담당 의사\n\n관리자\n\n치료 회차\n\n0회차\n\n방문일\n\n2026.09.09\n\n호흡 분석 결과\n최근 분석 상태\n2026.09.09\n\n아직 호흡 분석 결과가 없습니다.\n\n상단의 [데이터 추가]로 일반·DIBH 데이터(CSV 또는 VXP)를 업로드한 뒤, [호흡 분석]에서 파일을 선택해 분석을 실행해 주세요.\n\n데이터 추가\n캘리브레이션 히스토리\n\n캘리브레이션 이력이 없습니다.\n\n상단의 [데이터 추가] 버튼을 눌러 첫 분석을 시작해 주세요.\n\n환자 삭제\n\n환자 정보를 영구 삭제합니다.\n\n!\n\n환자 정보를 정말 삭제하시겠습니까?\n\n등록된 환자의 개인정보 및 호흡 데이터, 시뮬레이션 결과가 모두 시스템에서 영구적으로 삭제됩니다.\n\n삭제된 데이터는 복구할 수 없습니다.\n아니오, 취소합니다\n예, 삭제합니다"
   },
   {
@@ -383,6 +425,7 @@
     "file": "M070_환자_정보_저장에_실패했습니다.png",
     "verified": true,
     "expect": "환자 정보 저장에 실패",
+    "method": "user-action",
     "screenText": "홈\n환자 차트 (대시보드)\n로그아웃\n증적환자\nPT-2026-001\n정보 수정\n삭제\n\n생년월일(성별)\n\n1990.05.12 (M)\n\n담당 의사\n\n관리자\n\n치료 회차\n\n0회차\n\n방문일\n\n2026.09.09\n\n호흡 분석 결과\n최근 분석 상태\n2026.09.09\n\n아직 호흡 분석 결과가 없습니다.\n\n상단의 [데이터 추가]로 일반·DIBH 데이터(CSV 또는 VXP)를 업로드한 뒤, [호흡 분석]에서 파일을 선택해 분석을 실행해 주세요.\n\n데이터 추가\n캘리브레이션 히스토리\n\n캘리브레이션 이력이 없습니다.\n\n상단의 [데이터 추가] 버튼을 눌러 첫 분석을 시작해 주세요.\n\n저장 실패\n환자 정보 저장에 실패했습니다. 다시 시도해 주세요.\n환자 정보 수정\n\n환자의 기본 정보를 수정합니다.\n\n환자 정보 수정\n\n기본 정보(필수)\n환자 이름\n담당 의사\n담당 의사를 선택하세요\n직접 입력\n관리자 (admin)\n생년월일\n\n예: 19900512 (구분자 입력 가능)\n\n성별\n남성\n여성\n선택안함\n치료회차\n0\n직접입력\n환자 코드\n다시 생성하기\n취소\n저장"
   },
   {
@@ -392,6 +435,7 @@
     "file": "M071_파일_삭제_실패_(분석할_파일_선택).png",
     "verified": false,
     "expect": "파일 삭제",
+    "method": "user-action",
     "screenText": "뒤로\n분석할 파일 선택\n\n삭제환자 • PT-2026-004\n\n홈\n\n이 환자에게 등록된 호흡 데이터 목록입니다.\n\n업로드는 CSV·VXP 모두 가능합니다. 이 화면에서 실행하는 분석은 일반·DIBH 각각 CSV 파일을 선택해야 합니다.\n\n호흡 파일 추가화면에서 일반·DIBH 파일을 더 등록할 수 있습니다.\n\n일반호흡 업로드 파일\n\n등록된 일반호흡 파일이 없습니다. 환자 등록 시 업로드가 완료된 뒤 등록 완료를 눌렀는지 확인하거나, 업로드 진행 중에 등록하지 않았는지 확인해 주세요.\n\nDIBH 업로드 파일\n\n등록된 DIBH 파일이 없습니다.\n\n처음으로\n분석 시작"
   },
   {
@@ -401,6 +445,7 @@
     "file": "M027_소문자(a-z)를_포함해야_합니다.png",
     "verified": true,
     "expect": "소문자(a-z)를 포함해야 합니다",
+    "method": "user-action",
     "screenText": "초기 비밀번호 변경 필요\n\n초기 비밀번호를 사용 중입니다. 보안을 위해 새 비밀번호로 변경해주세요.\n\n새 비밀번호\n새 비밀번호 확인\n\n• 8자 이상\n\n• 대문자 포함\n\n• 소문자 포함\n\n• 숫자 포함\n\n• 특수문자 포함\n\n소문자(a-z)를 포함해야 합니다\n\n비밀번호 변경\n원주세브란스기독병원\n시작하기\n\n© 2026 THEPICT Inc.  ·  v1.1.7\n유통표준코드(GTIN-13) 8800398360005"
   },
   {
@@ -410,6 +455,7 @@
     "file": "M068_누락된_항목을_확인해_주세요.png",
     "verified": true,
     "expect": "누락된 항목을 확인해 주세요",
+    "method": "user-action",
     "screenText": "뒤로\n신규 환자 등록\n홈\n기본 정보(필수)\n환자 이름\n담당 의사\n관리자 (admin)\n직접 입력\n관리자 (admin)\n생년월일\n\n예: 19900512 (구분자 입력 가능)\n\n성별\n남성\n여성\n선택안함\n치료회차\n0\n직접입력\n환자 코드\n\n호흡 데이터는 등록 후 환자 대시보드의 [데이터 추가]에서 등록합니다.\n\n등록 완료\n!\n\n기본정보(필수입력)를 모두 입력하세요.\n\n누락된 항목을 확인해 주세요.\n\n확인"
   },
   {
@@ -419,6 +465,7 @@
     "file": "M033_사용자를_찾을_수_없습니다.png",
     "verified": true,
     "expect": "사용자를 찾을 수 없습니다",
+    "method": "user-action",
     "screenText": "계정 관리\n\n관리자 전용 — 사용자 계정 생성·수정·삭제\n\n계정 추가\n계정 관리\n감사 로그\n백업/복구\n등록된 계정 (2)\n관리자\n(admin)\n나\n관리자\n\n생성: 2026.09.09\n\n역할 변경\nghost\n임상의\n\n생성: 2026.09.09\n\n역할 변경\n비밀번호 초기화\n삭제\n시스템 사용 알림 문구\n\n로그인 화면에 표시되는 사전 접속 안내 문구입니다. 비워두면 기본 문구가 표시됩니다. (최대 1000자)\n\n기본값으로 재설정\n저장\n\nDIBH - Flow v1.1.7  ·  유통표준코드(GTIN-13) 8800398360005\n\n사용자를 찾을 수 없습니다."
   },
   {
@@ -428,6 +475,7 @@
     "file": "M036_계정을_삭제하지_못했습니다.png",
     "verified": false,
     "expect": "삭제하지 못했습니다",
+    "method": "user-action",
     "screenText": "계정 관리\n\n관리자 전용 — 사용자 계정 생성·수정·삭제\n\n계정 추가\n계정 관리\n감사 로그\n백업/복구\n등록된 계정 (1)\n관리자\n(admin)\n나\n관리자\n\n생성: 2026.09.09\n\n역할 변경\n시스템 사용 알림 문구\n\n로그인 화면에 표시되는 사전 접속 안내 문구입니다. 비워두면 기본 문구가 표시됩니다. (최대 1000자)\n\n기본값으로 재설정\n저장\n\nDIBH - Flow v1.1.7  ·  유통표준코드(GTIN-13) 8800398360005"
   },
   {
@@ -437,6 +485,7 @@
     "file": "M058_업로드_진행_중입니다___모든_파일_저장이_끝난_뒤.png",
     "verified": false,
     "expect": "업로드 진행 중입니다",
+    "method": "user-action",
     "screenText": "뒤로\n호흡 데이터 추가\n\n진행중환자 • PT-2026-001\n\n홈\n\n일반호흡·DIBH 파일을 추가하면 \"분석할 파일 선택\" 화면 목록에 바로 반영됩니다.\n\n일반호흡 업로드 (필수)\n\n파일을 선택하세요\n\nCSV, VXP 지원 (다중 선택 가능 · 분석은 CSV만)\n\n등록된 파일 (1)\n\nCSV\n\nGEN_slow.csv\n\n8.0 KB · 저장 중…\n\nDIBH 호흡 업로드 (필수)\n\n파일을 선택하세요\n\nCSV, VXP 지원 (다중 선택 가능 · 분석은 CSV만)\n\n등록 완료\n\n파일이 저장될 때까지 잠시만 기다려 주세요."
   },
   {
@@ -446,6 +495,7 @@
     "file": "M060_삭제_실패___파일_삭제_중_오류_(업로드_화면).png",
     "verified": false,
     "expect": "파일 삭제 중 오류",
+    "method": "user-action",
     "screenText": "뒤로\n호흡 데이터 추가\n\n파일삭제환자 • PT-2026-001\n\n홈\n\n일반호흡·DIBH 파일을 추가하면 \"분석할 파일 선택\" 화면 목록에 바로 반영됩니다.\n\n일반호흡 업로드 (필수)\n\n파일을 선택하세요\n\nCSV, VXP 지원 (다중 선택 가능 · 분석은 CSV만)\n\nDIBH 호흡 업로드 (필수)\n\n파일을 선택하세요\n\nCSV, VXP 지원 (다중 선택 가능 · 분석은 CSV만)\n\n등록 완료"
   },
   {
@@ -455,7 +505,8 @@
     "file": "M073_일반호흡_파일을_찾을_수_없습니다.png",
     "verified": true,
     "expect": "파일을 찾을 수 없습니다",
-    "screenText": "뒤로\n분석할 파일 선택\n\n분실환자 • PT-2026-001\n\n홈\n\n이 환자에게 등록된 호흡 데이터 목록입니다.\n\n업로드는 CSV·VXP 모두 가능합니다. 이 화면에서 실행하는 분석은 일반·DIBH 각각 CSV 파일을 선택해야 합니다.\n\n호흡 파일 추가화면에서 일반·DIBH 파일을 더 등록할 수 있습니다.\n\n일반호흡 업로드 파일\nCSV\n\n분실환자_GEN_20260909.csv\n\n8.0 KB · 2026.09.09 18:04 업로드\n\nDIBH 업로드 파일\nCSV\n\n분실환자_DIBH_20260909.csv\n\n8.0 KB · 2026.09.09 18:04 업로드\n\n처음으로\n분석 시작\n호흡 데이터 분석 중\n\n업로드된 파일의 패턴을 분석하고 있습니다.\n\n분석에 실패했습니다\n\n일반호흡 파일을 찾을 수 없습니다.\n\n확인"
+    "method": "user-action",
+    "screenText": "뒤로\n분석할 파일 선택\n\n분실환자 • PT-2026-001\n\n홈\n\n이 환자에게 등록된 호흡 데이터 목록입니다.\n\n업로드는 CSV·VXP 모두 가능합니다. 이 화면에서 실행하는 분석은 일반·DIBH 각각 CSV 파일을 선택해야 합니다.\n\n호흡 파일 추가화면에서 일반·DIBH 파일을 더 등록할 수 있습니다.\n\n일반호흡 업로드 파일\nCSV\n\n분실환자_GEN_20260909.csv\n\n8.0 KB · 2026.09.09 18:41 업로드\n\nDIBH 업로드 파일\nCSV\n\n분실환자_DIBH_20260909.csv\n\n8.0 KB · 2026.09.09 18:41 업로드\n\n처음으로\n분석 시작\n호흡 데이터 분석 중\n\n업로드된 파일의 패턴을 분석하고 있습니다.\n\n분석에 실패했습니다\n\n일반호흡 파일을 찾을 수 없습니다.\n\n확인"
   },
   {
     "id": "M078",
@@ -464,7 +515,8 @@
     "file": "M078_파일_무결성_오류__저장된_이후_파일이_변경되었습니다.png",
     "verified": false,
     "expect": "파일 무결성 오류",
-    "screenText": "뒤로\n분석할 파일 선택\n\n무결성환자 • PT-2026-001\n\n홈\n\n이 환자에게 등록된 호흡 데이터 목록입니다.\n\n업로드는 CSV·VXP 모두 가능합니다. 이 화면에서 실행하는 분석은 일반·DIBH 각각 CSV 파일을 선택해야 합니다.\n\n호흡 파일 추가화면에서 일반·DIBH 파일을 더 등록할 수 있습니다.\n\n일반호흡 업로드 파일\nCSV\n\n무결성환자_GEN_20260909.csv\n\n8.0 KB · 2026.09.09 18:04 업로드\n\nDIBH 업로드 파일\nCSV\n\n무결성환자_DIBH_20260909.csv\n\n8.0 KB · 2026.09.09 18:04 업로드\n\n처음으로\n분석 시작\n호흡 데이터 분석 중\n\n업로드된 파일의 패턴을 분석하고 있습니다.\n\n분석에 실패했습니다\n\nThe provided data is too small\n\n확인"
+    "method": "user-action",
+    "screenText": "뒤로\n분석할 파일 선택\n\n무결성환자 • PT-2026-001\n\n홈\n\n이 환자에게 등록된 호흡 데이터 목록입니다.\n\n업로드는 CSV·VXP 모두 가능합니다. 이 화면에서 실행하는 분석은 일반·DIBH 각각 CSV 파일을 선택해야 합니다.\n\n호흡 파일 추가화면에서 일반·DIBH 파일을 더 등록할 수 있습니다.\n\n일반호흡 업로드 파일\nCSV\n\n무결성환자_GEN_20260909.csv\n\n8.0 KB · 2026.09.09 18:41 업로드\n\nDIBH 업로드 파일\nCSV\n\n무결성환자_DIBH_20260909.csv\n\n8.0 KB · 2026.09.09 18:42 업로드\n\n처음으로\n분석 시작\n호흡 데이터 분석 중\n\n업로드된 파일의 패턴을 분석하고 있습니다.\n\n분석에 실패했습니다\n\nThe provided data is too small\n\n확인"
   },
   {
     "id": "M044",
@@ -473,6 +525,7 @@
     "file": "M044_백업_생성에_실패했습니다.png",
     "verified": true,
     "expect": "백업 생성에 실패",
+    "method": "user-action",
     "screenText": "백업 및 복구\n\n관리자 전용 — AES-256 암호화 백업 (RA-02, RA-03)\n\n계정 관리\n감사 로그\n백업/복구\n백업 생성에 실패했습니다.\n데이터 백업 (내보내기)\n\n모든 환자·캘리브레이션·감사 로그를 AES-256으로 암호화한 파일로 내보냅니다. 백업 중에는 시스템 사용에 영향을 주지 않습니다.\n\n백업 파일 생성\n비식별 데이터 내보내기 (DC-02)\n\n이름·생년월일을 제외한 캘리브레이션 결과를 CSV로 내보냅니다. 환자 코드·성별·치료회차·분석결과만 포함됩니다.\n\n비식별 CSV 내보내기\n데이터 복구 (가져오기)\n\n이전에 생성한 백업 파일(.enc)을 불러와 복구합니다. 무결성 검증 후 적용되며, 현재 데이터를 덮어씁니다.\n\n⚠ 복구 시 현재 저장된 데이터가 백업 시점으로 대체됩니다.\n백업 파일 선택\n\nDIBH - Flow v1.1.7  ·  유통표준코드(GTIN-13) 8800398360005"
   },
   {
@@ -482,6 +535,7 @@
     "file": "M045_비식별_내보내기에_실패했습니다.png",
     "verified": false,
     "expect": "비식별 내보내기에 실패",
+    "method": "user-action",
     "screenText": "백업 및 복구\n\n관리자 전용 — AES-256 암호화 백업 (RA-02, RA-03)\n\n계정 관리\n감사 로그\n백업/복구\n비식별 데이터가 내보내졌습니다 (0명, 다운로드 폴더/dibh-deidentified-20260909.csv). 이름·생년월일은 포함되지 않습니다.\n데이터 백업 (내보내기)\n\n모든 환자·캘리브레이션·감사 로그를 AES-256으로 암호화한 파일로 내보냅니다. 백업 중에는 시스템 사용에 영향을 주지 않습니다.\n\n백업 파일 생성\n비식별 데이터 내보내기 (DC-02)\n\n이름·생년월일을 제외한 캘리브레이션 결과를 CSV로 내보냅니다. 환자 코드·성별·치료회차·분석결과만 포함됩니다.\n\n비식별 CSV 내보내기\n데이터 복구 (가져오기)\n\n이전에 생성한 백업 파일(.enc)을 불러와 복구합니다. 무결성 검증 후 적용되며, 현재 데이터를 덮어씁니다.\n\n⚠ 복구 시 현재 저장된 데이터가 백업 시점으로 대체됩니다.\n백업 파일 선택\n\nDIBH - Flow v1.1.7  ·  유통표준코드(GTIN-13) 8800398360005"
   },
   {
@@ -491,6 +545,187 @@
     "file": "M048_복구에_실패했습니다___올바른_백업_파일인지_확인해_주세요.png",
     "verified": false,
     "expect": "복구에 실패",
+    "method": "user-action",
     "screenText": "백업 및 복구\n\n관리자 전용 — AES-256 암호화 백업 (RA-02, RA-03)\n\n계정 관리\n감사 로그\n백업/복구\nUnexpected token 'o', \"not a backup at all\" is not valid JSON\n데이터 백업 (내보내기)\n\n모든 환자·캘리브레이션·감사 로그를 AES-256으로 암호화한 파일로 내보냅니다. 백업 중에는 시스템 사용에 영향을 주지 않습니다.\n\n백업 파일 생성\n비식별 데이터 내보내기 (DC-02)\n\n이름·생년월일을 제외한 캘리브레이션 결과를 CSV로 내보냅니다. 환자 코드·성별·치료회차·분석결과만 포함됩니다.\n\n비식별 CSV 내보내기\n데이터 복구 (가져오기)\n\n이전에 생성한 백업 파일(.enc)을 불러와 복구합니다. 무결성 검증 후 적용되며, 현재 데이터를 덮어씁니다.\n\n⚠ 복구 시 현재 저장된 데이터가 백업 시점으로 대체됩니다.\n백업 파일 선택\n\nDIBH - Flow v1.1.7  ·  유통표준코드(GTIN-13) 8800398360005"
+  },
+  {
+    "id": "M060b",
+    "num": 60,
+    "name": "삭제 실패 / 파일 삭제 중 오류 (호흡 데이터 추가)",
+    "file": "M060b_삭제_실패___파일_삭제_중_오류_(호흡_데이터_추가).png",
+    "verified": true,
+    "expect": "파일 삭제 중 오류",
+    "method": "induced-fault (database write)",
+    "screenText": "뒤로\n호흡 데이터 추가\n\n삭제실패환자 • PT-2026-001\n\n홈\n\n일반호흡·DIBH 파일을 추가하면 \"분석할 파일 선택\" 화면 목록에 바로 반영됩니다.\n\n일반호흡 업로드 (필수)\n\n파일을 선택하세요\n\nCSV, VXP 지원 (다중 선택 가능 · 분석은 CSV만)\n\n등록된 파일 (1)\n\nCSV\n\n삭제실패환자_GEN_20260909.csv\n\n8.0 KB · 업로드 완료 (2026.09.09 18:43)\n\nDIBH 호흡 업로드 (필수)\n\n파일을 선택하세요\n\nCSV, VXP 지원 (다중 선택 가능 · 분석은 CSV만)\n\n등록 완료\n삭제 실패\n파일 삭제 중 오류가 발생했습니다. 다시 시도해 주세요.\n파일 삭제\n\n선택한 호흡 데이터 파일을 저장소에서 제거합니다.\n\n!\n\n파일을 삭제할까요?\n\n삭제실패환자_GEN_20260909.csv\n\n삭제 후 복구할 수 없습니다. 분석 화면에서도 제거됩니다.\n\n취소\n삭제"
+  },
+  {
+    "id": "M071b",
+    "num": 71,
+    "name": "파일 삭제 실패 (분석할 파일 선택)",
+    "file": "M071b_파일_삭제_실패_(분석할_파일_선택).png",
+    "verified": true,
+    "expect": "파일 삭제 실패",
+    "method": "induced-fault (database write)",
+    "screenText": "뒤로\n분석할 파일 선택\n\n선택삭제환자 • PT-2026-002\n\n홈\n\n이 환자에게 등록된 호흡 데이터 목록입니다.\n\n업로드는 CSV·VXP 모두 가능합니다. 이 화면에서 실행하는 분석은 일반·DIBH 각각 CSV 파일을 선택해야 합니다.\n\n호흡 파일 추가화면에서 일반·DIBH 파일을 더 등록할 수 있습니다.\n\n일반호흡 업로드 파일\nCSV\n\n선택삭제환자_GEN_20260909.csv\n\n8.0 KB · 2026.09.09 18:43 업로드\n\nDIBH 업로드 파일\n\n등록된 DIBH 파일이 없습니다.\n\n처음으로\n분석 시작\n파일 삭제 실패\n파일 삭제 중 오류가 발생했습니다. 다시 시도해 주세요.\n파일 삭제\n\n선택한 파일을 저장소에서 삭제합니다.\n\n!\n\n파일을 삭제할까요?\n\n선택삭제환자_GEN_20260909.csv\n\n삭제된 파일은 복구할 수 없습니다.\n\n취소\n삭제"
+  },
+  {
+    "id": "M069b",
+    "num": 69,
+    "name": "환자 삭제에 실패했습니다",
+    "file": "M069b_환자_삭제에_실패했습니다.png",
+    "verified": false,
+    "expect": "환자 삭제에 실패",
+    "method": "induced-fault (database write)",
+    "screenText": "홈\n환자 차트 (대시보드)\n로그아웃\n삭제실패대상\nPT-2026-003\n정보 수정\n삭제\n\n생년월일(성별)\n\n1990.05.12 (M)\n\n담당 의사\n\n관리자\n\n치료 회차\n\n0회차\n\n방문일\n\n2026.09.09\n\n호흡 분석 결과\n최근 분석 상태\n없음\n\n아직 호흡 분석 결과가 없습니다.\n\n상단의 [데이터 추가]로 일반·DIBH 데이터(CSV 또는 VXP)를 업로드한 뒤, [호흡 분석]에서 파일을 선택해 분석을 실행해 주세요.\n\n데이터 추가\n캘리브레이션 히스토리\n\n캘리브레이션 이력이 없습니다.\n\n상단의 [데이터 추가] 버튼을 눌러 첫 분석을 시작해 주세요.\n\n환자 삭제\n\n환자 정보를 영구 삭제합니다.\n\n!\n\n환자 정보를 정말 삭제하시겠습니까?\n\n등록된 환자의 개인정보 및 호흡 데이터, 시뮬레이션 결과가 모두 시스템에서 영구적으로 삭제됩니다.\n\n삭제된 데이터는 복구할 수 없습니다.\n아니오, 취소합니다\n예, 삭제합니다"
+  },
+  {
+    "id": "M036b",
+    "num": 36,
+    "name": "계정을 삭제하지 못했습니다",
+    "file": "M036b_계정을_삭제하지_못했습니다.png",
+    "verified": false,
+    "expect": "삭제하지 못했습니다",
+    "method": "induced-fault (encryption)",
+    "screenText": "계정 관리\n\n관리자 전용 — 사용자 계정 생성·수정·삭제\n\n계정 추가\n계정 관리\n감사 로그\n백업/복구\n등록된 계정 (1)\n관리자\n(admin)\n나\n관리자\n\n생성: 2026.09.09\n\n역할 변경\n시스템 사용 알림 문구\n\n로그인 화면에 표시되는 사전 접속 안내 문구입니다. 비워두면 기본 문구가 표시됩니다. (최대 1000자)\n\n기본값으로 재설정\n저장\n\nDIBH - Flow v1.1.7  ·  유통표준코드(GTIN-13) 8800398360005"
+  },
+  {
+    "id": "M046c",
+    "num": 46,
+    "name": "백업 파일의 무결성 검증에 실패했습니다",
+    "file": "M046c_백업_파일의_무결성_검증에_실패했습니다.png",
+    "verified": false,
+    "expect": "무결성 검증에 실패",
+    "method": "real artefact (tampered backup) + user action",
+    "screenText": "백업 및 복구\n\n관리자 전용 — AES-256 암호화 백업 (RA-02, RA-03)\n\n계정 관리\n감사 로그\n백업/복구\n복호화에 실패했습니다. 이 백업은 현재 설치 키와 다른 키로 암호화되어 있습니다. 백업을 생성한 기기에서만 복구할 수 있습니다.\n데이터 백업 (내보내기)\n\n모든 환자·캘리브레이션·감사 로그를 AES-256으로 암호화한 파일로 내보냅니다. 백업 중에는 시스템 사용에 영향을 주지 않습니다.\n\n백업 파일 생성\n비식별 데이터 내보내기 (DC-02)\n\n이름·생년월일을 제외한 캘리브레이션 결과를 CSV로 내보냅니다. 환자 코드·성별·치료회차·분석결과만 포함됩니다.\n\n비식별 CSV 내보내기\n데이터 복구 (가져오기)\n\n이전에 생성한 백업 파일(.enc)을 불러와 복구합니다. 무결성 검증 후 적용되며, 현재 데이터를 덮어씁니다.\n\n⚠ 복구 시 현재 저장된 데이터가 백업 시점으로 대체됩니다.\n백업 파일 선택\n\nDIBH - Flow v1.1.7  ·  유통표준코드(GTIN-13) 8800398360005"
+  },
+  {
+    "id": "M047",
+    "num": 47,
+    "name": "복호화에 실패했습니다 (다른 설치 키로 만든 백업)",
+    "file": "M047_복호화에_실패했습니다_(다른_설치_키로_만든_백업).png",
+    "verified": true,
+    "expect": "다른 키로 암호화",
+    "method": "real artefact (foreign-key backup) + user action",
+    "screenText": "백업 및 복구\n\n관리자 전용 — AES-256 암호화 백업 (RA-02, RA-03)\n\n계정 관리\n감사 로그\n백업/복구\n복호화에 실패했습니다. 이 백업은 현재 설치 키와 다른 키로 암호화되어 있습니다. 백업을 생성한 기기에서만 복구할 수 있습니다.\n데이터 백업 (내보내기)\n\n모든 환자·캘리브레이션·감사 로그를 AES-256으로 암호화한 파일로 내보냅니다. 백업 중에는 시스템 사용에 영향을 주지 않습니다.\n\n백업 파일 생성\n비식별 데이터 내보내기 (DC-02)\n\n이름·생년월일을 제외한 캘리브레이션 결과를 CSV로 내보냅니다. 환자 코드·성별·치료회차·분석결과만 포함됩니다.\n\n비식별 CSV 내보내기\n데이터 복구 (가져오기)\n\n이전에 생성한 백업 파일(.enc)을 불러와 복구합니다. 무결성 검증 후 적용되며, 현재 데이터를 덮어씁니다.\n\n⚠ 복구 시 현재 저장된 데이터가 백업 시점으로 대체됩니다.\n백업 파일 선택\n\nDIBH - Flow v1.1.7  ·  유통표준코드(GTIN-13) 8800398360005"
+  },
+  {
+    "id": "M048b",
+    "num": 48,
+    "name": "복구에 실패했습니다 / 올바른 백업 파일인지 확인해 주세요",
+    "file": "M048b_복구에_실패했습니다___올바른_백업_파일인지_확인해_주세요.png",
+    "verified": true,
+    "expect": "복구에 실패",
+    "method": "induced-fault (message-less error)",
+    "screenText": "백업 및 복구\n\n관리자 전용 — AES-256 암호화 백업 (RA-02, RA-03)\n\n계정 관리\n감사 로그\n백업/복구\n복구에 실패했습니다. 올바른 백업 파일인지 확인해 주세요.\n데이터 백업 (내보내기)\n\n모든 환자·캘리브레이션·감사 로그를 AES-256으로 암호화한 파일로 내보냅니다. 백업 중에는 시스템 사용에 영향을 주지 않습니다.\n\n백업 파일 생성\n비식별 데이터 내보내기 (DC-02)\n\n이름·생년월일을 제외한 캘리브레이션 결과를 CSV로 내보냅니다. 환자 코드·성별·치료회차·분석결과만 포함됩니다.\n\n비식별 CSV 내보내기\n데이터 복구 (가져오기)\n\n이전에 생성한 백업 파일(.enc)을 불러와 복구합니다. 무결성 검증 후 적용되며, 현재 데이터를 덮어씁니다.\n\n⚠ 복구 시 현재 저장된 데이터가 백업 시점으로 대체됩니다.\n백업 파일 선택\n\nDIBH - Flow v1.1.7  ·  유통표준코드(GTIN-13) 8800398360005"
+  },
+  {
+    "id": "M045b",
+    "num": 45,
+    "name": "비식별 내보내기에 실패했습니다",
+    "file": "M045b_비식별_내보내기에_실패했습니다.png",
+    "verified": false,
+    "expect": "비식별 내보내기에 실패",
+    "method": "induced-fault (decryption)",
+    "screenText": "백업 및 복구\n\n관리자 전용 — AES-256 암호화 백업 (RA-02, RA-03)\n\n계정 관리\n감사 로그\n백업/복구\n비식별 데이터가 내보내졌습니다 (1명, 다운로드 폴더/dibh-deidentified-20260909.csv). 이름·생년월일은 포함되지 않습니다.\n데이터 백업 (내보내기)\n\n모든 환자·캘리브레이션·감사 로그를 AES-256으로 암호화한 파일로 내보냅니다. 백업 중에는 시스템 사용에 영향을 주지 않습니다.\n\n백업 파일 생성\n비식별 데이터 내보내기 (DC-02)\n\n이름·생년월일을 제외한 캘리브레이션 결과를 CSV로 내보냅니다. 환자 코드·성별·치료회차·분석결과만 포함됩니다.\n\n비식별 CSV 내보내기\n데이터 복구 (가져오기)\n\n이전에 생성한 백업 파일(.enc)을 불러와 복구합니다. 무결성 검증 후 적용되며, 현재 데이터를 덮어씁니다.\n\n⚠ 복구 시 현재 저장된 데이터가 백업 시점으로 대체됩니다.\n백업 파일 선택\n\nDIBH - Flow v1.1.7  ·  유통표준코드(GTIN-13) 8800398360005"
+  },
+  {
+    "id": "M058b",
+    "num": 58,
+    "name": "업로드 진행 중입니다 / 모든 파일 저장이 끝난 뒤",
+    "file": "M058b_업로드_진행_중입니다___모든_파일_저장이_끝난_뒤.png",
+    "verified": false,
+    "expect": "업로드 진행 중입니다",
+    "method": "induced-fault (slowed write)",
+    "screenText": "뒤로\n호흡 데이터 추가\n\n진행중대상 • PT-2026-001\n\n홈\n\n일반호흡·DIBH 파일을 추가하면 \"분석할 파일 선택\" 화면 목록에 바로 반영됩니다.\n\n일반호흡 업로드 (필수)\n\n파일을 선택하세요\n\nCSV, VXP 지원 (다중 선택 가능 · 분석은 CSV만)\n\n등록된 파일 (1)\n\nCSV\n\nGEN_slow.csv\n\n8.0 KB · 저장 중…\n\nDIBH 호흡 업로드 (필수)\n\n파일을 선택하세요\n\nCSV, VXP 지원 (다중 선택 가능 · 분석은 CSV만)\n\n등록 완료\n\n파일이 저장될 때까지 잠시만 기다려 주세요."
+  },
+  {
+    "id": "M074",
+    "num": 74,
+    "name": "DIBH 파일을 찾을 수 없습니다",
+    "file": "M074_DIBH_파일을_찾을_수_없습니다.png",
+    "verified": true,
+    "expect": "DIBH 파일을 찾을 수 없습니다",
+    "method": "induced-fault (row removed after selection)",
+    "screenText": "뒤로\n분석할 파일 선택\n\nDIBH분실환자 • PT-2026-001\n\n홈\n\n이 환자에게 등록된 호흡 데이터 목록입니다.\n\n업로드는 CSV·VXP 모두 가능합니다. 이 화면에서 실행하는 분석은 일반·DIBH 각각 CSV 파일을 선택해야 합니다.\n\n호흡 파일 추가화면에서 일반·DIBH 파일을 더 등록할 수 있습니다.\n\n일반호흡 업로드 파일\nCSV\n\nDIBH분실환자_GEN_20260909.csv\n\n8.0 KB · 2026.09.09 18:45 업로드\n\nDIBH 업로드 파일\nCSV\n\nDIBH분실환자_DIBH_20260909.csv\n\n8.0 KB · 2026.09.09 18:45 업로드\n\n처음으로\n분석 시작\n호흡 데이터 분석 중\n\n업로드된 파일의 패턴을 분석하고 있습니다.\n\n분석에 실패했습니다\n\nDIBH 파일을 찾을 수 없습니다.\n\n확인"
+  },
+  {
+    "id": "M078b",
+    "num": 78,
+    "name": "파일 무결성 오류: 저장된 이후 파일이 변경되었습니다",
+    "file": "M078b_파일_무결성_오류__저장된_이후_파일이_변경되었습니다.png",
+    "verified": false,
+    "expect": "파일 무결성 오류",
+    "method": "induced-fault (stored bytes altered, hash left intact)",
+    "screenText": "뒤로\n분석할 파일 선택\n\n무결성대상 • PT-2026-001\n\n홈\n\n이 환자에게 등록된 호흡 데이터 목록입니다.\n\n업로드는 CSV·VXP 모두 가능합니다. 이 화면에서 실행하는 분석은 일반·DIBH 각각 CSV 파일을 선택해야 합니다.\n\n호흡 파일 추가화면에서 일반·DIBH 파일을 더 등록할 수 있습니다.\n\n일반호흡 업로드 파일\nCSV\n\n무결성대상_GEN_20260909.csv\n\n8.0 KB · 2026.09.09 18:46 업로드\n\nDIBH 업로드 파일\nCSV\n\n무결성대상_DIBH_20260909.csv\n\n8.0 KB · 2026.09.09 18:46 업로드\n\n처음으로\n분석 시작\n호흡 데이터 분석 중\n\n업로드된 파일의 패턴을 분석하고 있습니다.\n\n분석에 실패했습니다\n\nThe provided data is too small\n\n확인"
+  },
+  {
+    "id": "M072",
+    "num": 72,
+    "name": "분석 중 오류가 발생했습니다 (폴백)",
+    "file": "M072_분석_중_오류가_발생했습니다_(폴백).png",
+    "verified": true,
+    "expect": "분석 중 오류가 발생했습니다",
+    "method": "induced-fault (message-less error)",
+    "screenText": "뒤로\n분석할 파일 선택\n\n폴백환자 • PT-2026-001\n\n홈\n\n이 환자에게 등록된 호흡 데이터 목록입니다.\n\n업로드는 CSV·VXP 모두 가능합니다. 이 화면에서 실행하는 분석은 일반·DIBH 각각 CSV 파일을 선택해야 합니다.\n\n호흡 파일 추가화면에서 일반·DIBH 파일을 더 등록할 수 있습니다.\n\n일반호흡 업로드 파일\nCSV\n\n폴백환자_GEN_20260909.csv\n\n8.0 KB · 2026.09.09 18:47 업로드\n\nDIBH 업로드 파일\nCSV\n\n폴백환자_DIBH_20260909.csv\n\n8.0 KB · 2026.09.09 18:47 업로드\n\n처음으로\n분석 시작\n호흡 데이터 분석 중\n\n업로드된 파일의 패턴을 분석하고 있습니다.\n\n분석에 실패했습니다\n\n분석 중 오류가 발생했습니다. 파일을 확인하고 다시 시도해 주세요.\n\n확인"
+  },
+  {
+    "id": "M040b",
+    "num": 40,
+    "name": "감사 로그 저장 공간 경고 (UC-05)",
+    "file": "M040b_감사_로그_저장_공간_경고_(UC-05).png",
+    "verified": false,
+    "expect": "저장 공간 경고",
+    "method": "seeded state",
+    "screenText": "감사 로그\n\n읽기 전용 — 관리자 전용 (TRE-01)\n\n읽기 전용\n계정 관리\n감사 로그\n백업/복구\n\n총 7,800건 · 페이지 1/372· 감사 로그 2.60 MB · 저장소 전체 2.60 MB\n\n일시\t사용자\t액션\t대상\t상세\n09.09 16:37:31\t—\tLOGIN\tuser\tx\n09.09 16:37:32\t—\tLOGIN\tuser\tx\n09.09 16:37:33\t—\tLOGIN\tuser\tx\n09.09 16:37:34\t—\tLOGIN\tuser\tx\n09.09 16:37:35\t—\tLOGIN\tuser\tx\n09.09 16:37:36\t—\tLOGIN\tuser\tx\n09.09 16:37:37\t—\tLOGIN\tuser\tx\n09.09 16:37:38\t—\tLOGIN\tuser\tx\n09.09 16:37:39\t—\tLOGIN\tuser\tx\n09.09 16:37:40\t—\tLOGIN\tuser\tx\n09.09 16:37:41\t—\tLOGIN\tuser\tx\n09.09 16:37:42\t—\tLOGIN\tuser\tx\n09.09 16:37:43\t—\tLOGIN\tuser\tx\n09.09 16:37:44\t—\tLOGIN\tuser\tx\n09.09 16:37:45\t—\tLOGIN\tuser\tx\n09.09 16:37:46\t—\tLOGIN\tuser\tx\n09.09 16:37:47\t—\tLOGIN\tuser\tx\n09.09 16:37:48\t—\tLOGIN\tuser\tx\n09.09 16:37:49\t—\tLOGIN\tuser\tx\n09.09 16:37:50\t—\tLOGIN\tuser\tx\n09.09 16:37:51\t—\tLOGIN\tuser\tx\n이전\n1 / 372\n다음\n\nDIBH - Flow v1.1.7  ·  유통표준코드(GTIN-13) 8800398360005"
+  },
+  {
+    "id": "M040c",
+    "num": 40,
+    "name": "감사 로그 저장 공간 경고 (UC-05)",
+    "file": "M040c_감사_로그_저장_공간_경고_(UC-05).png",
+    "verified": true,
+    "expect": "저장 공간 경고",
+    "method": "seeded state",
+    "screenText": "감사 로그\n\n읽기 전용 — 관리자 전용 (TRE-01)\n\n읽기 전용\n계정 관리\n감사 로그\n백업/복구\n\n감사 로그 저장 공간 경고 (UC-05)\n\n로그 항목: 8,500 / 10,000건 (85%)\n\n총 8,500건 · 페이지 1/448· 감사 로그 2.45 MB · 저장소 전체 2.45 MB\n\n일시\t사용자\t액션\t대상\t상세\n09.09 16:26:06\t—\tLOGIN\tu\t—\n09.09 16:26:07\t—\tLOGIN\tu\t—\n09.09 16:26:08\t—\tLOGIN\tu\t—\n09.09 16:26:09\t—\tLOGIN\tu\t—\n09.09 16:26:10\t—\tLOGIN\tu\t—\n09.09 16:26:11\t—\tLOGIN\tu\t—\n09.09 16:26:12\t—\tLOGIN\tu\t—\n09.09 16:26:13\t—\tLOGIN\tu\t—\n09.09 16:26:14\t—\tLOGIN\tu\t—\n09.09 16:26:15\t—\tLOGIN\tu\t—\n09.09 16:26:16\t—\tLOGIN\tu\t—\n09.09 16:26:17\t—\tLOGIN\tu\t—\n09.09 16:26:18\t—\tLOGIN\tu\t—\n09.09 16:26:19\t—\tLOGIN\tu\t—\n09.09 16:26:20\t—\tLOGIN\tu\t—\n09.09 16:26:21\t—\tLOGIN\tu\t—\n09.09 16:26:22\t—\tLOGIN\tu\t—\n09.09 16:26:23\t—\tLOGIN\tu\t—\n09.09 16:26:24\t—\tLOGIN\tu\t—\n이전\n1 / 448\n다음\n\nDIBH - Flow v1.1.7  ·  유통표준코드(GTIN-13) 8800398360005"
+  },
+  {
+    "id": "M046d",
+    "num": 46,
+    "name": "백업 파일의 무결성 검증에 실패했습니다",
+    "file": "M046d_백업_파일의_무결성_검증에_실패했습니다.png",
+    "verified": true,
+    "expect": "무결성 검증에 실패",
+    "method": "real artefact (envelope hash mismatch) + user action",
+    "screenText": "백업 및 복구\n\n관리자 전용 — AES-256 암호화 백업 (RA-02, RA-03)\n\n계정 관리\n감사 로그\n백업/복구\n백업 파일의 무결성 검증에 실패했습니다. 파일이 손상되었거나 변조되었습니다.\n데이터 백업 (내보내기)\n\n모든 환자·캘리브레이션·감사 로그를 AES-256으로 암호화한 파일로 내보냅니다. 백업 중에는 시스템 사용에 영향을 주지 않습니다.\n\n백업 파일 생성\n비식별 데이터 내보내기 (DC-02)\n\n이름·생년월일을 제외한 캘리브레이션 결과를 CSV로 내보냅니다. 환자 코드·성별·치료회차·분석결과만 포함됩니다.\n\n비식별 CSV 내보내기\n데이터 복구 (가져오기)\n\n이전에 생성한 백업 파일(.enc)을 불러와 복구합니다. 무결성 검증 후 적용되며, 현재 데이터를 덮어씁니다.\n\n⚠ 복구 시 현재 저장된 데이터가 백업 시점으로 대체됩니다.\n백업 파일 선택\n\nDIBH - Flow v1.1.7  ·  유통표준코드(GTIN-13) 8800398360005"
+  },
+  {
+    "id": "M078c",
+    "num": 78,
+    "name": "파일 무결성 오류: 저장된 이후 파일이 변경되었습니다",
+    "file": "M078c_파일_무결성_오류__저장된_이후_파일이_변경되었습니다.png",
+    "verified": true,
+    "expect": "파일 무결성 오류",
+    "method": "induced-fault (contents re-encrypted, stored hash left stale)",
+    "screenText": "뒤로\n분석할 파일 선택\n\n무결성검증환자 • PT-2026-001\n\n홈\n\n이 환자에게 등록된 호흡 데이터 목록입니다.\n\n업로드는 CSV·VXP 모두 가능합니다. 이 화면에서 실행하는 분석은 일반·DIBH 각각 CSV 파일을 선택해야 합니다.\n\n호흡 파일 추가화면에서 일반·DIBH 파일을 더 등록할 수 있습니다.\n\n일반호흡 업로드 파일\nCSV\n\n무결성검증환자_GEN_20260909.csv\n\n8.0 KB · 2026.09.09 18:48 업로드\n\nDIBH 업로드 파일\nCSV\n\n무결성검증환자_DIBH_20260909.csv\n\n8.0 KB · 2026.09.09 18:48 업로드\n\n처음으로\n분석 시작\n호흡 데이터 분석 중\n\n업로드된 파일의 패턴을 분석하고 있습니다.\n\n분석에 실패했습니다\n\n파일 무결성 오류: 저장된 이후 파일이 변경되었습니다. (PT-2026-001_GEN_20260909.csv)\n\n확인"
+  },
+  {
+    "id": "M058c",
+    "num": 58,
+    "name": "업로드 진행 중입니다 / 모든 파일 저장이 끝난 뒤",
+    "file": "M058c_업로드_진행_중입니다___모든_파일_저장이_끝난_뒤.png",
+    "verified": false,
+    "expect": "업로드 진행 중입니다",
+    "method": "induced-fault (write held open)",
+    "screenText": "뒤로\n호흡 데이터 추가\n\n진행중대상2 • PT-2026-001\n\n홈\n\n일반호흡·DIBH 파일을 추가하면 \"분석할 파일 선택\" 화면 목록에 바로 반영됩니다.\n\n일반호흡 업로드 (필수)\n\n파일을 선택하세요\n\nCSV, VXP 지원 (다중 선택 가능 · 분석은 CSV만)\n\n등록된 파일 (1)\n\nCSV\n\nGEN_hold.csv\n\n8.0 KB · 저장 중…\n\nDIBH 호흡 업로드 (필수)\n\n파일을 선택하세요\n\nCSV, VXP 지원 (다중 선택 가능 · 분석은 CSV만)\n\n등록 완료\n\n파일이 저장될 때까지 잠시만 기다려 주세요."
+  },
+  {
+    "id": "M045c",
+    "num": 45,
+    "name": "비식별 내보내기에 실패했습니다",
+    "file": "M045c_비식별_내보내기에_실패했습니다.png",
+    "verified": true,
+    "expect": "비식별 내보내기에 실패",
+    "method": "induced-fault (export write)",
+    "screenText": "백업 및 복구\n\n관리자 전용 — AES-256 암호화 백업 (RA-02, RA-03)\n\n계정 관리\n감사 로그\n백업/복구\n비식별 내보내기에 실패했습니다.\n데이터 백업 (내보내기)\n\n모든 환자·캘리브레이션·감사 로그를 AES-256으로 암호화한 파일로 내보냅니다. 백업 중에는 시스템 사용에 영향을 주지 않습니다.\n\n백업 파일 생성\n비식별 데이터 내보내기 (DC-02)\n\n이름·생년월일을 제외한 캘리브레이션 결과를 CSV로 내보냅니다. 환자 코드·성별·치료회차·분석결과만 포함됩니다.\n\n비식별 CSV 내보내기\n데이터 복구 (가져오기)\n\n이전에 생성한 백업 파일(.enc)을 불러와 복구합니다. 무결성 검증 후 적용되며, 현재 데이터를 덮어씁니다.\n\n⚠ 복구 시 현재 저장된 데이터가 백업 시점으로 대체됩니다.\n백업 파일 선택\n\nDIBH - Flow v1.1.7  ·  유통표준코드(GTIN-13) 8800398360005"
   }
 ]
