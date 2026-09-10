@@ -60,6 +60,16 @@ const RENAMED = {
   'M040_감사_로그_저장_공간_경고_(UC-05).png': 'M040c_감사_로그_저장_공간_경고_(UC-05).png',
 };
 
+// Four catalogued strings exist in the source but cannot reach a user's screen;
+// the reasons are recorded in the catalogue. They are listed apart from genuine
+// capture gaps so "not captured" keeps meaning "we could and did not".
+const UNDISPLAYABLE = {
+  35: '삭제 버튼이 본인 계정에는 렌더링되지 않아 조작 자체가 불가능',
+  36: '`UserStore.delete` 가 던지는 오류는 #35 뿐이라 폴백 문구에 도달할 경로 없음',
+  69: '`Patient.delete` 에 던질 수 있는 경로가 없음',
+  79: '업로드 화면의 catch 가 `safeMsg`(#50)로 치환하여 표시',
+};
+
 const onDisk = readdirSync(SRC).filter((f) => f.endsWith('.png'));
 const frameText = new Map();
 for (const r of JSON.parse(readFileSync(RES, 'utf8'))) {
@@ -101,8 +111,10 @@ for (const [n] of messages) {
 
 /* ── write by-message/ ───────────────────────────────────────────────────── */
 
-if (existsSync(OUT)) rmSync(OUT, { recursive: true, force: true });
+// Empty the directory rather than removing it — on Windows a shell sitting in
+// the folder makes rmdir fail, and re-running the build should not need that.
 mkdirSync(OUT, { recursive: true });
+for (const f of readdirSync(OUT)) rmSync(join(OUT, f), { force: true });
 
 const safe = (t) =>
   t
@@ -117,23 +129,26 @@ for (const [n, text] of [...messages].sort((a, b) => a[0] - b[0])) {
   const frame = chosen.get(n);
   const num = String(n).padStart(3, '0');
   if (!frame) {
-    rows.push({ n, file: null, text, method: null, shared: null });
+    rows.push({ n, file: null, text, method: null, shared: null, blocked: UNDISPLAYABLE[n] ?? null });
     continue;
   }
   const name = `${num}_${safe(text)}.png`;
   copyFileSync(join(SRC, frame), join(OUT, name));
   const also = [...shows.get(frame)].filter((x) => x !== n).sort((a, b) => a - b);
-  rows.push({ n, file: name, text, method: frameText.get(frame)?.method ?? '—', shared: also });
+  rows.push({ n, file: name, text, method: frameText.get(frame)?.method ?? '—', shared: also, blocked: null });
 }
 
 const done = rows.filter((r) => r.file);
-const missing = rows.filter((r) => !r.file);
+const blocked = rows.filter((r) => !r.file && r.blocked);
+const missing = rows.filter((r) => !r.file && !r.blocked);
 
 const md = [
   '# 메시지별 화면 캡처 (1 메시지 = 1 파일)',
   '',
+  `- 등재 문구 ${messages.size}건 중 **표시 가능 ${messages.size - blocked.length}건**`,
   `- 파일 수: **${done.length}** (메시지 번호당 1장)`,
-  `- 미확보: ${missing.length}건 — ${missing.map((r) => '#' + r.n).join(', ') || '없음'}`,
+  `- 표시 불가로 확인된 문구: ${blocked.length}건 — ${blocked.map((r) => '#' + r.n).join(', ') || '없음'} (아래 표에 사유 기재)`,
+  `- 표시 가능하나 미확보: ${missing.length}건 — ${missing.map((r) => '#' + r.n).join(', ') || '없음'}`,
   '',
   '파일명은 `번호_메시지.png` 이므로 번호만 알면 바로 찾을 수 있습니다.',
   '',
@@ -146,11 +161,15 @@ const md = [
   ...rows.map((r) =>
     r.file
       ? `| ${r.n} | ${r.text} | \`${r.file}\` | ${r.shared.length ? r.shared.map((x) => '#' + x).join(', ') : '—'} | ${r.method} |`
-      : `| ${r.n} | ${r.text} | **미확보** | — | — |`,
+      : r.blocked
+        ? `| ${r.n} | ${r.text} | *표시 불가* | — | ${r.blocked} |`
+        : `| ${r.n} | ${r.text} | **미확보** | — | — |`,
   ),
   '',
 ].join('\n');
 writeFileSync(join(OUT, 'README.md'), md, 'utf8');
 
-console.log(`by-message/: ${done.length} files written, ${missing.length} messages without a capture`);
-if (missing.length) console.log('missing:', missing.map((r) => '#' + r.n).join(', '));
+console.log(
+  `by-message/: ${done.length} files written, ${blocked.length} undisplayable, ${missing.length} displayable but uncaptured`,
+);
+if (missing.length) console.log('uncaptured:', missing.map((r) => '#' + r.n).join(', '));
