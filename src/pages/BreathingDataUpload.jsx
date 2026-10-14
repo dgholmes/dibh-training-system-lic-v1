@@ -15,6 +15,9 @@ import { toast } from '@/components/ui/use-toast';
 import { formatFileSize, fileTypeBadge } from '@/lib/files';
 import { cn } from '@/lib/utils';
 import { isAllowedBreathingUploadFile } from '@/lib/breathingFileFormat';
+import { breathingFileDisplayName } from '@/lib/breathingFileDisplayName';
+import { buildUploadConfirmItems } from '@/lib/breathingFileCategory';
+import UploadConfirmDialog from '@/components/breathing/UploadConfirmDialog';
 import { format } from 'date-fns';
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 
@@ -29,6 +32,7 @@ function formatImportedAt(iso) {
 function PatientBreathingUploadSection({
   title,
   accentClass,
+  patient,
   savedFiles,
   pendingFiles,
   onAddFiles,
@@ -97,7 +101,9 @@ function PatientBreathingUploadSection({
                   {fileTypeBadge(f.original_name)}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-semibold text-white">{f.original_name}</p>
+                  <p className="truncate text-sm font-semibold text-white">
+                    {breathingFileDisplayName(f.original_name, patient)}
+                  </p>
                   <p className="mt-0.5 text-xs text-[#9BA1A6]">
                     {formatFileSize(f.size_bytes)} · 업로드 완료 ({formatImportedAt(f.imported_at)})
                   </p>
@@ -113,7 +119,10 @@ function PatientBreathingUploadSection({
                     className="h-9 w-9 shrink-0 text-[#8B949E] hover:bg-[#30363D] hover:text-white"
                     onClick={(e) => {
                       e.stopPropagation();
-                      onRequestDeleteSaved({ id: f.id, name: f.original_name });
+                      onRequestDeleteSaved({
+                        id: f.id,
+                        name: breathingFileDisplayName(f.original_name, patient),
+                      });
                     }}
                     aria-label="파일 삭제"
                   >
@@ -138,32 +147,20 @@ function PatientBreathingUploadSection({
                   <p className="mt-0.5 text-xs text-[#9BA1A6]">
                     {f.status === 'error'
                       ? f.error || '저장 실패'
-                      : f.status === 'persisting'
-                        ? `${formatFileSize(f.size)} · 저장 중…`
-                        : `${formatFileSize(f.size)} · ${Math.round(f.progress)}% 업로드 중…`}
+                      : `${formatFileSize(f.size)} · 저장 중…`}
                   </p>
                 </div>
                 <div className="flex shrink-0 items-center gap-3">
-                  {f.status === 'uploading' ? (
-                    <div
-                      className="h-2 w-[88px] overflow-hidden rounded-full bg-[#0D1117]"
-                      role="progressbar"
-                      aria-valuenow={Math.round(f.progress)}
-                      aria-valuemin={0}
-                      aria-valuemax={100}
-                    >
-                      <div
-                        className="h-full rounded-full bg-white/90 transition-[width] duration-200 ease-out"
-                        style={{ width: `${f.progress}%` }}
-                      />
-                    </div>
-                  ) : f.status === 'persisting' ? (
+                  {/*
+                    Indeterminate on purpose: a local SQLite write has no
+                    meaningful percentage, and the old determinate bar was
+                    animating an invented one.
+                  */}
+                  {f.status === 'persisting' ? (
                     <div className="h-2 w-[88px] overflow-hidden rounded-full bg-[#0D1117]">
                       <div className="h-full w-full animate-pulse rounded-full bg-[#8B5CF6]/60" />
                     </div>
-                  ) : f.status === 'error' ? null : (
-                    <Check className="h-4 w-4 shrink-0 text-[#A78BFA]" />
-                  )}
+                  ) : null}
                   <Button
                     type="button"
                     variant="ghost"
@@ -173,7 +170,7 @@ function PatientBreathingUploadSection({
                       e.stopPropagation();
                       onRemovePending(f.id);
                     }}
-                    aria-label={f.status === 'uploading' ? '업로드 취소' : '항목 제거'}
+                    aria-label="항목 제거"
                   >
                     <X className="h-4 w-4" strokeWidth={2} />
                   </Button>
@@ -200,6 +197,8 @@ export default function BreathingDataUpload() {
   const [dibhPending, setDibhPending] = useState([]);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  // Files wait here until the operator confirms their category (RM-DBF-010).
+  const [confirmState, setConfirmState] = useState(null);
 
   const { data: patient } = useQuery({
     queryKey: ['patient', patientId],
@@ -230,46 +229,38 @@ export default function BreathingDataUpload() {
     queryClient.invalidateQueries({ queryKey: ['breathingFiles'] });
   }, [queryClient]);
 
-  const simulateUploadAndPersist = useCallback(
-    (items, category, setList) => {
-      items.forEach((item) => {
-        const { id, file } = item;
-        const tick = setInterval(() => {
+  /**
+   * Saves each file and reports what actually happened.
+   *
+   * This used to animate 0.8-1.7s of invented progress before touching the
+   * database, so a local SQLite write looked slow and a file could read as
+   * finished before anything had been stored. Status now comes from the write
+   * itself: `persisting` while it runs, gone on success, `error` on failure.
+   */
+  const persistFiles = useCallback(
+    async (items, category, setList) => {
+      for (const { id, file } of items) {
+        setList((prev) =>
+          prev.map((f) => (f.id === id ? { ...f, status: 'persisting' } : f))
+        );
+        try {
+          if (!patientId) throw new Error('patientId 없음');
+          await createBreathingFile({ patientId, category, file });
+          invalidateBreathing();
+          setList((prev) => prev.filter((f) => f.id !== id));
+        } catch (err) {
+          console.error('[BreathingDataUpload] createBreathingFile failed:', err);
+          const safeMsg = '파일 저장 중 오류가 발생했습니다. 다시 시도해 주세요.';
+          toast({
+            title: '파일을 저장할 수 없습니다',
+            description: safeMsg,
+            variant: 'destructive',
+          });
           setList((prev) =>
-            prev.map((f) =>
-              f.id === id && f.status === 'uploading'
-                ? { ...f, progress: Math.min(100, f.progress + 12 + Math.random() * 15) }
-                : f
-            )
+            prev.map((f) => (f.id === id ? { ...f, status: 'error', error: safeMsg } : f))
           );
-        }, 220);
-        const doneAt = 800 + Math.random() * 900;
-        setTimeout(async () => {
-          clearInterval(tick);
-          setList((prev) =>
-            prev.map((f) => (f.id === id ? { ...f, progress: 100, status: 'persisting' } : f))
-          );
-          try {
-            if (!patientId) throw new Error('patientId 없음');
-            await createBreathingFile({ patientId, category, file });
-            invalidateBreathing();
-            setList((prev) => prev.filter((f) => f.id !== id));
-          } catch (err) {
-            console.error('[BreathingDataUpload] createBreathingFile failed:', err);
-            const safeMsg = '파일 저장 중 오류가 발생했습니다. 다시 시도해 주세요.';
-            toast({
-              title: '파일을 저장할 수 없습니다',
-              description: safeMsg,
-              variant: 'destructive',
-            });
-            setList((prev) =>
-              prev.map((f) =>
-                f.id === id ? { ...f, status: 'error', error: safeMsg } : f
-              )
-            );
-          }
-        }, doneAt);
-      });
+        }
+      }
     },
     [patientId, invalidateBreathing]
   );
@@ -301,14 +292,16 @@ export default function BreathingDataUpload() {
         file,
         name: file.name,
         size: file.size,
-        progress: 0,
-        status: 'uploading',
+        status: 'persisting',
       }));
       if (newItems.length === 0) return;
-      setGeneralPending((prev) => [...prev, ...newItems]);
-      simulateUploadAndPersist(newItems, 'general', setGeneralPending);
+      setConfirmState({
+        category: 'general',
+        queued: newItems,
+        items: buildUploadConfirmItems(newItems, 'general'),
+      });
     },
-    [simulateUploadAndPersist, generalSaved.length, generalPending.length]
+    [generalSaved.length, generalPending.length]
   );
 
   const handleAddDibh = useCallback(
@@ -338,18 +331,30 @@ export default function BreathingDataUpload() {
         file,
         name: file.name,
         size: file.size,
-        progress: 0,
-        status: 'uploading',
+        status: 'persisting',
       }));
       if (newItems.length === 0) return;
-      setDibhPending((prev) => [...prev, ...newItems]);
-      simulateUploadAndPersist(newItems, 'dibh', setDibhPending);
+      setConfirmState({
+        category: 'dibh',
+        queued: newItems,
+        items: buildUploadConfirmItems(newItems, 'dibh'),
+      });
     },
-    [simulateUploadAndPersist, dibhSaved.length, dibhPending.length]
+    [dibhSaved.length, dibhPending.length]
   );
 
-  const busyGeneral = generalPending.some((f) => f.status === 'uploading' || f.status === 'persisting');
-  const busyDibh = dibhPending.some((f) => f.status === 'uploading' || f.status === 'persisting');
+  /** Only reached once the operator has confirmed the destination category. */
+  const commitConfirmed = useCallback(() => {
+    if (!confirmState) return;
+    const { category, queued } = confirmState;
+    setConfirmState(null);
+    const setList = category === 'general' ? setGeneralPending : setDibhPending;
+    setList((prev) => [...prev, ...queued]);
+    void persistFiles(queued, category, setList);
+  }, [confirmState, persistFiles]);
+
+  const busyGeneral = generalPending.some((f) => f.status === 'persisting');
+  const busyDibh = dibhPending.some((f) => f.status === 'persisting');
   const hasBusy = busyGeneral || busyDibh;
 
   const handleDone = () => {
@@ -421,6 +426,7 @@ export default function BreathingDataUpload() {
             <PatientBreathingUploadSection
               title="일반호흡 업로드 (필수)"
               accentClass="from-[#8B5CF6] to-[#6366F1]"
+              patient={patient}
               savedFiles={generalSaved}
               pendingFiles={generalPending}
               onAddFiles={handleAddGeneral}
@@ -431,6 +437,7 @@ export default function BreathingDataUpload() {
             <PatientBreathingUploadSection
               title="DIBH 호흡 업로드 (필수)"
               accentClass="from-[#6366F1] to-[#8B5CF6]"
+              patient={patient}
               savedFiles={dibhSaved}
               pendingFiles={dibhPending}
               onAddFiles={handleAddDibh}
@@ -446,7 +453,7 @@ export default function BreathingDataUpload() {
         )}
       </div>
 
-      <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-[#30363D] bg-[#0D1117]/95 p-4 backdrop-blur">
+      <div className="fixed bottom-0 left-0 right-0 z-40 bg-[#0D1117]/95 p-4 backdrop-blur">
         <div className="mx-auto max-w-2xl">
           <Button
             type="button"
@@ -461,6 +468,13 @@ export default function BreathingDataUpload() {
           )}
         </div>
       </div>
+
+      <UploadConfirmDialog
+        open={!!confirmState}
+        items={confirmState?.items ?? []}
+        onCancel={() => setConfirmState(null)}
+        onConfirm={commitConfirmed}
+      />
 
       <Dialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
         <DialogContent

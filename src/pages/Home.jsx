@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Search, Plus, ChevronLeft, ChevronRight, LogOut } from 'lucide-react';
+import { Search, Plus, ChevronLeft, ChevronRight, LogOut, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Link, useNavigate } from 'react-router-dom';
@@ -9,6 +9,8 @@ import { useQuery } from '@tanstack/react-query';
 import PatientCard from '@/components/common/PatientCard';
 import { useAuth } from '@/context/AuthContext';
 import { Shield } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { PRODUCT_CODE, PRODUCT_CODE_LABEL } from '@/config/product';
 
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -21,6 +23,8 @@ export default function Home() {
     queryKey: ['patients'],
     queryFn: () => Patient.list('-last_training_date'),
   });
+
+  const isSearching = searchTerm.trim().length > 0;
 
   const filteredPatients = patients.filter(patient =>
     patient.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -74,7 +78,10 @@ export default function Home() {
             name="patient-search"
             placeholder="환자명 또는 코드로 검색"
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              setCurrentPage(1);
+            }}
             className="pl-14 h-14 bg-[#1C2128] border-[#30363D] text-white placeholder:text-[#8B949E] focus:border-[#3B82F6] rounded-xl text-base"
           />
         </div>
@@ -90,7 +97,9 @@ export default function Home() {
         <div className="space-y-3">
           {isLoading ? (
             <>
-              <h2 className="text-[#8B949E] text-sm font-bold mb-3 uppercase tracking-wide">최근 치료 환자</h2>
+              <h2 className="text-[#8B949E] text-sm font-bold mb-3 uppercase tracking-wide">
+                {isSearching ? '검색 결과' : '최근 치료 환자'}
+              </h2>
             <div className="space-y-3">
               {[...Array(3)].map((_, i) => (
                 <div key={i} className="bg-[#1C2128] rounded-xl p-5 border border-[#30363D] animate-pulse">
@@ -107,8 +116,26 @@ export default function Home() {
             </>
           ) : paginatedPatients.length > 0 ? (
             <>
-              <h2 className="text-[#8B949E] text-sm font-bold mb-3 uppercase tracking-wide">최근 치료 환자</h2>
-            <div className="space-y-3">
+              <div className="mb-3 flex items-center justify-between">
+                <h2 className="text-[#8B949E] text-sm font-bold uppercase tracking-wide">
+                  {isSearching ? `검색 결과 (${filteredPatients.length}건)` : '최근 치료 환자'}
+                </h2>
+                {isSearching && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setSearchTerm('');
+                      setCurrentPage(1);
+                    }}
+                    className="h-8 gap-1.5 text-[#8B949E] hover:bg-[#1C2128] hover:text-white"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                    검색 해제
+                  </Button>
+                )}
+              </div>
+            <div className={cn('space-y-3', isSearching && 'border-l-2 border-[#3B82F6]/60 pl-3')}>
               {paginatedPatients.map((patient) => (
                 <PatientCard
                   key={patient.id}
@@ -119,8 +146,10 @@ export default function Home() {
             </div>
             </>
           ) : (
-            <div className="text-center py-8">
-              <p className="text-[#8B949E] text-m mb-4">등록된 환자가 없습니다</p>
+            <div className="rounded-xl border border-dashed border-[#30363D] py-10 text-center">
+              <p className="text-sm text-[#8B949E]">
+                {isSearching ? '검색 결과가 없습니다' : '등록된 환자가 없습니다'}
+              </p>
             </div>
           )}
         </div>
@@ -151,6 +180,11 @@ export default function Home() {
             </Button>
           </div>
         )}
+
+        {/* Version was only visible on login and the admin screens (#6) */}
+        <p className="mt-10 text-center text-xs text-[#6E7681]">
+          DIBH - Flow v{__APP_VERSION__} &nbsp;·&nbsp; {PRODUCT_CODE_LABEL} {PRODUCT_CODE}
+        </p>
       </div>
     </div>
   );

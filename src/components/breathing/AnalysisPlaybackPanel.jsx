@@ -1,9 +1,14 @@
 /* eslint-disable react/prop-types -- playback shape comes from analyzeFiles */
-import { useMemo, useState, useEffect, useRef, useCallback } from 'react';
-import { Play, Pause, Repeat2 } from 'lucide-react';
+import { useMemo, useState, useEffect, useRef } from 'react';
+import { Play, Pause } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import CalibrationChart from '@/components/common/CalibrationChart';
 import { cn } from '@/lib/utils';
+
+const GRAPH_TABS = [
+  { key: 'general', label: '일반 호흡' },
+  { key: 'dibh', label: 'DIBH' },
+];
 
 function formatMmSs(seconds) {
   const s = Math.max(0, Math.floor(seconds % 60));
@@ -101,18 +106,10 @@ export default function AnalysisPlaybackPanel({ playback }) {
     return () => cancelAnimationFrame(raf);
   }, [playing]);
 
-  const toggleGraph = useCallback(() => {
-    setGraphMode((m) => (m === 'general' ? 'dibh' : 'general'));
-  }, []);
-
   useEffect(() => {
     setCurrentTime(0);
     setPlaying(false);
   }, [graphMode, duration]);
-
-  const title =
-    graphMode === 'general' ? '일반 호흡 그래프' : 'DIBH 호흡 그래프';
-  const toggleLabel = graphMode === 'general' ? 'DIBH' : '일반 호흡';
 
   if (!hasFilePlayback) {
     return (
@@ -126,19 +123,44 @@ export default function AnalysisPlaybackPanel({ playback }) {
   }
 
   return (
-    <div className="rounded-2xl border border-[#30363D] bg-[#1C2128] p-4 sm:p-5">
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-        <h3 className="text-base font-bold text-white sm:text-lg">{title}</h3>
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={toggleGraph}
-          className="gap-2 border-[#30363D] bg-[#252A32] text-white hover:bg-[#30363D]"
+    <div className="rounded-2xl border border-[#30363D] bg-[#1C2128] p-3 sm:p-4">
+      {/*
+        Tabs, not a toggle. The panel always showed one graph at a time, but a
+        single button whose label flipped between the two never revealed that a
+        second graph existed or which one was on screen (formative eval #7).
+
+        Title and tabs share one row so the control costs no extra height.
+        Tabs are 32px rather than the 44px used for navigation — this switches
+        a view rather than moving between screens, and it sits inside an
+        already-tall panel.
+      */}
+      <div className="mb-3 flex items-center justify-between gap-3">
+        <h3 className="min-w-0 truncate text-base font-bold text-white sm:text-lg">
+          호흡 파형 재생
+        </h3>
+        <div
+          role="tablist"
+          aria-label="그래프 선택"
+          className="inline-flex shrink-0 rounded-lg border border-[#30363D] bg-[#0D1117] p-0.5"
         >
-          <Repeat2 className="h-4 w-4 text-[#79B8FF]" />
-          {toggleLabel}
-        </Button>
+          {GRAPH_TABS.map((tab) => (
+            <button
+              key={tab.key}
+              type="button"
+              role="tab"
+              aria-selected={graphMode === tab.key}
+              onClick={() => setGraphMode(tab.key)}
+              className={cn(
+                'h-8 rounded-md px-3 text-xs font-semibold transition-colors sm:px-4 sm:text-sm',
+                graphMode === tab.key
+                  ? 'bg-[#3B82F6] text-white'
+                  : 'text-[#8B949E] hover:bg-[#252A32] hover:text-white'
+              )}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className="overflow-hidden rounded-xl border border-[#30363D] bg-[#0D1117]">
@@ -153,7 +175,7 @@ export default function AnalysisPlaybackPanel({ playback }) {
         />
       </div>
 
-      <div className="mt-4 flex flex-wrap items-center gap-3">
+      <div className="mt-3 flex flex-wrap items-center gap-3">
         <Button
           type="button"
           variant="ghost"

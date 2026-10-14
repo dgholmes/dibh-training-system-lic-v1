@@ -17,6 +17,7 @@ import { formatFileSize, fileTypeBadge } from '@/lib/files';
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { toast } from '@/components/ui/use-toast';
 import { analyzeFiles } from '@/lib/calibration/analyzeFiles';
+import { breathingFileDisplayName } from '@/lib/breathingFileDisplayName';
 export default function AnalysisFileSelect() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -107,6 +108,8 @@ export default function AnalysisFileSelect() {
 
       const genRow = generalFiles.find((f) => f.id === selectedGeneral);
       const dibhRow = dibhFiles.find((f) => f.id === selectedDibh);
+      // Stored name, never the display name: this goes into the Calibration
+      // record, which is hash-verified but not encrypted (RM-DBF-003).
       const source_files = [genRow?.original_name, dibhRow?.original_name].filter(Boolean);
 
       await CalibrationSession.complete(session.id, {
@@ -252,7 +255,9 @@ export default function AnalysisFileSelect() {
                             {fileTypeBadge(f.original_name)}
                           </div>
                           <div className="min-w-0 flex-1">
-                            <p className="truncate text-sm font-semibold text-white">{f.original_name}</p>
+                            <p className="truncate text-sm font-semibold text-white">
+                              {breathingFileDisplayName(f.original_name, patient)}
+                            </p>
                             <p className="mt-0.5 text-xs text-[#9BA1A6]">
                               {formatFileSize(f.size_bytes)} · {formatUploadedAt(f.imported_at)} 업로드
                             </p>
@@ -272,7 +277,12 @@ export default function AnalysisFileSelect() {
                           size="icon"
                           className="h-[52px] w-11 shrink-0 rounded-2xl text-[#8B949E] hover:bg-[#30363D] hover:text-white"
                           aria-label="파일 삭제"
-                          onClick={() => setDeleteTarget({ id: f.id, name: f.original_name })}
+                          onClick={() =>
+                            setDeleteTarget({
+                              id: f.id,
+                              name: breathingFileDisplayName(f.original_name, patient),
+                            })
+                          }
                         >
                           <X className="h-5 w-5" />
                         </Button>
@@ -314,7 +324,9 @@ export default function AnalysisFileSelect() {
                             {fileTypeBadge(f.original_name)}
                           </div>
                           <div className="min-w-0 flex-1">
-                            <p className="truncate text-sm font-semibold text-white">{f.original_name}</p>
+                            <p className="truncate text-sm font-semibold text-white">
+                              {breathingFileDisplayName(f.original_name, patient)}
+                            </p>
                             <p className="mt-0.5 text-xs text-[#9BA1A6]">
                               {formatFileSize(f.size_bytes)} · {formatUploadedAt(f.imported_at)} 업로드
                             </p>
@@ -334,7 +346,12 @@ export default function AnalysisFileSelect() {
                           size="icon"
                           className="h-[52px] w-11 shrink-0 rounded-2xl text-[#8B949E] hover:bg-[#30363D] hover:text-white"
                           aria-label="파일 삭제"
-                          onClick={() => setDeleteTarget({ id: f.id, name: f.original_name })}
+                          onClick={() =>
+                            setDeleteTarget({
+                              id: f.id,
+                              name: breathingFileDisplayName(f.original_name, patient),
+                            })
+                          }
                         >
                           <X className="h-5 w-5" />
                         </Button>
@@ -349,7 +366,7 @@ export default function AnalysisFileSelect() {
       </div>
 
       {/* Bottom action bar */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-[#30363D] bg-[#0D1117]/95 p-4 backdrop-blur">
+      <div className="fixed bottom-0 left-0 right-0 z-40 bg-[#0D1117]/95 p-4 backdrop-blur">
         <div className="mx-auto flex max-w-2xl gap-3">
           <Button
             type="button"

@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '@/context/AuthContext';
-import { ArrowLeft, LogOut, Plus, Edit, Trash2, Folder, RefreshCw, Calendar as CalendarIcon, Minus } from 'lucide-react';
+import { ArrowLeft, LogOut, Plus, Edit, Trash2, Folder, RefreshCw, Activity, Minus, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -17,13 +17,13 @@ import { getCalibrationStatus, getRecalibrationReason } from '@/utils/recalibrat
 import { getLatestCalibration, sortCalibrationsDesc } from '@/lib/calibration/sortCalibrations';
 import { format, parseISO, isValid } from 'date-fns';
 import { cn } from '@/lib/utils';
-import { darkPopoverCalendarClassNames } from '@/lib/darkPopoverCalendar';
 import { nextPatientCode } from '@/lib/patientCode';
 import { BreathingTypeBadge } from '@/components/breathing/BreathingTypeBadge';
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Calendar } from '@/components/ui/calendar';
 import { toast } from '@/components/ui/use-toast';
+import BirthDateField from '@/components/common/BirthDateField';
+import { rememberDoctorName } from '@/api/doctorRosterStore';
+import DoctorSelectField from '@/components/common/DoctorSelectField';
 
 const genderOptions = [
   { value: 'male', label: '남성' },
@@ -58,9 +58,9 @@ export default function PatientDashboard() {
     treatment_session_count: 0,
     patient_code: '',
     assigned_doctor_name: '',
+    assigned_doctor_account_id: '',
   });
   const [editSessionManualMode, setEditSessionManualMode] = useState(false);
-  const [editBirthPopoverOpen, setEditBirthPopoverOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
   const { data: patient } = useQuery({
@@ -124,7 +124,6 @@ export default function PatientDashboard() {
     return format(max, 'yyyy.MM.dd');
   }, [calibrations, breathingFiles]);
 
-  const hasBreathingData = breathingFiles.length > 0;
   const historyRows = useMemo(() => {
     const rows = [];
     sortCalibrationsDesc(calibrations).forEach((c) => {
@@ -213,7 +212,11 @@ export default function PatientDashboard() {
         treatment_session_count: editFormData.treatment_session_count,
         patient_code: editFormData.patient_code,
         assigned_doctor_name: editFormData.assigned_doctor_name.trim(),
+        assigned_doctor_account_id: editFormData.assigned_doctor_account_id,
       });
+      if (!editFormData.assigned_doctor_account_id && editFormData.assigned_doctor_name.trim()) {
+        await rememberDoctorName(editFormData.assigned_doctor_name);
+      }
       await queryClient.invalidateQueries({ queryKey: ['patient', patientId] });
       await queryClient.invalidateQueries({ queryKey: ['patients'] });
       setShowEditModal(false);
@@ -232,7 +235,6 @@ export default function PatientDashboard() {
   useEffect(() => {
     if (showEditModal && patient) {
       setEditSessionManualMode(false);
-      setEditBirthPopoverOpen(false);
       setEditFormData({
         name: patient.name || '',
         birth_date: patient.birth_date || '',
@@ -240,6 +242,7 @@ export default function PatientDashboard() {
         treatment_session_count: patient.treatment_session_count ?? 0,
         patient_code: patient.patient_code || nextPatientCode(),
         assigned_doctor_name: patient.assigned_doctor_name || '',
+        assigned_doctor_account_id: patient.assigned_doctor_account_id || '',
       });
     }
   }, [showEditModal, patient]);
@@ -249,11 +252,17 @@ export default function PatientDashboard() {
       <div className="mx-auto max-w-3xl">
         {/* Top bar */}
         <div className="sticky top-0 z-20 mb-6 flex items-center gap-3 bg-[#0D1117] py-1">
-          <Link to={createPageUrl('Home')}>
-            <Button variant="ghost" size="icon" className="text-[#8B949E] hover:bg-[#1C2128] hover:text-white">
-              <ArrowLeft className="h-6 w-6" />
-            </Button>
-          </Link>
+          {/* Labelled and bordered to match the patient-flow header (#8) */}
+          <Button
+            asChild
+            variant="ghost"
+            className="h-11 shrink-0 gap-1.5 rounded-xl px-2 text-[#C9D1D9] hover:bg-[#1C2128] hover:text-white"
+          >
+            <Link to={createPageUrl('Home')} aria-label="홈으로 이동">
+              <ArrowLeft className="h-5 w-5" />
+              <span className="text-sm font-semibold">홈</span>
+            </Link>
+          </Button>
           <h1 className="flex-1 text-xl font-bold text-white sm:text-2xl">환자 차트 (대시보드)</h1>
           <Button
             type="button"
@@ -432,14 +441,17 @@ export default function PatientDashboard() {
               </div>
             )}
 
-            {/* Data / calibration shortcuts */}
+            {/*
+              Two jobs, two screens: [데이터 추가] saves files, [분석] picks which
+              of them to analyse.
+            */}
             <div className="flex flex-col gap-2 sm:flex-row">
               <Button
                 type="button"
                 onClick={handleAddData}
                 className={cn(
                   'h-12 flex-1 font-semibold text-white',
-                  hasBreathingData
+                  latestCalibration
                     ? 'border border-[#30363D] bg-[#1C2128] hover:bg-[#30363D]'
                     : 'bg-gradient-to-r from-[#3B82F6] to-[#8B5CF6] hover:from-[#2563EB] hover:to-[#7C3AED]'
                 )}
@@ -447,14 +459,16 @@ export default function PatientDashboard() {
                 <Plus className="mr-2 h-4 w-4" />
                 데이터 추가
               </Button>
-              {hasBreathingData && (
+              {latestCalibration && (
                 <Button
                   type="button"
                   onClick={handleRecalibrate}
                   className="h-12 flex-1 bg-gradient-to-r from-[#3B82F6] to-[#8B5CF6] font-semibold text-white hover:from-[#2563EB] hover:to-[#7C3AED]"
                 >
-                  <RefreshCw className="mr-2 h-4 w-4" />
-                  {latestCalibration ? '다시 분석' : '호흡 분석'}
+                  {/* Pulse line, not circular arrows — this analyses a waveform
+                      rather than reloading anything. */}
+                  <Activity className="mr-2 h-4 w-4" />
+                  분석
                 </Button>
               )}
             </div>
@@ -545,10 +559,10 @@ export default function PatientDashboard() {
               <button
                 type="button"
                 onClick={() => setShowEditModal(false)}
-                className="rounded-lg p-1 text-[#8B949E] transition-colors hover:bg-[#30363D] hover:text-white"
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-[#8B949E] transition-colors hover:bg-[#30363D] hover:text-white"
                 aria-label="닫기"
               >
-                <span className="text-lg leading-none">×</span>
+                <X className="h-4 w-4" />
               </button>
             </div>
 
@@ -576,64 +590,26 @@ export default function PatientDashboard() {
                 <Label htmlFor="edit-doctor" className="mb-2 block font-medium text-[#8B949E]">
                   담당 의사
                 </Label>
-                <Input
-                  id="edit-doctor"
-                  placeholder="담당 의사 이름을 입력하세요"
-                  value={editFormData.assigned_doctor_name}
-                  onChange={(e) => setEditFormData({ ...editFormData, assigned_doctor_name: e.target.value })}
-                  className="h-12 rounded-xl border-[#30363D] bg-[#0D1117] text-white placeholder:text-[#6E7681] focus-visible:ring-[#3B82F6]/40"
+                <DoctorSelectField
+                  name={editFormData.assigned_doctor_name}
+                  accountId={editFormData.assigned_doctor_account_id}
+                  onChange={({ name, accountId }) =>
+                    setEditFormData({
+                      ...editFormData,
+                      assigned_doctor_name: name,
+                      assigned_doctor_account_id: accountId,
+                    })
+                  }
                 />
               </div>
 
               <div>
                 <Label className="mb-2 block font-medium text-[#8B949E]">생년월일</Label>
-                <Popover open={editBirthPopoverOpen} onOpenChange={setEditBirthPopoverOpen}>
-                  <PopoverTrigger asChild>
-                    <button
-                      type="button"
-                      className={cn(
-                        'flex h-12 w-full items-center gap-3 rounded-xl border bg-[#0D1117] px-4 text-left text-sm transition-colors',
-                        'border-[#30363D] hover:border-[#8B949E]/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]/50'
-                      )}
-                    >
-                      <CalendarIcon className="h-5 w-5 shrink-0 text-[#8B949E]" aria-hidden />
-                      <span className={editFormData.birth_date ? 'text-white' : 'text-[#6E7681]'}>
-                        {editFormData.birth_date && isValid(parseISO(editFormData.birth_date))
-                          ? format(parseISO(editFormData.birth_date), 'MM/dd/yyyy')
-                          : 'mm/dd/yyyy'}
-                      </span>
-                    </button>
-                  </PopoverTrigger>
-                  <PopoverContent
-                    className="w-auto border border-[#30363D] bg-[#1C2128] p-0 text-white"
-                    align="start"
-                    sideOffset={8}
-                  >
-                    <Calendar
-                      mode="single"
-                      selected={
-                        editFormData.birth_date && isValid(parseISO(editFormData.birth_date))
-                          ? parseISO(editFormData.birth_date)
-                          : undefined
-                      }
-                      onSelect={(date) => {
-                        setEditFormData({
-                          ...editFormData,
-                          birth_date: date ? format(date, 'yyyy-MM-dd') : '',
-                        });
-                        setEditBirthPopoverOpen(false);
-                      }}
-                      defaultMonth={
-                        editFormData.birth_date && isValid(parseISO(editFormData.birth_date))
-                          ? parseISO(editFormData.birth_date)
-                          : new Date()
-                      }
-                      initialFocus
-                      className="rounded-md border-0 bg-transparent text-white"
-                      classNames={darkPopoverCalendarClassNames}
-                    />
-                  </PopoverContent>
-                </Popover>
+                <BirthDateField
+                  id="edit-birth-date"
+                  value={editFormData.birth_date}
+                  onChange={(iso) => setEditFormData({ ...editFormData, birth_date: iso })}
+                />
               </div>
 
               <div>

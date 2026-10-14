@@ -81,11 +81,21 @@ const SelectLabel = React.forwardRef(({ className, ...props }, ref) => (
 ))
 SelectLabel.displayName = SelectPrimitive.Label.displayName
 
-const SelectItem = React.forwardRef(({ className, children, ...props }, ref) => (
+/**
+ * `action` renders a control inside the row but OUTSIDE ItemText — Radix clones
+ * ItemText into the closed trigger, so anything placed in `children` would show
+ * up as part of the selected value.
+ *
+ * The tick only occupies the right edge while the row is selected, so an action
+ * sits flush against that edge and steps inwards on data-state=checked rather
+ * than reserving a permanently empty gap.
+ */
+const SelectItem = React.forwardRef(({ className, children, action, ...props }, ref) => (
   <SelectPrimitive.Item
     ref={ref}
     className={cn(
-      "relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-2 pr-8 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+      "group relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-2 pr-8 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+      action && "data-[state=checked]:pr-14",
       className
     )}
     {...props}>
@@ -95,6 +105,11 @@ const SelectItem = React.forwardRef(({ className, children, ...props }, ref) => 
       </SelectPrimitive.ItemIndicator>
     </span>
     <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
+    {action ? (
+      <span className="absolute right-1 flex items-center group-data-[state=checked]:right-7">
+        {action}
+      </span>
+    ) : null}
   </SelectPrimitive.Item>
 ))
 SelectItem.displayName = SelectPrimitive.Item.displayName

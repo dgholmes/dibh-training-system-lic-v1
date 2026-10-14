@@ -8,6 +8,7 @@ import { useQuery } from '@tanstack/react-query';
 import ComprehensiveBreathingReportCard from '@/components/breathing/ComprehensiveBreathingReportCard';
 import BreathingTypeComparisonModal from '@/components/breathing/BreathingTypeComparisonModal';
 import AnalysisPlaybackPanel from '@/components/breathing/AnalysisPlaybackPanel';
+import AnalysisResultCard from '@/components/breathing/AnalysisResultCard';
 import { getLatestCalibration } from '@/lib/calibration/sortCalibrations';
 
 /**
@@ -65,7 +66,7 @@ export default function TrainingReport() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0D1117] p-6 pb-28">
+    <div className="min-h-screen bg-[#0D1117] p-6 pb-20">
       <PatientFlowPageHeader
         backHref={
           patientId
@@ -76,34 +77,33 @@ export default function TrainingReport() {
         patient={patient}
       />
 
-      <div className="mx-auto mt-2 max-w-2xl space-y-5">
+      <div className="mx-auto mt-2 max-w-2xl space-y-4">
         <ComprehensiveBreathingReportCard
           trainingType={trainingType}
           onOpenInfo={() => setComparisonOpen(true)}
         />
 
-        <div className="rounded-2xl border border-[#30363D] bg-[#1C2128] px-5 py-6 sm:px-6">
-          <div className="grid grid-cols-2 gap-4 text-center">
-            <div>
-              <p className="mb-1 text-sm text-[#8B949E]">DIBH 유지 시간</p>
-              <p className="text-2xl font-bold text-white">{Number(dibhDuration)}초</p>
-            </div>
-            <div>
-              <p className="mb-1 text-sm text-[#8B949E]">호흡 안정성 (CV)</p>
-              <p className="text-2xl font-bold text-white">{Number(cv).toFixed(1)}%</p>
-            </div>
-          </div>
-        </div>
+        {/*
+          `type` is gated on a real calibration: trainingType falls back to 'A'
+          when there is none, and 'A' advice ('DIBH 치료 계획 수립을 고려할 수
+          있습니다') must never be shown for a patient who has not been analysed
+          (RM-DBF-014). The measured values still render either way.
+        */}
+        <AnalysisResultCard
+          dibhDuration={dibhDuration}
+          cv={cv}
+          type={calibration ? trainingType : null}
+        />
 
         <AnalysisPlaybackPanel playback={playback} />
       </div>
 
-      <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-[#30363D] bg-[#0D1117]/95 p-4 backdrop-blur">
+      <div className="fixed bottom-0 left-0 right-0 z-40 bg-[#0D1117]/95 p-3 backdrop-blur">
         <div className="mx-auto max-w-2xl">
           <Button
             type="button"
             onClick={handleDashboard}
-            className="h-12 w-full bg-gradient-to-r from-[#3B82F6] to-[#8B5CF6] text-base font-semibold text-white hover:from-[#2563EB] hover:to-[#7C3AED]"
+            className="h-11 w-full bg-gradient-to-r from-[#3B82F6] to-[#8B5CF6] text-base font-semibold text-white hover:from-[#2563EB] hover:to-[#7C3AED]"
           >
             환자 대시보드로 이동
           </Button>

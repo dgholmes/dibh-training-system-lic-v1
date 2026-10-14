@@ -1,42 +1,59 @@
 import React from 'react';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Home } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { createPageUrl } from '@/utils';
 import { cn } from '@/lib/utils';
 
 /**
- * Matches InitialDiagnosis / TypeDecision: back, title (text-xl), optional patient line.
- * Optional `trailing` for right-side content (e.g. TrainingMonitor type badge).
+ * Patient-flow header.
+ *
+ * The back control used to be an unlabelled ghost icon at #8B949E on #0D1117,
+ * and there was no home control anywhere in the patient flow — both were
+ * raised in the formative evaluation (#8). Back is now labelled, home is
+ * always present, and each is a 44px touch target.
+ *
+ * Fixing it here means every patient screen inherits it; no call site changes.
  */
 export function PatientFlowPageHeader({ backHref, title, patient, trailing = null, className }) {
+  // Labelled and high-contrast, but no filled chip — the label is what makes
+  // these findable, not a background (formative eval #8).
+  const navButton =
+    'h-11 shrink-0 gap-1.5 rounded-xl px-2 text-[#C9D1D9] hover:bg-[#1C2128] hover:text-white';
+
   return (
     <div
       className={cn(
-        'sticky top-0 z-20 mb-4 flex items-center gap-4 bg-[#0D1117] py-1',
-        trailing ? 'justify-between' : null,
+        'sticky top-0 z-20 mb-4 flex items-center justify-between gap-3 bg-[#0D1117] py-2',
         className
       )}
     >
-      <div className="flex min-w-0 items-center gap-4">
-        <Link to={backHref}>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="text-[#8B949E] hover:bg-[#1C2128] hover:text-white"
-          >
+      <div className="flex min-w-0 items-center gap-3">
+        <Button asChild variant="ghost" className={navButton}>
+          <Link to={backHref} aria-label="뒤로 가기">
             <ArrowLeft className="h-5 w-5" />
-          </Button>
-        </Link>
-        <div>
-          <h1 className="text-xl font-bold text-white">{title}</h1>
+            <span className="text-sm font-semibold">뒤로</span>
+          </Link>
+        </Button>
+        <div className="min-w-0">
+          <h1 className="truncate text-xl font-bold text-white">{title}</h1>
           {patient && (
-            <p className="text-sm text-[#8B949E]">
+            <p className="truncate text-sm text-[#8B949E]">
               {patient.name} • {patient.patient_code}
             </p>
           )}
         </div>
       </div>
-      {trailing ? <div className="shrink-0">{trailing}</div> : null}
+
+      <div className="flex shrink-0 items-center gap-2">
+        {trailing}
+        <Button asChild variant="ghost" className={navButton}>
+          <Link to={createPageUrl('Home')} aria-label="홈으로 이동">
+            <Home className="h-5 w-5" />
+            <span className="text-sm font-semibold">홈</span>
+          </Link>
+        </Button>
+      </div>
     </div>
   );
 }

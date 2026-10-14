@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ArrowLeft, Plus, Trash2, Unlock, ShieldCheck, ShieldAlert, UserCog, Eye, EyeOff, Users, ClipboardList, Database, KeyRound, MessageSquareWarning } from 'lucide-react';
+import { ArrowLeft, Plus, Trash2, Unlock, ShieldCheck, ShieldAlert, UserCog, Eye, EyeOff, Users, ClipboardList, Database, KeyRound, MessageSquareWarning, X } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -340,9 +340,9 @@ export default function AdminAccounts() {
           <form onSubmit={handleCreate} className="pb-6">
             <div className="flex items-center justify-between border-b border-[#30363D] px-6 py-4">
               <p className="font-semibold text-[#C9D1D9]">새 계정 추가</p>
-              <button type="button" onClick={() => setShowCreate(false)}
-                className="rounded-lg p-1 text-[#8B949E] hover:bg-[#30363D] hover:text-white">
-                <span className="text-lg leading-none">×</span>
+              <button type="button" onClick={() => setShowCreate(false)} aria-label="닫기"
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-[#8B949E] transition-colors hover:bg-[#30363D] hover:text-white">
+                <X className="h-4 w-4" />
               </button>
             </div>
             <div className="space-y-4 px-6 pt-5">
@@ -411,9 +411,9 @@ export default function AdminAccounts() {
           <form onSubmit={handleReset} className="pb-6">
             <div className="flex items-center justify-between border-b border-[#30363D] px-6 py-4">
               <p className="font-semibold text-[#C9D1D9]">[{resetTarget?.username}] 비밀번호 초기화</p>
-              <button type="button" onClick={() => setResetTarget(null)}
-                className="rounded-lg p-1 text-[#8B949E] hover:bg-[#30363D] hover:text-white">
-                <span className="text-lg leading-none">×</span>
+              <button type="button" onClick={() => setResetTarget(null)} aria-label="닫기"
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-[#8B949E] transition-colors hover:bg-[#30363D] hover:text-white">
+                <X className="h-4 w-4" />
               </button>
             </div>
             <div className="space-y-4 px-6 pt-5">

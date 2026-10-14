@@ -28,22 +28,17 @@ export default function ComprehensiveBreathingReportCard({ trainingType, onOpenI
     <button
       type="button"
       onClick={onOpenInfo}
-      className="w-full rounded-2xl border border-[#30363D] bg-[#1C2128] p-5 text-left transition-colors hover:border-[#3B82F6]/40 hover:bg-[#222830] sm:p-6"
+      className="w-full rounded-2xl border border-[#30363D] bg-[#1C2128] p-4 text-left transition-colors hover:border-[#3B82F6]/40 hover:bg-[#222830] sm:p-5"
     >
       {/* Header */}
-      <div className="mb-5 flex items-center gap-2">
+      <div className="mb-4 flex items-center gap-2">
         <span className="h-5 w-1 rounded-full bg-gradient-to-b from-[#3B82F6] to-[#8B5CF6]" />
         <h2 className="text-base font-bold text-white sm:text-lg">종합 호흡 분석 진단리포트</h2>
-        <span
-          className="inline-flex h-6 w-6 items-center justify-center rounded-full border border-[#30363D] text-[#8B949E]"
-          aria-hidden
-        >
-          <Info className="h-3.5 w-3.5" />
-        </span>
+        <Info className="h-4 w-4 shrink-0 text-[#8B949E]" aria-hidden />
       </div>
 
       {/* Body: type card + summary */}
-      <div className="flex flex-col gap-5 sm:flex-row sm:items-stretch">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-stretch">
         {/* Type card with linear gradient top→bottom */}
         <div
           className={cn(
@@ -63,10 +58,10 @@ export default function ComprehensiveBreathingReportCard({ trainingType, onOpenI
 
         {/* Summary text + bullets */}
         <div className="flex min-w-0 flex-1 flex-col justify-center">
-          <p className="mb-3.5 text-sm font-bold leading-relaxed text-white sm:text-base">
+          <p className="mb-3 text-sm font-bold leading-relaxed text-white sm:text-base">
             {copy.summary}
           </p>
-          <ul className="space-y-2.5">
+          <ul className="space-y-2">
             {copy.bullets.map((line, i) => (
               <li key={i} className="flex gap-2.5 text-sm leading-snug text-[#C9D1D9]">
                 <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#3B82F6]/20">

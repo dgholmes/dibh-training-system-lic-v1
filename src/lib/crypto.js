@@ -226,7 +226,7 @@ export async function computeRecordHash(record) {
 
 // ── Patient PII helpers ───────────────────────────────────────────────────────
 
-const PII_FIELDS = ['name', 'birth_date', 'assigned_doctor_name'];
+const PII_FIELDS = ['name', 'birth_date', 'assigned_doctor_name', 'assigned_doctor_account_id'];
 
 /**
  * Separate PII from non-PII, encrypt PII into `_enc` blob.
@@ -256,7 +256,10 @@ export async function decryptPatient(raw) {
     const piiJson = await decryptValue(raw._enc);
     const pii = JSON.parse(piiJson);
     const { _enc, ...rest } = raw;
-    return { ...rest, ...pii };
+    // Records written before assigned_doctor_account_id existed have no such
+    // key. Default it rather than migrating — nothing needs rewriting, and the
+    // default is listed first so a real decrypted value overrides it.
+    return { assigned_doctor_account_id: '', ...rest, ...pii };
   } catch (err) {
     // Key mismatch (e.g. install key was regenerated) — return record with
     // empty PII so the app keeps working; warn in console for diagnostics.
@@ -268,6 +271,7 @@ export async function decryptPatient(raw) {
       name: '[복호화 실패]',
       birth_date: '',
       assigned_doctor_name: '',
+      assigned_doctor_account_id: '',
       _decryptionFailed: true,
     };
   }
