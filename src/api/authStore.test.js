@@ -57,6 +57,28 @@ describe('authStore — encrypted user metadata', () => {
     expect(raw._enc).toMatch(/^enc:/);
   });
 
+  it('a locked account is reported as locked to the admin list until unlocked', async () => {
+    const { initCrypto } = await import('@/lib/crypto');
+    await initCrypto();
+    const { ensureDefaultAdmin, loginUser, UserStore, isUserLocked } = await import('./authStore.js');
+    await ensureDefaultAdmin();
+
+    let [admin] = await UserStore.list();
+    expect(isUserLocked(admin)).toBe(false);
+
+    for (let i = 0; i < 5; i++) await loginUser('admin', 'wrong-password');
+
+    // Regression: `lockedUntil` holds the lockout *start* time, so a
+    // "lockedUntil > now" check reported this account as unlocked and the
+    // admin's 잠금해제 button never rendered.
+    [admin] = await UserStore.list();
+    expect(isUserLocked(admin)).toBe(true);
+
+    await UserStore.unlock(admin.id);
+    [admin] = await UserStore.list();
+    expect(isUserLocked(admin)).toBe(false);
+  });
+
   it('UserStore.list() never exposes passwordHash or salt', async () => {
     const { initCrypto } = await import('@/lib/crypto');
     await initCrypto();

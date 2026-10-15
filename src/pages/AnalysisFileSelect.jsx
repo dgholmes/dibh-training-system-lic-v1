@@ -32,6 +32,7 @@ export default function AnalysisFileSelect() {
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [isDeletingFile, setIsDeletingFile] = useState(false);
   const abortRef = useRef(null);
+  const committingRef = useRef(false); // true once the result is being saved
 
   // Abort analysis on unmount
   useEffect(() => {
@@ -79,6 +80,7 @@ export default function AnalysisFileSelect() {
 
     const controller = new AbortController();
     abortRef.current = controller;
+    committingRef.current = false;
 
     try {
       // Run analysis and enforce a minimum display time so the user sees the animation
@@ -94,6 +96,17 @@ export default function AnalysisFileSelect() {
       if (elapsed < MIN_DISPLAY_MS) {
         await new Promise((r) => setTimeout(r, MIN_DISPLAY_MS - elapsed));
       }
+
+      // analyzeFiles() only sees the signal while it is computing. A cancel
+      // during the minimum-display wait above must still discard the result —
+      // otherwise the modal closes as "cancelled" while the result is saved,
+      // ANALYSIS_RUN is logged and the app navigates on (RFN-024).
+      if (controller.signal.aborted) {
+        throw new DOMException('Analysis cancelled', 'AbortError');
+      }
+      // Past this point the result is being saved; a cancel can no longer
+      // un-save it, so the cancel control is ignored rather than half-applied.
+      committingRef.current = true;
 
       // Create a CalibrationSession and immediately complete it
       // — this creates a Calibration record and updates the Patient, same as Bluetooth flow
@@ -114,8 +127,8 @@ export default function AnalysisFileSelect() {
 
       await CalibrationSession.complete(session.id, {
         training_type: result.trainingType,
-        dibh_duration: result.avgDibh ?? 0,
-        cv: result.cv ?? 0,
+        dibh_duration: result.avgDibh,
+        cv: result.cv,
         algorithm_results: result.algorithmResults,
         source: result.source,
         playback: result.playback,
@@ -141,10 +154,13 @@ export default function AnalysisFileSelect() {
       // analyzeFiles() throws clean, user-facing Korean messages (missing file, no valid data, VXP
       // format error) — surface those directly; fall back to a generic message for anything else.
       setAnalysisError(err.message || '분석 중 오류가 발생했습니다. 파일을 확인하고 다시 시도해 주세요.');
+    } finally {
+      committingRef.current = false;
     }
   };
 
   const handleCancelAnalysis = () => {
+    if (committingRef.current) return;
     abortRef.current?.abort();
     setShowAnalysisModal(false);
   };

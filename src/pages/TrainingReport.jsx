@@ -47,11 +47,13 @@ export default function TrainingReport() {
     enabled: !!patientId,
   });
 
-  const trainingType = calibration?.training_type || patient?.training_type || 'A';
+  // Only a real calibration supplies a type; with none, nothing is classified
+  // (the report card shows "no result" rather than a default type).
+  const trainingType = calibration?.training_type ?? null;
 
   const dibhDuration =
-    calibration?.dibh_duration != null ? Math.round(Number(calibration.dibh_duration)) : 0;
-  const cv = calibration?.cv != null ? Number(calibration.cv) : 0;
+    calibration?.dibh_duration != null ? Math.round(Number(calibration.dibh_duration)) : null;
+  const cv = calibration?.cv != null ? Number(calibration.cv) : null;
 
   const playback = calibration?.playback ?? null;
 
@@ -84,16 +86,10 @@ export default function TrainingReport() {
         />
 
         {/*
-          `type` is gated on a real calibration: trainingType falls back to 'A'
-          when there is none, and 'A' advice ('DIBH 치료 계획 수립을 고려할 수
-          있습니다') must never be shown for a patient who has not been analysed
-          (RM-DBF-014). The measured values still render either way.
+          trainingType is null without a real calibration, so no advice is shown
+          for a patient who has not been analysed (RM-DBF-014).
         */}
-        <AnalysisResultCard
-          dibhDuration={dibhDuration}
-          cv={cv}
-          type={calibration ? trainingType : null}
-        />
+        <AnalysisResultCard dibhDuration={dibhDuration} cv={cv} type={trainingType} />
 
         <AnalysisPlaybackPanel playback={playback} />
       </div>

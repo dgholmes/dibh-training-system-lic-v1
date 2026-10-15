@@ -21,7 +21,21 @@ const TYPE_BOX_STYLE = {
 
 
 export default function ComprehensiveBreathingReportCard({ trainingType, onOpenInfo }) {
-  const t = trainingType === 'C' ? 'C' : trainingType === 'B' ? 'B' : 'A';
+  // No valid type → no type card. Anything that isn't exactly A/B/C used to
+  // fall through to 'A', showing the most favourable result for a patient with
+  // no analysis behind it (RFN-026).
+  if (!['A', 'B', 'C'].includes(trainingType)) {
+    return (
+      <div className="w-full rounded-2xl border border-[#30363D] bg-[#1C2128] p-4 sm:p-5">
+        <div className="mb-2 flex items-center gap-2">
+          <span className="h-5 w-1 rounded-full bg-gradient-to-b from-[#3B82F6] to-[#8B5CF6]" />
+          <h2 className="text-base font-bold text-white sm:text-lg">종합 호흡 분석 진단리포트</h2>
+        </div>
+        <p className="text-sm text-[#8B949E]">유효한 분석 결과가 없어 유형을 표시할 수 없습니다.</p>
+      </div>
+    );
+  }
+  const t = trainingType;
   const copy = REPORT_CARD_COPY[t];
 
   return (

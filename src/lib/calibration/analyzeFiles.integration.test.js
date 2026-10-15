@@ -63,13 +63,43 @@ describe('analyzeFiles (mocked files)', () => {
     const result = await analyzeFiles('gen-mock', 'dibh-mock');
     expect(['A', 'B', 'C']).toContain(result.trainingType);
     expect(result.cv).not.toBeNull();
-    // avgDibh may be null when Stage 3 marks no valid hold on synthetic data; pipeline still completes.
-    expect(result.avgDibh === null || typeof result.avgDibh === 'number').toBe(true);
+    // A classified result always carries both metrics — a missing one aborts the analysis instead.
+    expect(typeof result.avgDibh).toBe('number');
     expect(result.source).toBe('file_analysis');
     expect(result.playback?.source).toBe('file_analysis');
     expect(result.playback?.general?.chartData?.length).toBeGreaterThan(0);
     expect(result.playback?.dibh?.chartData?.length).toBeGreaterThan(0);
     expect(result.algorithmResults.stage2).toBeNull();
+  });
+
+  // Regression: a missing metric used to be coerced to 0, so a general file with
+  // no usable cycles (CV null → 0%) next to a long DIBH hold came out as Type A.
+  it('refuses to classify when the general file has no usable breathing cycles', async () => {
+    const flat = Array.from({ length: 2501 }, (_, i) => `${(i * 0.05).toFixed(3)},50.0000`).join('\n');
+    vi.mocked(getBreathingFileContent).mockImplementation(async (id) => {
+      if (id === 'flat-gen') {
+        return { arrayBuffer: toBuf(flat), original_name: 'P001_GEN_20260101.csv', mime: 'text/csv' };
+      }
+      if (id === 'dibh-mock') {
+        return { arrayBuffer: toBuf(buildDibhCsv()), original_name: 'P001_DIBH_20260101.csv', mime: 'text/csv' };
+      }
+      return null;
+    });
+    await expect(analyzeFiles('flat-gen', 'dibh-mock')).rejects.toThrow(/호흡 주기를 충분히 검출하지 못해/);
+  });
+
+  it('refuses to classify when the DIBH file has no breath-hold', async () => {
+    vi.mocked(getBreathingFileContent).mockImplementation(async (id) => {
+      if (id === 'gen-mock' || id === 'no-hold-dibh') {
+        return {
+          arrayBuffer: toBuf(buildGeneralCsv()),
+          original_name: id === 'gen-mock' ? 'P001_GEN_20260101.csv' : 'P001_DIBH_20260101.csv',
+          mime: 'text/csv',
+        };
+      }
+      return null;
+    });
+    await expect(analyzeFiles('gen-mock', 'no-hold-dibh')).rejects.toThrow(/숨참기\(hold\) 구간을 검출하지 못해/);
   });
 
   it('accepts VXP general file and runs analysis without error', async () => {

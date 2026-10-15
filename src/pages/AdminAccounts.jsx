@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
-import { UserStore } from '@/api/authStore';
+import { UserStore, isUserLocked } from '@/api/authStore';
 import { tryWriteAuditLog, AUDIT_ACTIONS } from '@/api/auditStore';
 import { validatePassword } from '@/lib/passwordUtils';
 import { getCustomUsageNotice, setUsageNotice, resetUsageNotice, validateUsageNotice } from '@/api/usageNoticeStore';
@@ -197,7 +197,7 @@ export default function AdminAccounts() {
     }
   };
 
-  const isLocked = (u) => u.lockedUntil && new Date(u.lockedUntil) > new Date();
+  const isLocked = isUserLocked;
 
   return (
     <div className="min-h-screen bg-[#0D1117] p-6 pb-24">

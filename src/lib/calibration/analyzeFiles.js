@@ -311,7 +311,23 @@ export async function analyzeFiles(generalFileId, dibhFileId, { signal } = {}) {
   });
 
   // ── Determine type ──────────────────────────────────────────────
-  const trainingType = determineDibhType(avgDibh ?? 0, cv ?? 0) ?? 'B';
+  // A missing metric means "not analysable", never "zero". Substituting 0 used
+  // to turn a file with no usable cycles into CV 0% — which reads as perfectly
+  // stable and could yield Type A. Refuse instead, so no type is shown or saved.
+  if (cv == null) {
+    throw new Error(
+      '일반호흡 파일에서 유효한 호흡 주기를 충분히 검출하지 못해 분석할 수 없습니다. 파일을 확인하고 다시 측정해 주세요.'
+    );
+  }
+  if (avgDibh == null) {
+    throw new Error(
+      'DIBH 파일에서 유효한 숨참기(hold) 구간을 검출하지 못해 분석할 수 없습니다. 파일을 확인하고 다시 측정해 주세요.'
+    );
+  }
+  const trainingType = determineDibhType(avgDibh, cv);
+  if (trainingType == null) {
+    throw new Error('분석 지표를 산출하지 못해 분석할 수 없습니다. 파일을 확인하고 다시 측정해 주세요.');
+  }
 
   console.log(`[analyzeFiles] Result: type=${trainingType}, avgDibh=${avgDibh}, cv=${cv}`);
 

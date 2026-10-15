@@ -345,6 +345,19 @@ export function clearSessionForTimeout() {
 
 // ── User management (admin) ───────────────────────────────────────────────────
 
+/**
+ * Whether a (decrypted) user record is currently locked out.
+ *
+ * The tick counter is the source of truth — it is what loginUser() checks and
+ * what the heartbeat counts down. `lockedUntil` is not usable here: despite the
+ * name it records when the lockout *began* (an audit timestamp), so comparing it
+ * against "now" reported every locked account as unlocked and hid the admin's
+ * 잠금해제 control.
+ */
+export function isUserLocked(user) {
+  return (user?.lockoutTicksRemaining ?? 0) > 0;
+}
+
 // A record whose `_enc` blob cannot be decrypted/verified has no recoverable
 // role or lockout state — decryptUserMeta() only returns permissive placeholders.
 // Merging an update onto those placeholders would bake the fallback values in as

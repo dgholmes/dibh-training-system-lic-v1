@@ -95,7 +95,7 @@ export default function TypeDecision() {
     );
   }
 
-  const displayType = trainingType ?? 'B';
+  const displayType = trainingType;
 
   return (
     <div className="min-h-screen bg-[#0D1117] p-6 pb-20">
