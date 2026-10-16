@@ -1,5 +1,6 @@
 /* eslint-disable react/prop-types -- three scalar props, documented below */
 import { RECOMMENDED_ACTIONS, CLINICAL_DISCLAIMER } from '@/lib/breathingAnalysisReportContent';
+import TypeDecisionMap from './TypeDecisionMap';
 
 /**
  * The measured values and what they imply, in one card.
@@ -27,12 +28,14 @@ import { RECOMMENDED_ACTIONS, CLINICAL_DISCLAIMER } from '@/lib/breathingAnalysi
 export default function AnalysisResultCard({ dibhDuration, cv, type }) {
   const copy = type ? RECOMMENDED_ACTIONS[type] : null;
 
-  const durationText =
-    dibhDuration != null && Number.isFinite(Number(dibhDuration))
-      ? `${Math.round(Number(dibhDuration))}초`
-      : '—';
-  const cvText =
-    cv != null && Number.isFinite(Number(cv)) ? `${Number(cv).toFixed(1)}%` : '—';
+  const hasMeasurements =
+    dibhDuration != null &&
+    cv != null &&
+    Number.isFinite(Number(dibhDuration)) &&
+    Number.isFinite(Number(cv));
+
+  const durationText = hasMeasurements ? `${Math.round(Number(dibhDuration))}초` : '—';
+  const cvText = hasMeasurements ? `${Number(cv).toFixed(1)}%` : '—';
 
   return (
     <div className="rounded-2xl border border-[#30363D] bg-[#1C2128] px-5 py-5 sm:px-6">
@@ -47,6 +50,22 @@ export default function AnalysisResultCard({ dibhDuration, cv, type }) {
           <p className="text-2xl font-bold text-white">{cvText}</p>
         </div>
       </div>
+
+      {/*
+        How the two values above produce the type. This is rule display, not
+        advice, so it belongs on the measurement side of the 권장 조치 divider.
+        Hidden without measurements: a criteria chart with no point on it
+        invites the reader to assume a result that was never produced.
+      */}
+      {hasMeasurements && (
+        <div className="mt-5 border-t border-[#30363D] pt-4">
+          <div className="mb-3 flex items-center gap-2">
+            <span className="h-5 w-1 rounded-full bg-gradient-to-b from-[#3B82F6] to-[#8B5CF6]" />
+            <h3 className="text-base font-bold text-white">판정 기준</h3>
+          </div>
+          <TypeDecisionMap dibhDuration={dibhDuration} cv={cv} type={type} />
+        </div>
+      )}
 
       {/* What they imply — advisory, and kept visually separate from the above */}
       {copy && (
