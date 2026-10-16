@@ -267,7 +267,7 @@ async function doLoginUser(username, password) {
       return {
         success: false,
         locked: true,
-        error: '로그인 시도 횟수를 초과하여 계정이 잠금되었습니다. 관리자에게 문의하여 잠금을 해제해 주세요.',
+        error: `로그인 시도 횟수를 초과하여 계정이 잠금되었습니다. 약 ${LOCKOUT_MS / 60_000}분 후 다시 시도하거나 관리자에게 문의하세요.`,
       };
     }
     const remaining = MAX_FAILED_ATTEMPTS - attempts;

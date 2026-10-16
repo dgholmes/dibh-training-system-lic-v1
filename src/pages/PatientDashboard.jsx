@@ -766,7 +766,7 @@ export default function PatientDashboard() {
             </div>
             <p className="text-base font-bold text-white sm:text-lg">환자 정보를 정말 삭제하시겠습니까?</p>
             <p className="mt-3 text-sm leading-relaxed text-[#8B949E]">
-              등록된 환자의 개인정보 및 호흡 데이터, 시뮬레이션 결과가 모두 시스템에서 영구적으로 삭제됩니다.
+              등록된 환자의 개인정보와 호흡 데이터 파일이 시스템에서 영구적으로 삭제됩니다. 분석 결과와 훈련 기록은 삭제되지 않고 보관됩니다.
             </p>
             <div className="mt-4 rounded-xl border border-[#EF4444]/30 bg-[#EF4444]/10 px-4 py-3 text-center text-sm text-[#FCA5A5]">
               삭제된 데이터는 복구할 수 없습니다.

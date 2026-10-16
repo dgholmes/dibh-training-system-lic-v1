@@ -57,6 +57,21 @@ describe('authStore — encrypted user metadata', () => {
     expect(raw._enc).toMatch(/^enc:/);
   });
 
+  it('tells the user the same retry time when the account locks and on a retry while locked', async () => {
+    const { initCrypto } = await import('@/lib/crypto');
+    await initCrypto();
+    const { ensureDefaultAdmin, loginUser } = await import('./authStore.js');
+    await ensureDefaultAdmin();
+
+    for (let i = 0; i < 4; i++) await loginUser('admin', 'wrong-password');
+    const atLock = await loginUser('admin', 'wrong-password');
+    const retry = await loginUser('admin', 'wrong-password');
+
+    // Both messages give the 15-minute auto-unlock and the admin alternative.
+    expect(atLock.error).toContain('약 15분 후 다시 시도하거나 관리자에게 문의하세요.');
+    expect(retry.error).toContain('약 15분 후 다시 시도하거나 관리자에게 문의하세요.');
+  });
+
   it('a locked account is reported as locked to the admin list until unlocked', async () => {
     const { initCrypto } = await import('@/lib/crypto');
     await initCrypto();
